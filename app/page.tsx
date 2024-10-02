@@ -12,7 +12,7 @@ export default function Home() {
     const sendEmail = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/sendTeam', {method: 'POST'});
+            const res = await fetch('/api/mailingSystem/sendTeam', {method: 'POST'});
             if (res.ok) {
                 setResult(`Email has sent to team members`);
             } else {
