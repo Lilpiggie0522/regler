@@ -2,10 +2,17 @@
 import { ChangeEvent, useState } from "react";
 import Papa, { ParseResult } from "papaparse";
 
-export default function main() {
-    const [displayData, setDisplayData] = useState<any[]>([]);
+interface DisplayData {
+    year: string;
+    name: string;
+    percent: string;
+    sex: string;
+}
 
-    const [showData, setShowData] = useState<Boolean>(false);
+export default function LecturerPage() {
+    const [displayData, setDisplayData] = useState<DisplayData[]>([]);
+
+    const [showData, setShowData] = useState<boolean>(false);
 
     function cancelFile() {
         const fileInput = document.getElementById("csv") as HTMLInputElement;
