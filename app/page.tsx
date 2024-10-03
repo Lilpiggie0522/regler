@@ -43,7 +43,9 @@ export default function TeamEvaluationForm() {
           className="border border-gray-300 text-black p-2 rounded-md h-20"
         />
 
-        <button className="bg-black text-white py-2 w-40 rounded-md mx-auto">
+        <button className="bg-black text-white py-2 w-40 rounded-md mx-auto" onSubmit={()=>{
+          
+        }}>
           Submit
         </button>
         
