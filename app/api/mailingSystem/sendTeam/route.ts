@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
-import { NextRequest, NextResponse } from 'next/server';
+// import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 // import { MongoClient } from 'mongodb'
 
 // interface EmailTeamInfo {
@@ -10,7 +11,8 @@ import { NextRequest, NextResponse } from 'next/server';
 //     team: string,
 // }
 
-export async function POST(request: NextRequest) {
+// export async function POST(request: NextRequest) {
+export async function POST() {
     try {
         const transport = nodemailer.createTransport({
             service: 'gmail',  // SMTP server? Other server
@@ -50,14 +52,15 @@ export async function POST(request: NextRequest) {
                 Regards,<br>
                 UNSW Development Team
             </p>
-            <a href = 'https://forms.office.com/Pages/ResponsePage.aspx?id=pM_2PxXn20i44Qhnufn7o2SAAYsNGbpPtDpcJj4gjllUNVdESFhXWk5QMTQ1VTVBVUs2VVJBTDVZWi4u'>Click here to complete the form<a>
+            <a href = 'http://localhost:3000/'><button type="button" colour="blue">Complete Here</button><a>
             `,
         };
-
         const info = await transport.sendMail(mailingParameters);
         return NextResponse.json({data: info}, {status: 200})
     } catch (error) {
-        console.error('Error - Team Email:', error);
-        return NextResponse.json({error: error.message}, {status: 502})
+        if (error instanceof Error) {
+            console.error('Error - Team Email:', error);
+            return NextResponse.json({error: error.message}, {status: 502})
+        }
     }
 }
