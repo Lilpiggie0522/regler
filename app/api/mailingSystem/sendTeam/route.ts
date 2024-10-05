@@ -5,15 +5,29 @@ import Team from '@/models/teamModel';
 import Student from '@/models/studentModel';
 
 
-// interface EmailTeamInfo {
-//     course: string,
-//     project: string,
-//     team: string,
-// }
-
 export async function POST(request: NextRequest) {
     try {
-        // const { teamId, teamName } = await request.json()
+        // const { teamId } = await request.json()
+        const teamId = "6700eaee7ae942fe983415c8"
+        
+        await dbConnect();
+        const team = await Team.findById( { _id: teamId } );
+        // Check if team exists
+        if (!team) {
+            return NextResponse.json({ error: "Team not found "}, { status: 404 })
+        }
+        // Get students' email
+        let i = 0;
+        const emailList = []
+
+        for (;team.students[i];) {
+            const student = await Student.findById({ _id: team.students[i] })
+            if (student !== null) {
+                emailList.push(student.email)
+            }
+            i++;
+        }
+
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -21,12 +35,8 @@ export async function POST(request: NextRequest) {
                 pass: process.env.SMTP_PASSWORD,
             },
         });
-        // await dbConnect();
-        // const team = await Team.findById(teamId);
 
         const course: string = 'COMP3900'
-        const emailList = ['z5361545@ad.unsw.edu.au']
-        const teamName: string = "Arcaea";
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
             to: emailList,
@@ -37,7 +47,7 @@ export async function POST(request: NextRequest) {
             </p>
             <p>
                 We have received a dispute application regarding 
-                the contribution to your group <strong>${teamName}</strong> 
+                the contribution to your group <strong>${team.teamName}</strong> 
                 in the course <strong>${course}</strong>. 
                 To ensure fairness and uphold the quality of learning, 
                 we sincerely ask that you fill out the following form 
