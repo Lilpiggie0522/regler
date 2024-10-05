@@ -13,7 +13,7 @@ interface initialiseInput {
             email: string,
             zid: string,
             passwordRaw: string,
-            courses:  [],
+           
         }
     ],
     staffAdmins: [
@@ -22,7 +22,7 @@ interface initialiseInput {
             email: string,
             zid: string,
             passwordRaw: string,
-            courses:  [],
+            
         }
     ],
     students: [
@@ -64,26 +64,24 @@ export async function GET(req : NextRequest) {
         const { courseAdmins, staffAdmins, students, teams, courses } = request as initialiseInput;
         for (const courseAdmin of courseAdmins) {
             const password = await bcrypt.hash(courseAdmin.passwordRaw, 10);
-            const admin = await Admin.create({
+            await Admin.create({
                 adminName: courseAdmin.adminName,
                 email: courseAdmin.email,
                 zid: courseAdmin.zid,
                 password: password,
                 role: "courseAdmin",
-                courses: courseAdmin.courses,
             });
 
             console.log(`Course admin ${courseAdmin.adminName} created.`);
         }
         for (const staff of staffAdmins) {
             const password = await bcrypt.hash(staff.passwordRaw, 10);
-            const staffAdmin = await Admin.create({
+            await Admin.create({
                 adminName: staff.adminName,
                 email: staff.email,
                 zid: staff.zid,
                 password: password,
                 role: "tutor",
-                courses: staff.courses,
             });
             console.log(`Staff admin ${staff.adminName} created.`);
         }
@@ -127,8 +125,9 @@ export async function GET(req : NextRequest) {
             newTeam.mentors = mentorsIds;
         }
         for (const course of courses) {
-            const courseTeamNames
-            await Course.create({
+            const courseTeamNames = course.teams.split(',');
+            const courseMentorZids = course.mentorsZids.split(',');
+            const newCourse = await Course.create({
                 courseName: course.courseName,
                 mentors: [],
                 teams: [],
@@ -137,25 +136,25 @@ export async function GET(req : NextRequest) {
             const teams = [];
             const mentorsIds = []; 
             // adding student to Team model
-            for (const team of teamStudentZids) {
+            for (const teamName of courseTeamNames) {
                 // sutd
-                const student = await Student.findOne({zid: studentZid}).exec();
-                if (!student) {
-                    return NextResponse.json({error: `incorrect student zid when adding to the team ${newTeam.teamName}`}, {status:404});
+                const team = await Team.findOne({teamName: teamName}).exec();
+                if (!team) {
+                    return NextResponse.json({error: `incorrect team name when adding to the course ${newCourse.courseName}`}, {status:404});
                 }
-                studentIds.push(student._id);
+                teams.push(team._id);
                 
             }
-            for (const mentorZid of teamMentorsZids) {
+            for (const mentorZid of courseMentorZids) {
                 // mentor
                 const mentor = await Admin.findOne({zid: mentorZid}).exec();
                 if (!mentor) {
-                    return NextResponse.json({error: `incorrect mentor zid when adding to the team ${newTeam.teamName}`}, {status:404});
+                    return NextResponse.json({error: `incorrect mentor zid when adding to the course ${newCourse.courseName}`}, {status:404});
                 }
                 mentorsIds.push(mentor._id);
             }
-            newTeam.students = studentIds;
-            newTeam.mentors = mentorsIds;
+            newCourse.teams = teams;
+            newCourse.mentors = mentorsIds;
         }
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
