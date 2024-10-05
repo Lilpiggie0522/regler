@@ -1,6 +1,9 @@
 
 name: Next.js CI
 
+env:
+  MONGODB_URI: ${{secrets.MONGODB_URI}}
+
 on:
   push:
     branches: '*'
