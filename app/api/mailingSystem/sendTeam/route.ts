@@ -1,36 +1,35 @@
 import nodemailer from 'nodemailer';
-// import { NextRequest, NextResponse } from 'next/server';
-import { NextResponse } from 'next/server';
-// import { MongoClient } from 'mongodb'
+import { NextRequest, NextResponse } from 'next/server';
+import dbConnect from '@/lib/dbConnect';
+import Team from '@/models/teamModel';
+import Student from '@/models/studentModel';
+
 
 // interface EmailTeamInfo {
-//     firstName: string,
-//     lastName: string,
 //     course: string,
 //     project: string,
 //     team: string,
 // }
 
-// export async function POST(request: NextRequest) {
-export async function POST() {
+export async function POST(request: NextRequest) {
     try {
+        // const { teamId, teamName } = await request.json()
         const transport = nodemailer.createTransport({
-            service: 'gmail',  // SMTP server? Other server
+            service: 'gmail',
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
             },
-            // How to use without self-signed certificates, gmail from only?
-            // Now is development-only, not for production
         });
+        // await dbConnect();
+        // const team = await Team.findById(teamId);
 
-        // Get team members' information from database
-        // request Team members' information given student's id name email?
-        // Customisation? Name, course, group, project.
-        // to: ['z5361545@ad.unsw.edu.au', 'z5361545@ad.unsw.edu.au',]
+        const course: string = 'COMP3900'
+        const emailList = ['z5361545@ad.unsw.edu.au']
+        const teamName: string = "Arcaea";
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
-            to: 'z5361545@ad.unsw.edu.au',
+            to: emailList,
             subject: 'Group Project Contribution Dispute',
             html: `
             <p>
@@ -38,7 +37,8 @@ export async function POST() {
             </p>
             <p>
                 We have received a dispute application regarding 
-                the contribution to your group project in this course. 
+                the contribution to your group <strong>${teamName}</strong> 
+                in the course <strong>${course}</strong>. 
                 To ensure fairness and uphold the quality of learning, 
                 we sincerely ask that you fill out the following form 
                 to assist us solve the issue promptly. 
@@ -52,7 +52,11 @@ export async function POST() {
                 Regards,<br>
                 UNSW Development Team
             </p>
-            <a href = 'http://localhost:3000/'><button type="button" colour="blue">Complete Here</button><a>
+            <a href = 'http://localhost:3000/teamEvaluationForm'>
+                <button>
+                    <strong>Complete Here</strong>
+				</button>
+            <a>
             `,
         };
         const info = await transport.sendMail(mailingParameters);
