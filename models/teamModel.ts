@@ -4,8 +4,9 @@ const teamSchema = new Schema({
     teamName: {
         type: 'string', required: true, unique: true
     },
-    studnets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true}],
-    mentors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true}],
+    //course: {type: mongoose.Schema.Types.ObjectId, required: true},
+    students: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: false}],
+    mentors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false}],
 });
 
 type Team = InferSchemaType<typeof teamSchema>;

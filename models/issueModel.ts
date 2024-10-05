@@ -24,7 +24,7 @@ const issueSchema = new Schema({
         fileUrl: {type: 'string'},
         createdAt: {type: Date, default: Date.now},
         updatedAt: {type: Date, default: Date.now},
-        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true},
+        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
     }, timeStamp]
 });
 
