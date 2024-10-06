@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-    const data = {
-        studentName: 'Avgust Vila',
-        email: 'z5361545@ad.unsw.edu.au',
+    // Sample input
+    // Request studentName (optional?), email and authCode
+    const input = {
+        studentName: 'Cow Horse',
+        email: 'cowhorse3900@outlook.com',
         authCode: '114514'
     }
     try {  
-        const response = await fetch('http://localhost:3000/api/mailingSystem/sendAuthCode', {method: 'POST', body: JSON.stringify(data)})
+        const response = await fetch('http://localhost:3000/api/mailingSystem/sendAuthCode', {method: 'POST', body: JSON.stringify(input)})
         const result = await response.json();
         if (!response.ok) {
             throw new Error(`HTTP Status: ${response.status}`);
