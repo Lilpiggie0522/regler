@@ -7,16 +7,19 @@ import { useState } from "react";
 
 export default function Home() {
     const [loading, setLoading] = useState(false);
-    const [result, setResult] = useState<string | null>(null);
+    const [result, setResult] = useState('');
 
     const sendEmail = async () => {
         setLoading(true);
         try {
-            const data = {
+            // Sample Input
+            // team id, course id, student id (student who submits the application)
+            const input = {
                 teamId: "6700eaee7ae942fe983415c8",
-                courseId: "6701f96d84f93badca934c10"
+                courseId: "6701f96d84f93badca934c10",
+                studentId: "670222deb7b79c45884600d7"
             }
-            const res = await fetch('/api/mailingSystem/sendTeam', {method: 'POST', body: JSON.stringify(data)});
+            const res = await fetch('/api/mailingSystem/sendTeam', {method: 'POST', body: JSON.stringify(input)});
             if (res.ok) {
                 setResult(`Email has sent to team members`);
             } else {

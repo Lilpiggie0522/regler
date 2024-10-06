@@ -1,14 +1,21 @@
 import nodemailer from 'nodemailer';
 import { NextRequest, NextResponse } from 'next/server';
-import Student from '@/models/studentModel';
-import dbConnect from '@/lib/dbConnect'
+// import Student from '@/models/studentModel';
+// import dbConnect from '@/lib/dbConnect'
 
-// interface EmailInfo {
-//     studentName: string,
-//     email: string,
-//     authCode: string,
-// }
 
+/*
+    Input: 
+        - studentName: Student Name (Could be optional?)
+        - email: Student's email address
+        - authCode: Authentication code
+    Output: 
+        Send email contains authentication code to student
+    Error:
+        - Check if student exists
+        - Check if student is correct by name
+        - Check if email given matches student's email
+*/
 export async function POST(request: NextRequest) {
     try {
         const transport = nodemailer.createTransport({
@@ -20,15 +27,19 @@ export async function POST(request: NextRequest) {
         });
         const { studentName, email, authCode } = await request.json();
 
+        // Overwrite schema if import model from different files?
         // Check if email exists and student name is correct
-        await dbConnect();
-        const student = await Student.findOne({ email: email });
-        if (!student) {
-            return NextResponse.json({ error: "Invalid Email Address" }, { status: 404 });
-        }
-        if (student.studentName !== studentName) {
-            return NextResponse.json({ error: "Incorrect Student Name" }, { status: 400 });
-        }
+        // await dbConnect();
+        // const student = await Student.findOne({ email: email });
+        // if (!student) {
+        //     return NextResponse.json({ error: "Invalid Email Address" }, { status: 404 });
+        // }
+        // if (student.studentName !== studentName) {
+        //     return NextResponse.json({ error: "Incorrect Student Name" }, { status: 400 });
+        // }
+        // if (student.email !== email) {
+        //     return NextResponse.json({ error: "Given email does not match student's email" }, { status: 400 });
+        // }
         
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,

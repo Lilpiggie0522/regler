@@ -4,37 +4,41 @@ import dbConnect from '@/lib/dbConnect';
 import Team from '@/models/teamModel';
 import Student from '@/models/studentModel';
 import Course from '@/models/courseModel';
+// import mongoose from 'mongoose';
+// tempId.equals(mongoose.Types.ObjectId(studentId))
 
-
+/*
+    Input: 
+        - teamId: Unique object id of team
+        - courseId: Unique object id of course
+        - studentId: Unique object id of student who submits application
+    Output: 
+        Send email contains evaluation link to the rest of members
+    Error:
+        - Check if team exists
+        - Check if course exists
+        - Check if team is contained in courses
+        - Check if student given in team or not
+*/
 export async function POST(request: NextRequest) {
     try {
-        const { teamId, courseId } = await request.json()
+        const { teamId, courseId, studentId } = await request.json()
 
         await dbConnect();
-        const team = await Team.findById( { _id: teamId } );
-        // Check if team exists
+        const team = await Team.findById(teamId);
+        const course = await Course.findById(courseId)
         if (!team) {
             return NextResponse.json({ error: "Team not found"}, { status: 404 })
         }
-        // Get students' email
-        let i = 0;
-        const emailList = []
-
-        for (;team.students[i];) {
-            const student = await Student.findById({ _id: team.students[i] })
-            if (student !== null) {
-                emailList.push(student.email)
-            }
-            i++;
-        }
-        // Get course name and check if team exists in course.
-        const course = await Course.findById({ _id: courseId })
         if (!course) {
             return NextResponse.json({ error: "Course not found"}, { status: 404 })
-        } else if (!course.teams.includes(teamId)) {
+        } 
+        if (!course.teams.includes(teamId)) {
             return NextResponse.json({ error: "Team not found from course"}, { status: 404 })
         }
-
+        if (team.students.includes(studentId)) {
+            return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
+        }
 
         const transport = nodemailer.createTransport({
             service: 'gmail',
@@ -44,9 +48,18 @@ export async function POST(request: NextRequest) {
             },
         });
 
+        // Get email addresses from the rest of the team
+        const emailList = []
+        for (const tempId of team.students) {
+            const student = await Student.findById(tempId);
+            if (student && tempId.toString() !== studentId.toString()) {
+                emailList.push(student.email);
+            }
+        }
+
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
-            to: emailList,
+            to: emailList.join(','),
             subject: 'Group Project Contribution Dispute',
             html: `
             <p>
@@ -79,6 +92,7 @@ export async function POST(request: NextRequest) {
         // <a href = 'http://localhost:3000/teamEvaluationForm'>
         const info = await transport.sendMail(mailingParameters);
         return NextResponse.json({data: info}, {status: 200})
+
     } catch (error) {
         if (error instanceof Error) {
             console.error('Error - Team Email:', error);
