@@ -1,6 +1,13 @@
+"use client"
+
 import Image from "next/image";
+import { useState } from 'react';
+import TermsOfServiceModal from "@/components/termsOfServiceModal";
 
 export default function Home() {
+
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
   return (
     <div className="flex min-h-screen">
       {/* Left part image */}
@@ -39,9 +46,19 @@ export default function Home() {
           {/* privacy policy */}
           <p className="text-center text-s text-gray-700 mt-4">
             By clicking continue, you agree to our{" "}
-            <a href="#" className="underline">Terms of Service</a> and{" "}
-            <a href="#" className="underline">Privacy Policy</a>.
+            <button
+              onClick={() => setShowTermsModal(true)}
+              className="underline text-blue-600"
+            >
+              Terms of Service
+            </button>{" "}
+            and{" "}
+            <a href="https://www.unsw.edu.au/privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy Policy</a>.
           </p>
+          {/* Terms of Service model */}
+          {showTermsModal && (
+            <TermsOfServiceModal onClose={() => setShowTermsModal(false)} />
+          )}
         </div>
       </div>
     </div>
