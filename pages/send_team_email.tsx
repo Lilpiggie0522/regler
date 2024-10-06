@@ -12,7 +12,11 @@ export default function Home() {
     const sendEmail = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/mailingSystem/sendTeam', {method: 'POST', body: JSON.stringify({teamId: 1, teamName: 'Arcaea'})});
+            const data = {
+                teamId: "6700eaee7ae942fe983415c8",
+                courseId: "6701f96d84f93badca934c10"
+            }
+            const res = await fetch('/api/mailingSystem/sendTeam', {method: 'POST', body: JSON.stringify(data)});
             if (res.ok) {
                 setResult(`Email has sent to team members`);
             } else {
