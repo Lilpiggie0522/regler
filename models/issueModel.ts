@@ -15,15 +15,13 @@ const issueSchema = new Schema({
     studentComments: [{
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
-        fileUrl: {type: 'string'},
+        filesUrl: {type: 'string'},
         student: {type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true},
       }, timeStamp],
     tutorComments:[{
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
-        fileUrl: {type: 'string'},
-        createdAt: {type: Date, default: Date.now},
-        updatedAt: {type: Date, default: Date.now},
+        filesUrl: {type: 'string'},
         tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
     }, timeStamp]
 });
