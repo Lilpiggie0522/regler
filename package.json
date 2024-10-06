@@ -9,14 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "mongodb": "^6.9.0",
     "mongoose": "^8.7.0",
     "next": "14.2.13",
+    "nodemailer": "^6.9.15",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
     "@types/mongoose": "^5.11.97",
     "@types/node": "^20",
+    "@types/nodemailer": "^6.4.16",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
