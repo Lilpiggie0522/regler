@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
         if (!course.teams.includes(teamId)) {
             return NextResponse.json({ error: "Team not found from course"}, { status: 404 })
         }
-        if (team.students.includes(studentId)) {
+        if (!team.students.includes(studentId)) {
             return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
         }
 
@@ -82,11 +82,9 @@ export async function POST(request: NextRequest) {
                 Regards,<br>
                 UNSW Development Team
             </p>
-            <a href = 'https://3900-capstone.vercel.app/teamEvaluationForm'>
-                <button>
-                    <strong>Complete Here</strong>
-				</button>
-            <a>
+            <a style="display:inline-block; background-color:#f7b602; color:black; 
+            padding:8px 16px; margin-right:6px; vertical-align:middle; border-radius:4px"
+            href="https://3900-capstone.vercel.app/teamEvaluationForm"><strong>Complete Here</strong></a>
             `,
         };
         // <a href = 'http://localhost:3000/teamEvaluationForm'>
