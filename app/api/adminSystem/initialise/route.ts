@@ -51,7 +51,7 @@ interface initialiseInput {
 }
 
 //TODO: get all the courses
-export async function GET(req : NextRequest) {
+export async function POST(req : NextRequest) {
     // step 1 sign up course admins
     // step 2 sign up staff admins
     // step 3 sign up students
