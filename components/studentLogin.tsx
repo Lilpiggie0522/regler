@@ -135,8 +135,8 @@ export default function StudentLogin() {
           {/* privacy policy */}
           <p className="text-center text-s text-gray-700">
             By clicking continue, you agree to our{" "}
-            <a href="#" className="underline">Terms of Service</a> and{" "}
-            <a href="#" className="underline">Privacy Policy</a>.
+            <a href="javascript:void(0);" className="underline">Terms of Service</a> and{" "}
+            <a href="https://www.unsw.edu.au/privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy Policy</a>.
           </p>
         </div>
       </div>
