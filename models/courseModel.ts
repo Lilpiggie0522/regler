@@ -1,6 +1,6 @@
 import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
 
-const courseSchema = new Schema({
+export const courseSchema = new Schema({
     courseName: {
         type: 'string', required: true, unique: true
     },
@@ -8,6 +8,3 @@ const courseSchema = new Schema({
     mentors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false}],
 });
 
-type Course = InferSchemaType<typeof courseSchema>;
-
-export default model<Course>('Course', courseSchema);

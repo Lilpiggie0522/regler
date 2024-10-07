@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
         });
         const { studentName, email, authCode } = await request.json();
 
-        // Overwrite schema if import model from different files?
+        
         // Check if email exists and student name is correct
         // await dbConnect();
         // const student = await Student.findOne({ email: email });
