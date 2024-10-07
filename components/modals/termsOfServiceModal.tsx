@@ -1,12 +1,9 @@
 'use client';
 
 import React from 'react';
+import { ModalProps } from "@/components/modals/ModalProps";
 
-export interface TermsOfServiceModalProps {
-  onClose: () => void;
-}
-
-const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({ onClose }) => {
+export default function TermsOfServiceModal({ onClose }: ModalProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full relative text-black">
@@ -31,7 +28,7 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({ onClose }) =>
             I acknowledge that all dispute resolutions are final, based on the evidence provided.
           </li>
         </ul>
-        {/* close button */}
+        {/* close */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 text-black text-3xl"
@@ -43,4 +40,3 @@ const TermsOfServiceModal: React.FC<TermsOfServiceModalProps> = ({ onClose }) =>
   );
 }
 
-export default TermsOfServiceModal;
