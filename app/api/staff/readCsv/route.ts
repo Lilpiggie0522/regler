@@ -1,8 +1,12 @@
-// import dbConnect from '@/lib/dbConnect';
+import dbConnect from '@/lib/dbConnect';
 import Student from '@/models/studentModel';
+import Team from '@/models/teamModel';
+import Admin from '@/models/adminModel';
+import Course from '@/models/courseModel'
 import csvParser from "csv-parser";
 import { NextRequest, NextResponse } from "next/server";
 import { Readable } from "stream";
+import mongoose from 'mongoose';
 
 type rawResult = {
     email: string;
@@ -27,6 +31,7 @@ interface csvType {
 }
 
 export async function POST(req: NextRequest) {
+    await dbConnect()
     console.log("request received")
     const formData = await req.formData()
     const file = formData.get('csv') as File
@@ -55,38 +60,59 @@ export async function POST(req: NextRequest) {
     })
     // console.log("converted result is following:")
     // console.log(converted)
-    const validResults: rawResult[] = converted.filter(row => 
+    const validResults: rawResult[] = converted.filter(row =>
         row.name && row.zid && row.groupname && row.class
         && row.mentor && row.group_id && row.group_id2
         && row.email
     )
-    const newStudent = await Student.create({
-        studentName: 'dzoggie', 
-        email: 'doggie.com',
-        zid: 'z6335222'
-    })
-    const studentId = newStudent._id
-    console.log(`inserted student ${studentId}`)
-    // console.log(validResults)
-    for (const row of validResults) {
-        // const typed_row: csvType = {
-        //     name: row.name,
-        //     zid: parseInt(row.zid),
-        //     groupname: row.groupname,
-        //     class: row.class,
-        //     mentor: row.mentor,
-        //     group_id: parseInt(row.group_id),
-        //     group_id2: parseInt(row.group_id2),
-        //     email: row.email
-        // }
+    console.log("valid results are: ")
+    console.log(validResults)
+    
+    // const newStudent = await Student.create({
+    //     studentName: 'dzoggie', 
+    //     email: 'doggie.com',
+    //     zid: 'z6335222'
+    // })
+    // for (const row of validResults) {
+    //     // insert student
+    //     let student = await Student.findOne({zid: row.zid})
+    //     let studentId = student._id
+    //     if (!student) {
+    //         const newStudent = await Student.create({
+    //             studentName: row.name,
+    //             email: row.email,
+    //             zid: row.zid
+    //         })
+    //         studentId = newStudent._id
+    //         console.log(`inserted student ${studentId}`)
+    //     }
         
-    }
+    //     // insert team
+    //     let team = await Team.findOne({teamName: row.groupname})
+    //     if (!team) {
+    //         team = await Team.create({
+    //             teamName: row.groupname,
+    //             students: [studentId],
+    //             mentors: Admin.findOne({
+    //                 adminName: row.mentor
+    //             }) || []
+    //         })
+    //     } else {
+    //         team.students.push(studentId)
+    //     }
 
+    //     let courseFound = await Course.findOne({
+    //         courseName: course
+    //     })
+
+    //     if (!courseFound) {
+    //         Course.create
+    //     }
+    // }
     return NextResponse.json(results, { status: 200 })
 }
 
 function parseCSV(stream: Readable): Promise<rawResult[]> {
-    let isFirstRow: boolean = true
     const results: any = []
     return new Promise((resolve, reject) => {
         stream.pipe(csvParser())
