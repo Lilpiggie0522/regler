@@ -2,21 +2,37 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
+import StudentVerificationModal from "@/components/modals/studentVerificationModel";
+import ErrorModal from '@/components/modals/errorModal';
+
 
 export default function StudentLogin() {
 
-  const [showLoginFail, setShowLoginFail] = useState(false); // control the login fail model show
-  const [errorMessage, setErrorMessage] = useState(''); // error message
-  const [zid, setZid] = useState('');
+  const router = useRouter();
+  
+  const [errorMessage, setErrorMessage] = useState('');
+  const [zID, setZid] = useState('');
   const [courseCode, setCourseCode] = useState('');
+
+  const [showLoginFail, setShowLoginFail] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
+
+  const handleVerificationSuccess = () => {
+    setShowVerificationModal(false);
+    router.push('/teamEvaluationForm');
+  };
 
   // frontend invalid check
   const validateInput = () => {
 
-    const zidRegex = /^z[0-9]{7}$/; // zID start with 'z', then 7 numbers
-    const courseCodeRegex = /^[A-Z]{4}[0-9]{4}$/; // 4 upper case letters with 4 numbers 
+    const zidRegex = /^z[0-9]{7}$/;
+    const courseCodeRegex = /^[A-Z]{4}[0-9]{4}$/;
 
-    if (!zidRegex.test(zid)) {
+    if (!zidRegex.test(zID)) {
       setErrorMessage('Invalid zID format.');
       return false;
     }
@@ -27,38 +43,40 @@ export default function StudentLogin() {
     return true;
   };
 
-  const checkLoginFail = async () => {
-    // 1. frontend check: if format wrong
+  const sendVerificationEmail = async () => {
+    // frontend check: if format wrong
     if (!validateInput()) {
       setShowLoginFail(true);
       return;
     }
 
-    // // 2. backend check
-    // try {
-    //   const response = await fetch('/api/identityCheck', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({ zid, courseCode }),
-    //   });
+    // test for verification
+    setShowVerificationModal(true);
 
-    //   const data = await response.json();
+    try {
+      const response = await fetch('/api/sendVerificationEmail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ zID, courseCode }),
+      });
 
-    //   if (!data.success) {
-    //     setErrorMessage('Invalid input. Please try again.');
-    //     setShowLoginFail(true);
-    //   } else {
-    //     console.log('Login successful!');
-    //      // link to identify check page
-    //   }
-    // } catch (error) {
-    //   console.error('Error during login:', error);
-    //   setErrorMessage('Server error. Please try again later.');
-    //   setShowLoginFail(true);
-    // }
+      if (!response.ok) {
+        setErrorMessage('Failed to send verification email.');
+        setShowLoginFail(true);
+      } else {
+        setShowVerificationModal(true);
+        setShowLoginFail(false);
+      }
+    } catch (error) {
+      console.error('Error during email sending:', error);
+      setErrorMessage('Server error. Please try again later.');
+      setShowLoginFail(true);
+    }
+
   };
+  
 
   return (
     <div className="flex min-h-screen">
@@ -84,10 +102,11 @@ export default function StudentLogin() {
 
           {/* zID Input */}
           <div className="mb-6">
-            {/*<label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="zid">zID: </label>*/}
+          <label htmlFor="zID" className="sr-only">zID:</label>
             <input
-              id="zid"
-              name="zid"
+              id="zID"
+              name="zID"
+              value={zID}
               type="text"
               className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
               placeholder="zID: z1234567"
@@ -97,10 +116,11 @@ export default function StudentLogin() {
 
           {/* Course Code Input */}
           <div className="mb-6">
-            {/*<label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="courseCode">Course Code: </label>*/}
+          <label htmlFor="courseCode" className="sr-only">Course Code:</label>
             <input
               id="courseCode"
               name="courseCode"
+              value={courseCode}
               type="text"
               className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
               placeholder="Course Code: COMP3900"
@@ -111,33 +131,43 @@ export default function StudentLogin() {
           {/* Verify button */}
           
           <button 
-            onClick={ checkLoginFail } // check whether Input invalid
+            onClick={ sendVerificationEmail } // check whether Input invalid
             className="w-full bg-black text-white py-2 rounded-full mb-6">
             Verify with email
           </button>
 
           {/* showLoginFail */}
           {showLoginFail ? (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full relative">
-                <button
-                  className="absolute top-2 right-2 text-black text-3xl"
-                  onClick={() => setShowLoginFail(false)} // click on close button to hide the model
-                >
-                  &times;
-                </button>
-                <p className="text-center text-lg font-bold text-black">{errorMessage}</p>
-                <p className="text-center text-lg text-black font-bold">Please try again.</p>
-              </div>
-            </div>
+            <ErrorModal
+              errorMessage={errorMessage}
+              onClose={() => setShowLoginFail(false)}
+            />
+          ) : null}
+
+          {/* showVerificationModal */}
+          {showVerificationModal ? (
+            <StudentVerificationModal
+              onClose={() => setShowVerificationModal(false)}
+              onVerificationSuccess={handleVerificationSuccess}
+            />
           ) : null}
 
           {/* privacy policy */}
-          <p className="text-center text-s text-gray-700">
+          <p className="text-center text-s text-gray-700 mt-4">
             By clicking continue, you agree to our{" "}
-            <a href="javascript:void(0);" className="underline">Terms of Service</a> and{" "}
-            <a href="https://www.unsw.edu.au/privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy Policy</a>.
+            <button
+              onClick={() => setShowTermsModal(true)}
+              className="underline text-blue-700"
+            >
+              Terms of Service
+            </button>{" "}
+            and{" "}
+            <a href="https://www.unsw.edu.au/privacy" target="_blank" rel="noopener noreferrer" className="underline text-blue-700">Privacy Policy</a>.
           </p>
+          {/* Terms of Service model */}
+          {showTermsModal && (
+            <TermsOfServiceModal onClose={() => setShowTermsModal(false)} />
+          )}
         </div>
       </div>
     </div>
