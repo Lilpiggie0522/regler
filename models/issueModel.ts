@@ -1,3 +1,4 @@
+import { timeStamp } from 'console';
 import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
 
 const issueSchema = new Schema({
@@ -15,10 +16,8 @@ const issueSchema = new Schema({
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
         fileUrl: {type: 'string'},
-        createdAt: {type: Date, default: Date.now},
-        updatedAt: {type: Date, default: Date.now},
         student: {type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true},
-      },],
+      }, timeStamp],
     tutorComments:[{
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
@@ -26,7 +25,7 @@ const issueSchema = new Schema({
         createdAt: {type: Date, default: Date.now},
         updatedAt: {type: Date, default: Date.now},
         tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true},
-    }]
+    }, timeStamp]
 });
 
 type Issue = InferSchemaType<typeof issueSchema>;
