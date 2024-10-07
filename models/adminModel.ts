@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
+import  { InferSchemaType, Schema, model } from 'mongoose';
 
 const adminSchema = new Schema({
   adminName: {
@@ -7,7 +7,6 @@ const adminSchema = new Schema({
   email: { type: 'string', required: true, unique: true},
   zid: { type: 'string', required: true, select: false, unique: true},
   password: { type: 'string', required: true, select: false },
-  courses:  [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true}],
   role: {
       type: 'string', 
       enum: ['courseAdmin', 'tutor'],
