@@ -1,7 +1,7 @@
 import { timeStamp } from 'console';
 import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
 
-const issueSchema = new Schema({
+export const issueSchema = new Schema({
     status: {
         type: 'string', 
         enum: ['pending', 'closed'],
@@ -15,19 +15,14 @@ const issueSchema = new Schema({
     studentComments: [{
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
-        fileUrl: {type: 'string'},
+        filesUrl: {type: 'string'},
         student: {type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true},
-      }, timeStamp],
+      }, { timestamps: true }],
     tutorComments:[{
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
-        fileUrl: {type: 'string'},
-        createdAt: {type: Date, default: Date.now},
-        updatedAt: {type: Date, default: Date.now},
-        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true},
-    }, timeStamp]
+        filesUrl: {type: 'string'},
+        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
+    }, { timestamps: true }]
 });
 
-type Issue = InferSchemaType<typeof issueSchema>;
-
-export default model<Issue>('Issue', issueSchema);
