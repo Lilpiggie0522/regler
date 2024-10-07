@@ -4,8 +4,6 @@ import dbConnect from '@/lib/dbConnect';
 import Team from '@/models/teamModel';
 import Student from '@/models/studentModel';
 import Course from '@/models/courseModel';
-// import mongoose from 'mongoose';
-// tempId.equals(mongoose.Types.ObjectId(studentId))
 
 /*
     Input: 
@@ -82,12 +80,11 @@ export async function POST(request: NextRequest) {
                 Regards,<br>
                 UNSW Development Team
             </p>
-            <a style="display:inline-block; background-color:#f7b602; color:black; 
-            padding:8px 16px; margin-right:6px; vertical-align:middle; border-radius:4px"
+            
+            <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
             href="https://3900-capstone.vercel.app/teamEvaluationForm"><strong>Complete Here</strong></a>
             `,
         };
-        // <a href = 'http://localhost:3000/teamEvaluationForm'>
         const info = await transport.sendMail(mailingParameters);
         return NextResponse.json({data: info}, {status: 200})
 

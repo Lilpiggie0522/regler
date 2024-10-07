@@ -21,7 +21,7 @@ export default function Home() {
             }
             const res = await fetch('/api/mailingSystem/sendTeam', {method: 'POST', body: JSON.stringify(input)});
             if (res.ok) {
-                setResult(`Email has sent to team members`);
+                setResult(`Email has sent to team members: ${res.status}`);
             } else {
                 const data = await res.json();
                 setResult(`Error: ${data.error}, status: ${data.status}`);
@@ -38,7 +38,7 @@ export default function Home() {
         try {
             const res = await fetch('/api/mailingSystem/testAuthCode', {method: 'POST'});
             if (res.ok) {
-                setResult(`Verification email sent successfully.`);
+                setResult(`Verification email sent successfully: ${res.status}`);
             } else {
                 const data = await res.json();
                 setResult(`Error: ${data.error}, status: ${data.status}`);
