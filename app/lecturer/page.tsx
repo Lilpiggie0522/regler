@@ -23,43 +23,36 @@ export default function LecturerPage() {
 
     function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
         const file: File | undefined = e.target.files?.[0];
-
+        const formData: FormData = new FormData()
         if (file) {
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: (results) => {
-                    console.log(results)
-                    sendDataToBackend(results);
-                },
-            })
+            formData.append('csv', file)
+            sendData(formData)
+            alert('form data sent')
         }
     };
 
-    async function sendDataToBackend(results: ParseResult<unknown>) {
+    async function sendData(formData: FormData) {
         // console.log(results.data)
         try {
-            const response = await fetch('api/readCSV', {
+            const response = await fetch('api/staff/readCsv', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(results.data)
+                body: formData
             })
             if (response.ok) {
                 alert("OK! Data sent and received")
                 const displayData = await response.json()
-                console.log(displayData.data)
+                console.log(displayData)
                 setShowData(true)
-                setDisplayData(displayData.data)
+                setDisplayData(displayData)
             } else {
-                throw new Error("network response not ok!")
+                const error = await response.json()
+                alert(error.message)
             }
         } catch (error) {
             console.log(error)
             alert("oh no!")
         }
-        
+
     }
 
     return (
