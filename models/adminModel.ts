@@ -1,6 +1,6 @@
 import  { InferSchemaType, Schema, model } from 'mongoose';
 
-const adminSchema = new Schema({
+export const adminSchema = new Schema({
   adminName: {
     type: 'string', required: true
    },
@@ -15,6 +15,3 @@ const adminSchema = new Schema({
     }
 });
 
-type Admin = InferSchemaType<typeof adminSchema>;
-
-export default model<Admin>('Admin', adminSchema);

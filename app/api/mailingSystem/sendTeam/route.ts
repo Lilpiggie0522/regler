@@ -1,9 +1,12 @@
 import nodemailer from 'nodemailer';
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-import Team from '@/models/teamModel';
-import Student from '@/models/studentModel';
-import Course from '@/models/courseModel';
+import models from "@/models/models";
+
+
+const Student = models.Student;
+const Team = models.Team;
+const Course = models.Course;
 // import mongoose from 'mongoose';
 // tempId.equals(mongoose.Types.ObjectId(studentId))
 
@@ -88,6 +91,8 @@ export async function POST(request: NextRequest) {
             `,
         };
         // <a href = 'http://localhost:3000/teamEvaluationForm'>
+        /*console.log("Send mail successfully");
+        return NextResponse.json({mailingParameters}, {status:200});*/
         const info = await transport.sendMail(mailingParameters);
         return NextResponse.json({data: info}, {status: 200})
 

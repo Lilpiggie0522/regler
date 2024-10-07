@@ -1,8 +1,9 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import Course from "@/models/courseModel";
+import models from "@/models/models";
 
+const Course = models.Course;
 
 //TODO: get all the courses
 export async function GET() {
