@@ -1,9 +1,16 @@
 import nodemailer from 'nodemailer';
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-import Team from '@/models/teamModel';
-import Student from '@/models/studentModel';
-import Course from '@/models/courseModel';
+
+import models from "@/models/models";
+
+
+const Student = models.Student;
+const Team = models.Team;
+const Course = models.Course;
+// import mongoose from 'mongoose';
+// tempId.equals(mongoose.Types.ObjectId(studentId))
+
 
 /*
     Input: 
@@ -85,6 +92,7 @@ export async function POST(request: NextRequest) {
             href="https://3900-capstone.vercel.app/teamEvaluationForm"><strong>Complete Here</strong></a>
             `,
         };
+
         const info = await transport.sendMail(mailingParameters);
         return NextResponse.json({data: info}, {status: 200})
 

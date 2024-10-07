@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import Course from "@/models/courseModel";
-import Team from "@/models/teamModel";
-import Admin from "@/models/adminModel";
-import Student from "@/models/studentModel";
 import bcrypt from 'bcrypt';
-import Issue from '@/models/issueModel';
+
+import models from "@/models/models";
+
+const Issue = models.Issue;
+const Student = models.Student;
+const Team = models.Team;
+const Course = models.Course;
+const Admin = models.Admin;
+
 
 interface createAdminInput {
     

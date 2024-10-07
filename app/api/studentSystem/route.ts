@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
-import Student from "@/models/studentModel";
+import models from "@/models/models";
+
+
+const Student = models.Student;
 
 export async function GET() {
     await dbConnect();
