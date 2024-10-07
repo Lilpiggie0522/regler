@@ -3,9 +3,10 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import mongoose from 'mongoose';
-import Course from '@/models/courseModel';
+import models from "@/models/models";
 
 
+const Course = models.Course;
 type Params = {
     params: {
       courseId: string
