@@ -8,14 +8,15 @@
 // if it is not valid, return an error message.
 
 import { NextRequest, NextResponse } from "next/server";
-import Issue from "@/models/issueModel";
+
 import dbConnect from "@/lib/dbConnect";
 import { validateId } from "@/lib/validateId";
-import Student from '@/models/studentModel';
-import Team from '@/models/teamModel';
-import Course from '@/models/courseModel';
+import models from "@/models/models";
 
-
+const Issue = models.Issue;
+const Student = models.Student;
+const Team = models.Team;
+const Course = models.Course;
 
 export interface CreateIssueInput {
     studentId: string,
@@ -91,8 +92,8 @@ export async function POST(req: NextRequest) {
         })
         // calling mailing function send teams
         // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
-/*
-        const mailResponse = await fetch("/api/mailingSystem/sendTeam", {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const mailResponse = await fetch(`${baseUrl}/api/mailingSystem/sendTeam`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -104,9 +105,9 @@ export async function POST(req: NextRequest) {
             }),
         });
 
-                if (!mailResponse.ok) {
+        if (!mailResponse.ok) {
             return NextResponse.json({ error: "Failed to send team information to mailing system" }, { status: 500 });
-        } */
+        } 
 
         return NextResponse.json({ success: true, issue }, { status: 200 });
 
