@@ -17,7 +17,7 @@ import Course from '@/models/courseModel';
 
 
 
-interface CreateIssueInput {
+export interface CreateIssueInput {
     studentId: string,
     teamId: string,
     courseId: string,

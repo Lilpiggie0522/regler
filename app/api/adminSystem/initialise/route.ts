@@ -5,48 +5,39 @@ import Team from "@/models/teamModel";
 import Admin from "@/models/adminModel";
 import Student from "@/models/studentModel";
 import bcrypt from 'bcrypt';
+import Issue from '@/models/issueModel';
 
-interface initialiseInput {
-    courseAdmins: [
-        {
-            adminName: string,
-            email: string,
-            zid: string,
-            passwordRaw: string,
-           
-        }
-    ],
-    staffAdmins: [
-        {
-            adminName: string,
-            email: string,
-            zid: string,
-            passwordRaw: string,
-            
-        }
-    ],
-    students: [
-        {
-            studentName: string,
-            email: string,
-            zid: string,
-        }
-    ],
+interface createAdminInput {
+    
+    adminName: string,
+    email: string,
+    zid: string,
+    passwordRaw: string,
+}
+interface createStudentInput {
+    
+    studentName: string,
+    email: string,
+    zid: string,
+}
+interface createTeamInput {
+    teamName: string,
+    studentsZids: string,
+    mentorsZids: string,
+}
+interface createCourseInput {
+    courseName: string,
+    mentorsZids: string,
+    teams: string,
+}
+
+export interface initialiseInput {
+    courseAdmins: createAdminInput[],
+    staffAdmins: createAdminInput[],
+    students: createStudentInput[],
     // students and mentors should be in the form of zid,zid2,zid3
-    teams: [
-        {
-            teamName: string,
-            studentsZids: string,
-            mentorsZids: string,
-        }
-    ],
-    courses: [
-        {
-            courseName: string,
-            mentorsZids: string,
-            teams: string,
-        }
-    ]
+    teams: createTeamInput [],
+    courses: createCourseInput[]
         
 }
 
@@ -57,11 +48,19 @@ export async function POST(req : NextRequest) {
     // step 3 sign up students
     // step 4 create teams and assign students and staff
     // step 5 create courses and assign teams, staff admins and courses admins
-    await dbConnect();
+    
     try {
+        await dbConnect();
         const request = await req.json();
         
         const { courseAdmins, staffAdmins, students, teams, courses } = request as initialiseInput;
+        
+        await Admin.deleteMany({});
+        await Student.deleteMany({});
+        await Team.deleteMany({});
+        await Course.deleteMany({});
+        await Issue.deleteMany({});
+
         for (const courseAdmin of courseAdmins) {
             const password = await bcrypt.hash(courseAdmin.passwordRaw, 10);
             await Admin.create({
@@ -121,8 +120,10 @@ export async function POST(req : NextRequest) {
                 }
                 mentorsIds.push(mentor._id);
             }
-            newTeam.students = studentIds;
-            newTeam.mentors = mentorsIds;
+            await newTeam.updateOne({
+                students: studentIds,
+                mentors: mentorsIds,
+            });
         }
         for (const course of courses) {
             const courseTeamNames = course.teams.split(',');
@@ -153,9 +154,12 @@ export async function POST(req : NextRequest) {
                 }
                 mentorsIds.push(mentor._id);
             }
-            newCourse.teams = teams;
-            newCourse.mentors = mentorsIds;
+            await newCourse.updateOne({
+                teams: teams,
+                mentors: mentorsIds,
+            });
         }
+        return NextResponse.json({ message: "Initialisation successful.", courses, teams}, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
     }
