@@ -14,16 +14,16 @@ type rawResult = {
     name: string;
 }
 
-interface csvType {
-    name: string,
-    zid: number,
-    groupname: string,
-    class: string,
-    mentor: string,
-    group_id: number,
-    group_id2: number,
-    email: string
-}
+// interface csvType {
+//     name: string,
+//     zid: number,
+//     groupname: string,
+//     class: string,
+//     mentor: string,
+//     group_id: number,
+//     group_id2: number,
+//     email: string
+// }
 
 export async function POST(req: NextRequest) {
     await dbConnect()
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 }
 
 function parseCSV(stream: Readable): Promise<rawResult[]> {
-    const results: any = []
+    const results: rawResult[] = []
     return new Promise((resolve, reject) => {
         stream.pipe(csvParser())
             .on('data', (row) => {
