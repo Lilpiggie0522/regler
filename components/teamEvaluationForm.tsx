@@ -69,7 +69,7 @@ export default function TeamEvaluationForm() {
 				alert('Success!');
 			}
 			if (!res.ok) {
-                const result = await res.json();
+                //const result = await res.json();
                 alert('Error sending the form data. Please try again later.');
 			}
 		} 
