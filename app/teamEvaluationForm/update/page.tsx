@@ -1,11 +1,10 @@
-
 'use client'
 import TeamEvaluationForm from "@/components/teamEvaluationForm";
-
 import { useSearchParams } from 'next/navigation'
+import React, { Suspense } from 'react';
 
 
-export default function TeamEvaluationPage() {
+const UpdateTeamEvaluationForm = () => {
 
   
   const searchParams = useSearchParams();
@@ -15,15 +14,30 @@ export default function TeamEvaluationPage() {
   const issueId = searchParams.get('issueId') 
 
   return (
+    
     <div>
       
       <p>Debug: studentId={studentId}, teamId={teamId}, courseId={courseId}, issueId={issueId}</p>
+      
       <TeamEvaluationForm
         studentId={studentId}
         teamId={teamId}
         courseId={courseId}
         issueId={issueId}
+        
       />
+      
     </div>
+    
   );
 }
+
+const UpdateTeamEvaluationFormPage = () => {
+  return(
+    <Suspense fallback={<div>Loading...</div>}>
+      <UpdateTeamEvaluationForm />
+    </Suspense>
+  )
+}
+
+export default UpdateTeamEvaluationFormPage;
