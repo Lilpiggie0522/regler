@@ -1,12 +1,7 @@
 import dbConnect from '@/lib/dbConnect';
-import Student from '@/models/studentModel';
-import Team from '@/models/teamModel';
-import Admin from '@/models/adminModel';
-import Course from '@/models/courseModel'
 import csvParser from "csv-parser";
 import { NextRequest, NextResponse } from "next/server";
 import { Readable } from "stream";
-import mongoose from 'mongoose';
 
 type rawResult = {
     email: string;
@@ -67,48 +62,8 @@ export async function POST(req: NextRequest) {
     )
     console.log("valid results are: ")
     console.log(validResults)
+
     
-    // const newStudent = await Student.create({
-    //     studentName: 'dzoggie', 
-    //     email: 'doggie.com',
-    //     zid: 'z6335222'
-    // })
-    // for (const row of validResults) {
-    //     // insert student
-    //     let student = await Student.findOne({zid: row.zid})
-    //     let studentId = student._id
-    //     if (!student) {
-    //         const newStudent = await Student.create({
-    //             studentName: row.name,
-    //             email: row.email,
-    //             zid: row.zid
-    //         })
-    //         studentId = newStudent._id
-    //         console.log(`inserted student ${studentId}`)
-    //     }
-        
-    //     // insert team
-    //     let team = await Team.findOne({teamName: row.groupname})
-    //     if (!team) {
-    //         team = await Team.create({
-    //             teamName: row.groupname,
-    //             students: [studentId],
-    //             mentors: Admin.findOne({
-    //                 adminName: row.mentor
-    //             }) || []
-    //         })
-    //     } else {
-    //         team.students.push(studentId)
-    //     }
-
-    //     let courseFound = await Course.findOne({
-    //         courseName: course
-    //     })
-
-    //     if (!courseFound) {
-    //         Course.create
-    //     }
-    // }
     return NextResponse.json(results, { status: 200 })
 }
 

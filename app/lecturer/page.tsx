@@ -1,6 +1,5 @@
 "use client";
 import { ChangeEvent, useState } from "react";
-import Papa, { ParseResult } from "papaparse";
 
 interface DisplayData {
     year: string;
