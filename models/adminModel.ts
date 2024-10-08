@@ -14,4 +14,3 @@ export const adminSchema = new Schema({
       required: true
     }
 });
-
