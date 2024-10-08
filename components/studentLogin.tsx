@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
 import StudentVerificationModal from "@/components/modals/studentVerificationModel";
 import ErrorModal from '@/components/modals/errorModal';
+import { sendVerificationEmail } from '@/components/services/emailService';
 
 
 export default function StudentLogin() {
@@ -23,6 +24,7 @@ export default function StudentLogin() {
 
   const handleVerificationSuccess = () => {
     setShowVerificationModal(false);
+    // need to change to comfirm details page
     router.push('/teamEvaluationForm');
   };
 
@@ -43,40 +45,56 @@ export default function StudentLogin() {
     return true;
   };
 
-  const sendVerificationEmail = async () => {
-    // frontend check: if format wrong
+  const handleSendVerificationEmail = async () => {
     if (!validateInput()) {
       setShowLoginFail(true);
       return;
     }
 
-    // test for verification
-    setShowVerificationModal(true);
+    const emailSent = await sendVerificationEmail(zID, courseCode); // 使用拆分后的逻辑
 
-    try {
-      const response = await fetch('/api/studentSystem/identityCheck', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ zid: zID, courseCode: courseCode }),
-      });
-
-      if (!response.ok) {
-        setErrorMessage('Failed to send verification email.');
-        setShowLoginFail(true);
-        alert(response);
-      } else {
-        setShowVerificationModal(true);
-        setShowLoginFail(false);
-      }
-    } catch (error) {
-      console.error('Error during email sending:', error);
-      setErrorMessage('Server error. Please try again later.');
+    if (!emailSent) {
+      setErrorMessage('Failed to send verification email.');
       setShowLoginFail(true);
+    } else {
+      setShowVerificationModal(true); 
     }
-
   };
+
+  // const sendVerificationEmail = async () => {
+  //   // frontend check: if format wrong
+  //   if (!validateInput()) {
+  //     setShowLoginFail(true);
+  //     return;
+  //   }
+
+  //   // test for verification
+  //   setShowVerificationModal(true);
+
+  //   try {
+  //     const response = await fetch('/api/studentSystem/identityCheck', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ zid: zID, courseCode: courseCode }),
+  //     });
+
+  //     if (!response.ok) {
+  //       setErrorMessage('Failed to send verification email.');
+  //       setShowLoginFail(true);
+  //       alert(response);
+  //     } else {
+  //       setShowVerificationModal(true);
+  //       setShowLoginFail(false);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error during email sending:', error);
+  //     setErrorMessage('Server error. Please try again later.');
+  //     setShowLoginFail(true);
+  //   }
+
+  // };
   
 
   return (
@@ -132,7 +150,7 @@ export default function StudentLogin() {
           {/* Verify button */}
           
           <button 
-            onClick={ sendVerificationEmail } // check whether Input invalid
+            onClick={ handleSendVerificationEmail } // check whether Input invalid
             className="w-full bg-black text-white py-2 rounded-full mb-6">
             Verify with email
           </button>
@@ -151,6 +169,7 @@ export default function StudentLogin() {
               onClose={() => setShowVerificationModal(false)}
               onVerificationSuccess={handleVerificationSuccess}
               zID={zID}
+              courseCode={courseCode}
             />
           ) : null}
 
