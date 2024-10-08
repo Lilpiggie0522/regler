@@ -26,7 +26,7 @@ export interface CreateIssueInput {
     title: string,
     content: string,
 }
-interface StudentCommentInput {
+export interface StudentCommentInput {
     title: string,
     content: string,
     filesUrl: string,
@@ -74,6 +74,19 @@ export async function POST(req: NextRequest) {
         if (!title || !content) {
             return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
         }
+        // if there is a pending issue for the team
+        
+        const existingIssue = await Team.findOne(
+            { _id: teamId,
+            issues: { $elemMatch: { status: 'pending' } }
+            }
+        )
+        .exec();
+    
+        if (existingIssue) {
+            return NextResponse.json({ error: "A pending issue already exists for this team" }, { status: 409 });
+        }
+        
 
         const initialStudentComment: StudentCommentInput = {
             title: title,
