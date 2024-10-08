@@ -24,8 +24,7 @@ export default function StudentLogin() {
 
   const handleVerificationSuccess = () => {
     setShowVerificationModal(false);
-    // need to change to comfirm details page
-    router.push('/teamEvaluationForm');
+    router.push('/studentDetailConfirm');
   };
 
   // frontend invalid check
