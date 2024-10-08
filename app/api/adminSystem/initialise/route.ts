@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 import models from "@/models/models";
 
-//const Issue = models.Issue;
+const Issue = models.Issue;
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
@@ -69,6 +69,11 @@ export async function POST(req : NextRequest) {
         await Course.deleteMany({});
         await Issue.deleteMany({});
         */
+        await Admin.deleteMany({});
+        await Student.deleteMany({});
+        await Team.deleteMany({});
+        await Course.deleteMany({});
+        await Issue.deleteMany({});
 
         for (const courseAdmin of courseAdmins) {
             const password = await bcrypt.hash(courseAdmin.passwordRaw, 10);
@@ -107,13 +112,14 @@ export async function POST(req : NextRequest) {
             const newTeam = await Team.create({
                 teamName: team.teamName,
                 students: [],
-                mentors: []
+                mentors: [],
+                issues: [],
             });
             const studentIds = [];
             const mentorsIds = []; 
             // adding student to Team model
             for (const studentZid of teamStudentZids) {
-                // sutd
+                // c
                 const student = await Student.findOne({zid: studentZid}).exec();
                 if (!student) {
                     return NextResponse.json({error: `incorrect student zid when adding to the team ${newTeam.teamName}`}, {status:404});
@@ -122,7 +128,7 @@ export async function POST(req : NextRequest) {
                 
             }
             for (const mentorZid of teamMentorsZids) {
-                // mentor
+                // check is mentor already in the team.
                 const mentor = await Admin.findOne({zid: mentorZid}).exec();
                 if (!mentor) {
                     return NextResponse.json({error: `incorrect mentor zid when adding to the team ${newTeam.teamName}`}, {status:404});
