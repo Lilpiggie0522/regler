@@ -90,6 +90,7 @@ export async function POST(req: NextRequest) {
             status: "pending",
             startby: studentId
         })
+        const issueId = issue._id;
         // calling mailing function send teams
         // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -102,6 +103,7 @@ export async function POST(req: NextRequest) {
                 teamId: teamId,
                 studentId: studentId,
                 courseId: courseId,
+                issueId: issueId,
             }),
         });
 
