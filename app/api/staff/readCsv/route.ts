@@ -173,6 +173,7 @@ export async function POST(req: NextRequest) {
         console.log(err)
         return NextResponse.json(err, {status: 500})
     }
+    // return NextResponse.json(validResults, { status: 200 })
 }
 
 function parseCSV(stream: Readable): Promise<rawResult[]> {
