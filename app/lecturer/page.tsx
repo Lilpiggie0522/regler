@@ -2,10 +2,14 @@
 import { ChangeEvent, useState } from "react";
 
 interface DisplayData {
-    year: string;
-    name: string;
-    percent: string;
-    sex: string;
+    name: string,
+    zid: string;
+    groupname: string,
+    class: string;
+    group_id: string;
+    group_id2: string;
+    mentor: string;
+    email: string
 }
 
 export default function LecturerPage() {
@@ -72,19 +76,27 @@ export default function LecturerPage() {
                     <table>
                         <thead>
                             <tr>
-                                <th className="border border-gray-300 p-2">year</th>
                                 <th className="border border-gray-300 p-2">name</th>
-                                <th className="border border-gray-300 p-2">percent</th>
-                                <th className="border border-gray-300 p-2">sex</th>
+                                <th className="border border-gray-300 p-2">zid</th>
+                                <th className="border border-gray-300 p-2">class</th>
+                                <th className="border border-gray-300 p-2">groupName</th>
+                                <th className="border border-gray-300 p-2">group Id</th>
+                                <th className="border border-gray-300 p-2">group Id2</th>
+                                <th className="border border-gray-300 p-2">mentor</th>
+                                <th className="border border-gray-300 p-2">email</th>
                             </tr>
                         </thead>
                         <tbody>
                             {displayData.map((row, index) => (
                                 <tr key={index}>
-                                    <td className="border border-gray-300 p-2">{row.year}</td>
                                     <td className="border border-gray-300 p-2">{row.name}</td>
-                                    <td className="border border-gray-300 p-2">{row.percent}</td>
-                                    <td className="border border-gray-300 p-2">{row.sex}</td>
+                                    <td className="border border-gray-300 p-2">{row.zid}</td>
+                                    <td className="border border-gray-300 p-2">{row.class}</td>
+                                    <td className="border border-gray-300 p-2">{row.groupname}</td>
+                                    <td className="border border-gray-300 p-2">{row.group_id}</td>
+                                    <td className="border border-gray-300 p-2">{row.group_id2}</td>
+                                    <td className="border border-gray-300 p-2">{row.mentor}</td>
+                                    <td className="border border-gray-300 p-2">{row.email}</td>
                                 </tr>
                             ))}
                         </tbody>
