@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { useState } from 'react';
+import Link from 'next/link';
+
 import TermsOfServiceModal from "@/components/termsOfServiceModal";
 
 export default function Home() {
@@ -13,10 +15,10 @@ export default function Home() {
       {/* Left part image */}
       <div className="w-3/5 relative">
         <Image
-          src="/Mainpage-priscilla-du-preez-unsplash.jpg" // Image URL
+          src="/Mainpage-priscilla-du-preez-unsplash.jpg" 
           alt="Students working together"
-          layout="fill"
-          objectFit="cover"
+          fill
+          style={{ objectFit: 'cover' }}
           className="absolute inset-0"
         />
         <div className="absolute bottom-4 left-4 text-white text-xs">
@@ -32,9 +34,12 @@ export default function Home() {
           <p className="text-black mb-6">Please select one of the following options to sign in.</p>
 
           {/* student login button */}
-          <button className="w-full bg-black text-white py-2 rounded-full mb-4">
-            Students
-          </button>
+          <div className="flex justify-center">
+            <Link href="/studentLogin" className="w-full bg-black text-white py-2 rounded-full text-center">
+              Students
+            </Link>
+          </div>
+
 
           <p className="text-center text-black mb-4">or</p>
 
@@ -48,12 +53,12 @@ export default function Home() {
             By clicking continue, you agree to our{" "}
             <button
               onClick={() => setShowTermsModal(true)}
-              className="underline text-blue-600"
+              className="underline text-blue-700"
             >
               Terms of Service
             </button>{" "}
             and{" "}
-            <a href="https://www.unsw.edu.au/privacy" target="_blank" rel="noopener noreferrer" className="underline">Privacy Policy</a>.
+            <a href="https://www.unsw.edu.au/privacy" target="_blank" rel="noopener noreferrer" className="underline text-blue-700">Privacy Policy</a>.
           </p>
           {/* Terms of Service model */}
           {showTermsModal && (
