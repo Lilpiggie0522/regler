@@ -1,5 +1,6 @@
 import { initialiseInput } from "@/app/api/adminSystem/initialise/route";
 import {CreateIssueInput} from "@/app/api/issueSystem/createIssue/route";
+import { UpdateIssueInput } from "@/app/api/issueSystem/updateIssue/route";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const testSample : initialiseInput = {
@@ -54,6 +55,17 @@ const testSample : initialiseInput = {
             studentName: 'Michael Lee',
             email: "MICHAELLEE@email.com",
             zid: '64140126',
+        },
+        // team 3 actual students with email
+        {
+            studentName: 'Wilson Zhu',
+            email: "wilsonzhu2003@@email.com",
+            zid: '5423255',
+        },
+        {
+            studentName: 'Rocky',
+            email: "z5361545@ad.unsw.edu.au",
+            zid: '5423256',
         }
     ],
     // students and mentors should be in the form of zid,zid2,zid3
@@ -67,13 +79,18 @@ const testSample : initialiseInput = {
             teamName: 'Team 2',
             studentsZids: '64140126',
             mentorsZids: '34567,45678',
+        },
+        {
+            teamName: 'Team 3',
+            studentsZids: '5423255,5423256',
+            mentorsZids: '34567,67890',
         }
     ],
     courses: [
         {
             courseName: 'COMP3900',
             mentorsZids: '12345,34567,67890',
-            teams: 'Team 1,Team 2'
+            teams: 'Team 1,Team 2, Team 3'
         }
     ]
         
@@ -88,4 +105,15 @@ const createIssueSample: CreateIssueInput = {
     title: "issue 1",
     content: "string",
 
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const updateIssueSample: UpdateIssueInput = {
+    studentId: "6703551f9db9e11b3843691a",
+    teamId: "6703551f9db9e11b38436924",
+    courseId: "6703551f9db9e11b3843692a",
+    filesUrl: "anc.png,dasd.jpg",
+    title: "issue 1",
+    content: "string",
+    issueId: "6703551f9db9e11b384"
 }

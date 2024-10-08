@@ -1,5 +1,4 @@
-import { timeStamp } from 'console';
-import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export const issueSchema = new Schema({
     status: {
