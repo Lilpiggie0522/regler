@@ -25,21 +25,27 @@ export async function POST(request: NextRequest) {
             },
         });
         const { studentName, email, authCode } = await request.json();
+        // const { email, authCode } = await request.json();
 
         
         // Check if email exists and student name is correct
         await dbConnect();
         const Student = models.Student;
+        // const AuthCode = models.AuthCode
+        // const authCode = await AuthCode.findOne({ email: email });
         const student = await Student.findOne({ email: email });
         if (!student) {
-            return NextResponse.json({ error: "Invalid Email Address" }, { status: 404 });
+            return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
         }
-        if (student.studentName !== studentName) {
-            return NextResponse.json({ error: "Incorrect Student Name" }, { status: 400 });
-        }
+        // if (student.studentName !== studentName) {
+        //     return NextResponse.json({ error: "Incorrect Student Name" }, { status: 400 });
+        // }
         if (student.email !== email) {
             return NextResponse.json({ error: "Given email does not match student's email" }, { status: 400 });
         }
+        // if (!authCode) {
+        //     return NextResponse.json({ error: "Invalid authentication code" }, { status: 400 });
+        // }
         
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
@@ -64,6 +70,7 @@ export async function POST(request: NextRequest) {
         };
         const info = await transport.sendMail(mailingParameters);
         return NextResponse.json({data: info}, {status: 200})
+        
     } catch (error) {
         if (error instanceof Error) {
             console.error('Error - Team Email:', error);
