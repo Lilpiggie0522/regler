@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { StudentVerificationModalProps } from "@/components/modals/ModalProps";
 import ErrorModal from "@/components/modals/errorModal";
 
-export default function StudentVerificationModal({ onClose, onVerificationSuccess }: StudentVerificationModalProps) {
+export default function StudentVerificationModal({ onClose, onVerificationSuccess, zID }: StudentVerificationModalProps) {
 
   const [verificationCode, setVerificationCode] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -47,12 +47,12 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
 
   const handleVerificationSubmit = async () => {
     try {
-      const response = await fetch('/api/verifyCode', {
+      const response = await fetch('/api/authcodeSystem/checkAuthcode', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ code: verificationCode }),
+        body: JSON.stringify({ zid: zID, code: verificationCode }),
       });
 
       // Testing!!!!!!!!!!!!
