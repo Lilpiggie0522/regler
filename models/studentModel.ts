@@ -1,4 +1,4 @@
-import { InferSchemaType, Schema, models, model } from 'mongoose';
+import { Schema } from 'mongoose';
 
 export const studentSchema = new Schema({
     studentName: {
