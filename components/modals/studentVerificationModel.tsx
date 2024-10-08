@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 
 import { StudentVerificationModalProps } from "@/components/modals/ModalProps";
 import ErrorModal from "@/components/modals/errorModal";
+import { sendVerificationEmail } from '@/components/services/emailService';
 
-export default function StudentVerificationModal({ onClose, onVerificationSuccess, zID }: StudentVerificationModalProps) {
+export default function StudentVerificationModal({ onClose, onVerificationSuccess, zID, courseCode }: StudentVerificationModalProps) {
 
   const [verificationCode, setVerificationCode] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -38,10 +39,10 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
     };
   }, [isResendDisabled]);
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setIsResendDisabled(true);
     setCountdown(60);
-    // sending email...
+    await sendVerificationEmail(zID, courseCode); // resend email
   };
 
 
