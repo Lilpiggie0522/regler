@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from 'react';
 import Link from 'next/link';
 
-import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
+import TermsOfServiceModal from "@/components/termsOfServiceModal";
 
 export default function Home() {
 
