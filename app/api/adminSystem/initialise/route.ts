@@ -4,32 +4,35 @@ import bcrypt from 'bcrypt';
 
 import models from "@/models/models";
 
-const Issue = models.Issue;
+//const Issue = models.Issue;
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
 const Admin = models.Admin;
 
 
-interface createAdminInput {
+export interface createAdminInput {
     
     adminName: string,
     email: string,
     zid: string,
     passwordRaw: string,
 }
-interface createStudentInput {
+export interface createStudentInput {
     
     studentName: string,
     email: string,
     zid: string,
 }
-interface createTeamInput {
+// studentsZids = zid1,zid2,zid3...
+// mentorsZids = zid1,zid2,zid3..
+export interface createTeamInput {
     teamName: string,
     studentsZids: string,
     mentorsZids: string,
 }
-interface createCourseInput {
+// teams = teamName1,teamName2...
+export interface createCourseInput {
     courseName: string,
     mentorsZids: string,
     teams: string,
@@ -42,8 +45,9 @@ export interface initialiseInput {
     // students and mentors should be in the form of zid,zid2,zid3
     teams: createTeamInput [],
     courses: createCourseInput[]
-        
 }
+
+
 
 //TODO: get all the courses
 export async function POST(req : NextRequest) {
@@ -58,12 +62,13 @@ export async function POST(req : NextRequest) {
         const request = await req.json();
         
         const { courseAdmins, staffAdmins, students, teams, courses } = request as initialiseInput;
-        
+        /* delete all the info depends on what client is configured.
         await Admin.deleteMany({});
         await Student.deleteMany({});
         await Team.deleteMany({});
         await Course.deleteMany({});
         await Issue.deleteMany({});
+        */
 
         for (const courseAdmin of courseAdmins) {
             const password = await bcrypt.hash(courseAdmin.passwordRaw, 10);
