@@ -30,7 +30,7 @@ export default function StudentLogin() {
   const validateInput = () => {
 
     const zidRegex = /^z[0-9]{7}$/;
-    const courseCodeRegex = /^[A-Z]{4}[0-9]{4}$/;
+    const courseCodeRegex = /^[A-Za-z]{4}[0-9]{4}$/;
 
     if (!zidRegex.test(zID)) {
       setErrorMessage('Invalid zID format.');
@@ -54,17 +54,18 @@ export default function StudentLogin() {
     setShowVerificationModal(true);
 
     try {
-      const response = await fetch('/api/sendVerificationEmail', {
+      const response = await fetch('/api/studentSystem/identityCheck', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ zID, courseCode }),
+        body: JSON.stringify({ zid: zID, courseCode: courseCode }),
       });
 
       if (!response.ok) {
         setErrorMessage('Failed to send verification email.');
         setShowLoginFail(true);
+        alert(response);
       } else {
         setShowVerificationModal(true);
         setShowLoginFail(false);
@@ -123,7 +124,7 @@ export default function StudentLogin() {
               value={courseCode}
               type="text"
               className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
-              placeholder="Course Code: COMP3900"
+              placeholder="Course Code: Comp3900"
               onChange={(input) => setCourseCode(input.target.value)} // refresh course code
             />
           </div>
@@ -149,6 +150,7 @@ export default function StudentLogin() {
             <StudentVerificationModal
               onClose={() => setShowVerificationModal(false)}
               onVerificationSuccess={handleVerificationSuccess}
+              zID={zID}
             />
           ) : null}
 
@@ -173,3 +175,5 @@ export default function StudentLogin() {
     </div>
   );
 }
+
+

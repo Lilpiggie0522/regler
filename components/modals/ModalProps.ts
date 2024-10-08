@@ -9,6 +9,7 @@ export interface ErrorModalProps extends ModalProps {
 
 export interface StudentVerificationModalProps extends ModalProps {
     onVerificationSuccess: () => void;
+    zID: string;
 }
 
   
