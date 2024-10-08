@@ -125,7 +125,7 @@ export async function POST(req : NextRequest) {
                 // mentor
                 const mentor = await Admin.findOne({zid: mentorZid}).exec();
                 if (!mentor) {
-                    return NextResponse.json({error: `incorrect mentor zid when adding to the team ${newTeam.teamName}`}, {status:404});
+                    return NextResponse.json({error: `incorrect mentor zid: ${mentorZid} when adding to the team ${newTeam.teamName}`}, {status:404});
                 }
                 mentorsIds.push(mentor._id);
             }
@@ -150,7 +150,7 @@ export async function POST(req : NextRequest) {
                 // sutd
                 const team = await Team.findOne({teamName: teamName}).exec();
                 if (!team) {
-                    return NextResponse.json({error: `incorrect team name when adding to the course ${newCourse.courseName}`}, {status:404});
+                    return NextResponse.json({error: `incorrect team name: ${teamName} when adding to the course ${newCourse.courseName}`}, {status:404});
                 }
                 teams.push(team._id);
                 
