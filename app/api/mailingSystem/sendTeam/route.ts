@@ -8,8 +8,6 @@ import models from "@/models/models";
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
-// import mongoose from 'mongoose';
-// tempId.equals(mongoose.Types.ObjectId(studentId))
 
 
 /*
@@ -27,7 +25,7 @@ const Course = models.Course;
 */
 export async function POST(request: NextRequest) {
     try {
-        const { teamId, courseId, studentId } = await request.json()
+        const { teamId, courseId, studentId, issueId } = await request.json()
 
         await dbConnect();
         const team = await Team.findById(teamId);
@@ -89,7 +87,7 @@ export async function POST(request: NextRequest) {
             </p>
             
             <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-            href="https://3900-capstone.vercel.app/teamEvaluationForm"><strong>Complete Here</strong></a>
+            href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${studentId}&teamId=${teamId}&courseId=${courseId}&issurId=${issueId}"><strong>Complete Here</strong></a>
             `,
         };
 
