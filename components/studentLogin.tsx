@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
 import StudentVerificationModal from "@/components/modals/studentVerificationModel";
-import ErrorModal from '@/components/modals/errorModal';
+import ErrorModal from './modals/errorModal';
 import { sendVerificationEmail } from '@/components/services/emailService';
 
 

@@ -1,15 +1,23 @@
 'use client'
 import { useState, ChangeEvent, FormEvent } from 'react';
 
+
 interface FormData {
 	teamMembers: string;
 	situationExplanation: string;
 	file: File | null;
 	fileLink: string;
 }
+interface TeamEvaluationFormProps{
+	teamId: string | null;
+    courseId: string| null;
+    studentId: string| null;
+	issueId: string| null;
+}
 
-export default function TeamEvaluationForm() {
+export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Define state for the form inputs
+	const {teamId, courseId, studentId, issueId} = props;
 	const [formData, setFormData] = useState<FormData>({
 		teamMembers: '',
 		situationExplanation: '',
@@ -39,13 +47,35 @@ export default function TeamEvaluationForm() {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
+		if (!issueId){
+			return;
+			
+		}
+	/*	if (issueId) {
+			// Update issue with new data
+            const title = 'testing title'
+            const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
+            `
+            try {
+                const res = await fetch(`/api/issueSystem/issues/${issueId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        filesUrl: '',
+                        title: title,
+                        content: content,
+                    }),
+                });
+		}*/
+
 		// Log the collected form data
 		console.log('Form submitted:', formData);
 
 		// Reset form (optional)
 		const title = 'testing title'
-		const content = `
-		Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
+		const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
 		`
 		try {
 			const res = await fetch("/api/issueSystem/createIssue", {
@@ -54,9 +84,9 @@ export default function TeamEvaluationForm() {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					studentId: '6703551f9db9e11b38436918',
-					teamId: '6703551f9db9e11b3843691c',
-					courseId: '6703551f9db9e11b3843692a',
+					studentId: studentId,
+					teamId: teamId,
+					courseId: courseId,
 					filesUrl: '',
 					title: title,
 					content: content,

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 
 import { StudentVerificationModalProps } from "@/components/modals/ModalProps";
-import ErrorModal from "@/components/modals/errorModal";
+import ErrorModal from './errorModal';
 import { sendVerificationEmail } from '@/components/services/emailService';
 
 export default function StudentVerificationModal({ onClose, onVerificationSuccess, zID, courseCode }: StudentVerificationModalProps) {
