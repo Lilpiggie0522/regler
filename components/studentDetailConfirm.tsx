@@ -43,7 +43,7 @@ export default function StudentDetailConfirm() {
     };
 
     // api/util/{courseId}
-    const {studentId, teamId, courseId} = useStudentContext()
+    const {teamId, courseId} = useStudentContext()
     console.log("teamId:", teamId); // Check the value of teamId
     console.log("courseId:", courseId); // Check the value of teamId
     useEffect(() => {
