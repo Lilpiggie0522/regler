@@ -44,6 +44,11 @@ export async function POST(request: NextRequest) {
         if (!authcodeCreationResponse.ok) {
             return authcodeCreationResponse;
         }
+        const authCode = await authcodeCreationResponse.json();
+        const sendAuthCodeResponse = await fetch('http://localhost:3002/api/mailingSystem/sendAuthCode', {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode})})
+        if (!sendAuthCodeResponse.ok) {
+            return sendAuthCodeResponse
+        }
         // objectId of student, team and course
         return NextResponse.json({studentId: student._id, teamId: teamId, courseId: course._id}, {status: authcodeCreationResponse.status})
     } catch (error) {
