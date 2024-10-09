@@ -27,7 +27,7 @@ export async function GET( req: NextRequest) {
         const courseResponse: CourseResponse = {
             courseName: course.courseName,
         }
-        return NextResponse.json({courseResponse}, {status: 200});
+        return NextResponse.json(courseResponse, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
     }

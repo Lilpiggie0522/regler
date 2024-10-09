@@ -64,8 +64,8 @@ export default function StudentLogin() {
       setStudentId(studentId)
       setTeamId(teamId)
       setCourseId(courseId)
-      console.log("student got from email backend is:")
-      console.log(student)
+      // console.log("student got from email backend is:")
+      // console.log(student)
     }
   };
 

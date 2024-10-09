@@ -41,7 +41,7 @@ export async function GET( req : NextRequest) {
             teamName: team.teamName,
             mentors: mentorsNames.slice(0, -1), // remove trailing comma
         }
-        return NextResponse.json({teamResponse}, {status: 200});
+        return NextResponse.json(teamResponse, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
     }

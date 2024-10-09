@@ -46,11 +46,6 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Handle form submission
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-
-		if (!issueId){
-			return;
-			
-		}
 	/*	if (issueId) {
 			// Update issue with new data
             const title = 'testing title'
@@ -77,6 +72,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		const title = 'testing title'
 		const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
 		`
+		console.log(studentId)
 		try {
 			const res = await fetch("/api/issueSystem/createIssue", {
                 method: "POST",
@@ -99,7 +95,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 				alert('Success!');
 			}
 			if (!res.ok) {
-                //const result = await res.json();
+                const errObj = await res.json();
+				console.log(errObj.error)
                 alert('Error sending the form data. Please try again later.');
 			}
 		} 
