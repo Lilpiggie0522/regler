@@ -29,7 +29,7 @@ export async function GET(req : NextRequest, { params } : Params) {
         return NextResponse.json({ error: error}, {status: 500});
     }
     
-  }
+}
 // delete courseById
 export async function DELETE(req : NextRequest, { params } : Params) {
     const courseId = params.courseId;
