@@ -12,7 +12,6 @@ import models from '@/models/models'
         Send email contains authentication code to student
     Error:
         - Check if student exists
-        - Check if student is correct by name
         - Check if email given matches student's email
 */
 export async function POST(request: NextRequest) {
@@ -24,28 +23,18 @@ export async function POST(request: NextRequest) {
                 pass: process.env.SMTP_PASSWORD,
             },
         });
-        const { studentName, email, authCode } = await request.json();
-        // const { email, authCode } = await request.json();
-
+        const { email, authCode } = await request.json();
         
         // Check if email exists and student name is correct
         await dbConnect();
         const Student = models.Student;
-        // const AuthCode = models.AuthCode
-        // const authCode = await AuthCode.findOne({ email: email });
         const student = await Student.findOne({ email: email });
         if (!student) {
             return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
         }
-        // if (student.studentName !== studentName) {
-        //     return NextResponse.json({ error: "Incorrect Student Name" }, { status: 400 });
-        // }
         if (student.email !== email) {
             return NextResponse.json({ error: "Given email does not match student's email" }, { status: 400 });
         }
-        // if (!authCode) {
-        //     return NextResponse.json({ error: "Invalid authentication code" }, { status: 400 });
-        // }
         
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
@@ -53,7 +42,7 @@ export async function POST(request: NextRequest) {
             subject: 'UNSW Evaluation System Verification Code (Do not reply)',
             html: `
             <p>
-                Hi, ${studentName}!
+                Hi!
             </p>
             <p>
                 Your verification code is: <strong>${authCode}</strong>.
