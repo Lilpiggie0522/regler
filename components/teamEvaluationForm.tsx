@@ -193,7 +193,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
 				<button 
 					type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto"
-					//onClick={() => router.push('/studentLogout')}
+					onClick={() => router.push('/studentLogout')}
 				>
 					Submit
 				</button>
