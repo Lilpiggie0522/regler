@@ -6,7 +6,7 @@ export const sendVerificationEmail = async (zID: string, courseCode: string): Pr
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ zid: zID, courseCode: courseCode }),
+        body: JSON.stringify({ zID: zID, courseCode: courseCode }),
       });
 
       // if (!response.ok) {
