@@ -1,5 +1,6 @@
 'use client'
 import { useState, ChangeEvent, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 
 
 interface FormData {
@@ -17,6 +18,7 @@ interface TeamEvaluationFormProps{
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Define state for the form inputs
+	const router = useRouter();
 	const {teamId, courseId, studentId, issueId} = props;
 	const [formData, setFormData] = useState<FormData>({
 		teamMembers: '',
@@ -47,10 +49,10 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		if (!issueId){
-			return;
-			
-		}
+	// 	if (!issueId){
+	// 		return;
+	// 	}
+
 	/*	if (issueId) {
 			// Update issue with new data
             const title = 'testing title'
@@ -96,7 +98,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             if (res.ok) {
                 const result = await res.json();
                 console.log("Form submitted successfully:", result);
-				alert('Success!');
+				//alert('Success!');
+				router.push('/studentLogout'); 
 			}
 			if (!res.ok) {
                 //const result = await res.json();
