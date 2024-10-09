@@ -8,12 +8,12 @@ import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
 import StudentVerificationModal from "@/components/modals/studentVerificationModel";
 import ErrorModal from './modals/errorModal';
 import { sendVerificationEmail } from '@/components/services/emailService';
-
+import { useStudentContext } from '@/context/studentContext';
 
 export default function StudentLogin() {
-
   const router = useRouter();
-  
+  const {setStudentId, setTeamId, setCourseId} = useStudentContext()
+
   const [errorMessage, setErrorMessage] = useState('');
   const [zID, setZid] = useState('');
   const [courseCode, setCourseCode] = useState('');
@@ -52,11 +52,20 @@ export default function StudentLogin() {
 
     const emailSent = await sendVerificationEmail(zID, courseCode); // 使用拆分后的逻辑
 
-    if (!emailSent) {
+    if (!emailSent.ok) {
+      const res = await emailSent.json()
+      console.log(res.error)
       setErrorMessage('Failed to send verification email.');
       setShowLoginFail(true);
     } else {
-      setShowVerificationModal(true); 
+      setShowVerificationModal(true);
+      const student = await emailSent.json()
+      const {studentId, teamId, courseId} = student
+      setStudentId(studentId)
+      setTeamId(teamId)
+      setCourseId(courseId)
+      console.log("student got from email backend is:")
+      console.log(student)
     }
   };
 

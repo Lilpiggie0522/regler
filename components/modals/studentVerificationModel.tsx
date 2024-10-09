@@ -14,6 +14,7 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
   const [countdown, setCountdown] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
 
+
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 

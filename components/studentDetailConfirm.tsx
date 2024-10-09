@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ModalProps } from "@/components/modals/ModalProps";
-
+import { useStudentContext } from '@/context/studentContext';
 
 const WrongGroupModal = ({ onClose }: ModalProps) => {
     
@@ -28,8 +28,10 @@ const WrongGroupModal = ({ onClose }: ModalProps) => {
 export default function StudentDetailConfirm() {
 
     const router = useRouter();
-
+    
     const [showModal, setShowModal] = useState(false);
+    const [team, setTeam] = useState('')
+    const [course, setCourse] = useState('')
 
     const handleNotThisGroup = () => {
         setShowModal(true);
@@ -38,6 +40,12 @@ export default function StudentDetailConfirm() {
     const closeModal = () => {
         setShowModal(false);
     };
+    // api/util/{courseId}
+    useEffect(() => {
+      const {studentId, teamId, courseId} = useStudentContext()
+      setTeam(teamId)
+      setCourse(courseId)
+    }, [])
 
     return (
         <div className="min-h-screen bg-yellow-400 flex justify-center items-center">
@@ -54,7 +62,7 @@ export default function StudentDetailConfirm() {
                 Course Code:
                 </p>
                 <p className="text-left font-bold text-black">
-                COMP3900
+                {course}
                 </p>
 
                 <p className="text-right font-bold text-gray-500">
@@ -68,7 +76,7 @@ export default function StudentDetailConfirm() {
                 Mentor Name:
                 </p>
                 <p className="text-left font-bold text-black">
-                Someone
+                {team}
                 </p>
             </div>
 
