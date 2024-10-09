@@ -44,6 +44,13 @@ export default function StudentDetailConfirm() {
     // api/util/{courseId}
     const {studentId, teamId, courseId} = useStudentContext()
     useEffect(() => {
+      // try {
+      //   const response = await fetch(`/api/util/${4}`, {
+
+      //   })
+      // } catch (error) {
+        
+      // }
       setTeam(teamId)
       setCourse(courseId)
     }, [])
