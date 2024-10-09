@@ -40,9 +40,10 @@ export default function StudentDetailConfirm() {
     const closeModal = () => {
         setShowModal(false);
     };
+
     // api/util/{courseId}
+    const {studentId, teamId, courseId} = useStudentContext()
     useEffect(() => {
-      const {studentId, teamId, courseId} = useStudentContext()
       setTeam(teamId)
       setCourse(courseId)
     }, [])
