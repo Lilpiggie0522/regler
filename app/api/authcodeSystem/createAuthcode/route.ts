@@ -37,11 +37,7 @@ export async function POST(request: NextRequest) {
             expiresAt,
         });
 
-        return NextResponse.json({
-            message: 'Auth code generated successfully',
-            authCode,
-            expiresAt,
-        }, { status: 200 });
+        return NextResponse.json({ authCode }, { status: 200 });
     } catch (error) {
         console.error('Error generating auth code:', error);
         return NextResponse.json({ error: (error as Error).message }, { status: 500 });
