@@ -1,5 +1,5 @@
 
-export const sendVerificationEmail = async (zID: string, courseCode: string): Promise<boolean> => {
+export const sendVerificationEmail = async (zID: string, courseCode: string): Promise<Response> => {
     // try {
       const response = await fetch('/api/studentSystem/identityCheck', {
         method: 'POST',
@@ -9,20 +9,12 @@ export const sendVerificationEmail = async (zID: string, courseCode: string): Pr
         body: JSON.stringify({ zid: zID, courseCode: courseCode }),
       });
 
-
-      console.log('Verification email sent successfully.');
-      return true;
-  
-      if (!response.ok) {
-        console.error('Failed to send verification email.');
-        return false;
-      }
-
-      console.log('Verification email sent successfully.');
-      return true;
-    // } catch (error) {
-    //   console.error('Error during email sending:', error);
-    //   return false;
-    // }
+      // if (!response.ok) {
+      //   console.error('Failed to send verification email.');
+      //   return false;
+      // }
+      // console.log('Verification email sent successfully.');
+      // return true;
+      return response
   };
   

@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Student is not in this course" }, { status: 404 });
         }
         //please note that port may change
-        const authcodeCreationResponse = await fetch('http://localhost:3002/api/authcodeSystem/createAuthcode', {method: 'POST', body: JSON.stringify({zid: zID})})
+        const authcodeCreationResponse = await fetch('http://localhost:3000/api/authcodeSystem/createAuthcode', {method: 'POST', body: JSON.stringify({zid: zID})})
         if (!authcodeCreationResponse.ok) {
             return authcodeCreationResponse;
         }
