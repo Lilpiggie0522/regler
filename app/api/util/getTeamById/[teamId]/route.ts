@@ -1,39 +1,40 @@
 // get team by Id
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import mongoose from 'mongoose';
 import models from "@/models/models";
+import dbConnect from "@/lib/dbConnect";
 
 
 
 const Team = models.Team;
 const Admin = models.Admin;
-type Params = {
-    params: {
-      teamId: string
-    }
-  }
-
 interface TeamResponse {
     teamName: string;
     mentors: string;
 }
 
-export async function GET( { params } : Params) {
-    const teamId = params.teamId;
+export async function GET( req : NextRequest) {
+    
     try {
+        await dbConnect();
+        const teamId = req.url.split('/').pop();
+        console.log(teamId);
         if (!mongoose.isValidObjectId(teamId)) {
-            return NextResponse.json({error: "invalid course id"}, {status: 400});
+            return NextResponse.json({error: "invalid team id"}, {status: 400});
         }
         const team = await Team.findById(teamId).exec();
+        //console.log(team);
         if (!team) {
             return NextResponse.json({error: "course not found"}, {status: 404});
         }
         const mentorsIds = team.mentors;
         let mentorsNames = '';
-        for (const mentorId in mentorsIds) {
-            const mentorName = await Admin.findById(mentorId).exec();
-            if (mentorName) {
-                mentorsNames += mentorName.name + ',';
+        for (const mentorId of mentorsIds) {
+            //console.log(mentorId);
+            const mentor = await Admin.findById(mentorId).exec();
+            //console.log(mentor);
+            if (mentor) {
+                mentorsNames += mentor.adminName + ',';
             }
         }
         const teamResponse : TeamResponse = {
