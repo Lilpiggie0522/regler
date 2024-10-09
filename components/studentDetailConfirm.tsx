@@ -46,7 +46,13 @@ export default function StudentDetailConfirm() {
     const {studentId, teamId, courseId} = useStudentContext()
     console.log("teamId:", teamId); // Check the value of teamId
     console.log("courseId:", courseId); // Check the value of teamId
-    const fetchTeam = async () => {
+    useEffect(() => {
+      if (teamId && courseId) {
+        fetchTeam(teamId, courseId);
+      }
+    }, [teamId, courseId]);  // Run effect when these values change
+    
+    const fetchTeam = async (teamId: string, courseId: string) => {
       try {
         const teamResponse = await fetch(`/api/util/getTeamById/${teamId}`)
         if (!teamResponse.ok) {
@@ -54,6 +60,9 @@ export default function StudentDetailConfirm() {
           throw Error(errObj.error)
         }
         const teamObj = await teamResponse.json()
+        // console.log(teamObj)
+        // console.log(teamObj.teamName)
+        // console.log(teamObj.mentors)
         setTeam(teamObj.teamName)
         setMentors(teamObj.mentors)
         const courseResponse = await fetch(`/api/util/getCourseById/${courseId}`)
@@ -64,12 +73,10 @@ export default function StudentDetailConfirm() {
         const courseObj = await courseResponse.json()
         setCourse(courseObj.courseName)
       } catch (error) {
-        alert(error)
+        throw error
       }
     }
-
-    fetchTeam()
-
+    
     return (
         <div className="min-h-screen bg-yellow-400 flex justify-center items-center">
         {/* Outer container for the confirmation card */}
