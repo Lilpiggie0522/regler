@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
         //1. find email from zid
         //2.  add check for student in this course
         // Check if email exists and student name is correct
+        console.log()
         await dbConnect();
         // Retrieve student and team to check their relations
         const student = await Student.findOne({ zid: zID }).exec();
