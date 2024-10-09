@@ -13,3 +13,6 @@ export const authCodeSchema = new Schema<AuthCodeDocument>({
     expiresAt: { type: Date, required: true },
 });
 
+authCodeSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+
+
