@@ -52,47 +52,119 @@ export async function POST(request: NextRequest) {
         });
 
         // Get email addresses from the rest of the team
-        const emailList = []
+        // const emailList = []
+        // for (const tempId of team.students) {
+        //     const student = await Student.findById(tempId);
+        //     if (student && tempId.toString() !== studentId.toString()) {
+        //         emailList.push(student.email);
+        //     }
+        // }
+
+        // const mailingParameters = {
+        //     from: process.env.SMTP_EMAIL,
+        //     to: emailList.join(','),
+        //     subject: 'Group Project Contribution Dispute',
+        //     html: `
+        //     <p>
+        //         Hi!
+        //     </p>
+        //     <p>
+        //         We have received a dispute application regarding 
+        //         the contribution to your group <strong>${team.teamName}</strong> 
+        //         in the course <strong>${course.courseName}</strong>. 
+        //         To ensure fairness and uphold the quality of learning, 
+        //         we sincerely ask that you fill out the following form 
+        //         to assist us solve the issue promptly. 
+        //         We appreciate your cooperation!
+        //     </p>
+        //     <p>
+        //         If the information is not correct, or this message does
+        //         not apply to you, please ignore this message. Thank you!
+        //     </p>
+        //     <p>
+        //         Regards,<br>
+        //         UNSW Development Team
+        //     </p>
+            
+        //     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
+        //     href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${studentId}&teamId=${teamId}&courseId=${courseId}&issurId=${issueId}"><strong>Complete Here</strong></a>
+        //     `,
+        // };
+
+        // const info = await transport.sendMail(mailingParameters);
+        // return NextResponse.json({data: info}, {status: 200})
+
+
         for (const tempId of team.students) {
             const student = await Student.findById(tempId);
             if (student && tempId.toString() !== studentId.toString()) {
-                emailList.push(student.email);
+                const mailingParameters = {
+                    from: process.env.SMTP_EMAIL,
+                    to: student.email,
+                    subject: 'Group Project Contribution Dispute',
+                    html: 
+                    `
+                    <p>
+                        Hi, <strong>${student.studentName}</strong>!
+                    </p>
+                    <p>
+                        We have received a dispute application regarding 
+                        the contribution to your group <strong>${team.teamName}</strong> 
+                        in the course <strong>${course.courseName}</strong>. 
+                        To ensure fairness and uphold the quality of learning, 
+                        we sincerely ask that you fill out the following form 
+                        to assist us solve the issue promptly. 
+                        We appreciate your cooperation!
+                    </p>
+                    <p>
+                        If the information is not correct, or this message does
+                        not apply to you, please ignore this message. Thank you!
+                    </p>
+                    <p>
+                        Regards,<br>
+                        UNSW Development Team
+                    </p>
+                    <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
+                    href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issurId=${issueId}"><strong>Complete Here</strong></a>
+                    `
+                };
+                await transport.sendMail(mailingParameters);       
+            } else if (student && tempId.toString() === studentId.toString()) {
+                const mailingParameters = {
+                    from: process.env.SMTP_EMAIL,
+                    to: student.email,
+                    subject: 'Submission Comfirmed (Do not reply)',
+                    html: 
+                    `
+                    <p>
+                        Hi, <strong>${student.studentName}</strong>!
+                    </p>
+                    <p>
+                        We have received your request of contribution review and
+                        inform the rest of your team members to fill out forms 
+                        anonymously. The evaluation result will be released via
+                        email after lecturers make adjustment. Please rest assure.
+                    </p>
+                    <p>
+                        If the information is not correct, or this message does
+                        not apply to you, please ignore this message. Thank you!
+                    </p>
+                    <p>
+                        Regards,<br>
+                        UNSW Development Team
+                    </p>
+                    `
+                };
+                await transport.sendMail(mailingParameters);  
+            } else {
+                console.log('Error: Partial notification failed due to student not exists');
             }
         }
 
-        const mailingParameters = {
-            from: process.env.SMTP_EMAIL,
-            to: emailList.join(','),
-            subject: 'Group Project Contribution Dispute',
-            html: `
-            <p>
-                Hi!
-            </p>
-            <p>
-                We have received a dispute application regarding 
-                the contribution to your group <strong>${team.teamName}</strong> 
-                in the course <strong>${course.courseName}</strong>. 
-                To ensure fairness and uphold the quality of learning, 
-                we sincerely ask that you fill out the following form 
-                to assist us solve the issue promptly. 
-                We appreciate your cooperation!
-            </p>
-            <p>
-                If the information is not correct, or this message does
-                not apply to you, please ignore this message. Thank you!
-            </p>
-            <p>
-                Regards,<br>
-                UNSW Development Team
-            </p>
-            
-            <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-            href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${studentId}&teamId=${teamId}&courseId=${courseId}&issurId=${issueId}"><strong>Complete Here</strong></a>
-            `,
-        };
+        
+        // const info = await transport.sendMail(mailingParameters);
+        return NextResponse.json({data: 'Notification sent successfully'}, {status: 200})
 
-        const info = await transport.sendMail(mailingParameters);
-        return NextResponse.json({data: info}, {status: 200})
 
     } catch (error) {
         if (error instanceof Error) {
