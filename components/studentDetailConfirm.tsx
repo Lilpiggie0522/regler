@@ -31,6 +31,7 @@ export default function StudentDetailConfirm() {
     
     const [showModal, setShowModal] = useState(false);
     const [team, setTeam] = useState('')
+    const [mentors, setMentors] = useState('')
     const [course, setCourse] = useState('')
 
     const handleNotThisGroup = () => {
@@ -43,17 +44,31 @@ export default function StudentDetailConfirm() {
 
     // api/util/{courseId}
     const {studentId, teamId, courseId} = useStudentContext()
-    useEffect(() => {
-      // try {
-      //   const response = await fetch(`/api/util/${4}`, {
+    console.log("teamId:", teamId); // Check the value of teamId
+    console.log("courseId:", courseId); // Check the value of teamId
+    const fetchTeam = async () => {
+      try {
+        const teamResponse = await fetch(`/api/util/getTeamById/${teamId}`)
+        if (!teamResponse.ok) {
+          const errObj = await teamResponse.json()
+          throw Error(errObj.error)
+        }
+        const teamObj = await teamResponse.json()
+        setTeam(teamObj.teamName)
+        setMentors(teamObj.mentors)
+        const courseResponse = await fetch(`/api/util/getCourseById/${courseId}`)
+        if (!courseResponse.ok) {
+          const errObj = await courseResponse.json()
+          throw Error(errObj.error)
+        }
+        const courseObj = await courseResponse.json()
+        setCourse(courseObj.courseName)
+      } catch (error) {
+        alert(error)
+      }
+    }
 
-      //   })
-      // } catch (error) {
-        
-      // }
-      setTeam(teamId)
-      setCourse(courseId)
-    }, [])
+    fetchTeam()
 
     return (
         <div className="min-h-screen bg-yellow-400 flex justify-center items-center">
@@ -77,14 +92,14 @@ export default function StudentDetailConfirm() {
                 Group Name:
                 </p>
                 <p className="text-left font-bold text-black">
-                Cow Horse
+                {team}
                 </p>
 
                 <p className="text-right font-bold text-gray-500">
                 Mentor Name:
                 </p>
                 <p className="text-left font-bold text-black">
-                {team}
+                {mentors}
                 </p>
             </div>
 
