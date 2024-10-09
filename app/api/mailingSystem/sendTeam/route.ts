@@ -17,6 +17,7 @@ const Course = models.Course;
         - studentId: Unique object id of student who submits application
     Output: 
         Send email contains evaluation link to the rest of members
+        Send confirmation email to initial applicant
     Error:
         - Check if team exists
         - Check if course exists
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
                         UNSW Development Team
                     </p>
                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-                    href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issurId=${issueId}"><strong>Complete Here</strong></a>
+                    href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
                     `
                 };
                 await transport.sendMail(mailingParameters);       
@@ -163,7 +164,7 @@ export async function POST(request: NextRequest) {
 
         
         // const info = await transport.sendMail(mailingParameters);
-        return NextResponse.json({data: 'Notification sent successfully'}, {status: 200})
+        return NextResponse.json({message: 'Notification sent successfully'}, {status: 200})
 
 
     } catch (error) {
