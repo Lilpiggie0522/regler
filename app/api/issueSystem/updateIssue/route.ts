@@ -77,7 +77,7 @@ export async function PUT(req: NextRequest) {
             student: studentId
         } 
         // update issue
-        const updateIssue = Issue.updateOne(
+        const updateIssue = await Issue.updateOne(
             {_id: existingIssue._id }, // filter by the issue ID
             { $push: { studentComments: newStudentComment } } 
         );
