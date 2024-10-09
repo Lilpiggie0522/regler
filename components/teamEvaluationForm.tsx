@@ -49,9 +49,9 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-	// 	if (!issueId){
-	// 		return;
-	// 	}
+		if (!issueId){
+			return;
+		}
 
 	/*	if (issueId) {
 			// Update issue with new data
@@ -98,8 +98,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             if (res.ok) {
                 const result = await res.json();
                 console.log("Form submitted successfully:", result);
-				//alert('Success!');
-				router.push('/studentLogout'); 
+				alert('Success!');
+				//router.push('/studentLogout'); 
 			}
 			if (!res.ok) {
                 //const result = await res.json();
@@ -173,7 +173,10 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					onChange={handleChange}
 				/>
 
-				<button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">
+				<button 
+					type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto"
+					onClick={() => router.push('/studentLogout')}
+				>
 					Submit
 				</button>
 			</form>
