@@ -55,8 +55,8 @@ export async function POST(req: NextRequest) {
         && row.mentor && row.group_id && row.group_id2
         && row.email && row.mentor_id
     )
-    console.log("valid results are: ")
-    console.log(validResults)
+    // console.log("valid results are: ")
+    // console.log(validResults)
     const courseAdmins: createAdminInput[] = []
     const staffAdmins: createAdminInput[] = []
     const students: createStudentInput[] = []
