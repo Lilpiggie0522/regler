@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
 
 
@@ -17,6 +18,7 @@ interface TeamEvaluationFormProps{
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Define state for the form inputs
+	const route = useRouter()
 	const {teamId, courseId, studentId, issueId} = props;
 	const [formData, setFormData] = useState<FormData>({
 		teamMembers: '',
@@ -72,7 +74,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 				if (res.ok) {
 					const result = await res.json();
 					console.log("Form submitted successfully:", result);
-					alert('Success!');
+					route.push('/studentLogout')
 				}
 				if (!res.ok) {
 					//const result = await res.json();
@@ -114,7 +116,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             if (res.ok) {
                 const result = await res.json();
                 console.log("Form submitted successfully:", result);
-				alert('Success!');
+				route.push('/studentLogout')
 			}
 			if (!res.ok) {
                 const errObj = await res.json();
