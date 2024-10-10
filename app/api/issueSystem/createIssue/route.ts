@@ -76,17 +76,21 @@ export async function POST(req: NextRequest) {
         }
         // if there is a pending issue for the team
         
-        const existingIssue = await Team.findOne(
+        const existingTeam = await Team.findOne(
             { _id: teamId,
-            issues: { $elemMatch: { status: 'pending' } }
             }
         )
         .exec();
-    
-        if (existingIssue) {
-            return NextResponse.json({ error: "A pending issue already exists for this team" }, { status: 409 });
+        const issuesIds = existingTeam.issues;
+        console.log(existingTeam)
+        for (const issueId of issuesIds) {
+            const existingIssue = await Issue.findById(issueId).exec();
+            console.log(existingIssue);
+            if (existingIssue && existingIssue.status === 'pending') {
+                return NextResponse.json({ error: "A pending issue already exists for this team" }, { status: 409 });
+            }
         }
-        
+
 
         const initialStudentComment: StudentCommentInput = {
             title: title,
@@ -104,6 +108,10 @@ export async function POST(req: NextRequest) {
             startby: studentId
         })
         const issueId = issue._id;
+        await Team.updateOne(
+            {_id: existingTeam._id }, // filter by the issue ID
+            { $push: { issues: issueId } } 
+        );
         // calling mailing function send teams
         // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
