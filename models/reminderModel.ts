@@ -1,7 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
 
 
-// 
+// team id, course id, issue id: when a team/course/issue has been deleted, remove from database
+// When student completes 
 export const reminderSchema = new Schema({
     team: {
         type: mongoose.Schema.Types.ObjectId, ref: 'Team', required: true
@@ -15,5 +16,4 @@ export const reminderSchema = new Schema({
     students: [
         {id: {type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true}, timestamp: {type: 'string', required: true}}
     ]
-
 });
