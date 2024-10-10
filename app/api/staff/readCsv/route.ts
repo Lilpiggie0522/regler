@@ -72,10 +72,10 @@ export async function POST(req: NextRequest) {
             adminName: row.mentor
         })
         if (!admin) { // no admins
-            console.log("enter into admin check")
+            // console.log("enter into admin check")
             const adminFound: createAdminInput | undefined = courseAdmins.find(admin => admin.zid === row.mentor_id)
             if (!adminFound) {
-                console.log("admin not found")
+                // console.log("admin not found")
                 const newAdmin: createAdminInput = {
                     adminName: row.mentor,
                     email: `${row.mentor_id}@unsw.edu.au`,
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
         if (!student) { // database no student
             const studentFound: createStudentInput | undefined = students.find(student => student.zid === row.zid)
             if (!studentFound) { // array no student
-                console.log("student not found")
+                // console.log("student not found")
                 const newStudent: createStudentInput = {
                     studentName: row.name,
                     email: row.email,
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
         if (!team) {
             const teamFound: createTeamInput | undefined = teams.find(team => team.teamName === row.groupname)
             if (!teamFound) {
-                console.log("team not found")
+                // console.log("team not found")
                 const newTeam: createTeamInput = {
                     teamName: row.groupname,
                     studentsZids: '',
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
             } else {
                 // teamFound.studentsZids += ','
                 // teamFound.studentsZids += row.zid
-                console.log("team found")
+                // console.log("team found")
                 if (!teamFound.studentsZids.includes(row.zid)) {
                     teamFound.studentsZids += ','
                     teamFound.studentsZids += row.zid
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
         courseName: courseNameFound
     })
     if (!course) {
-        console.log("course not found")
+        // console.log("course not found")
         const newCourse: createCourseInput = {
             courseName: courseNameFound,
             mentorsZids: '',
@@ -169,8 +169,8 @@ export async function POST(req: NextRequest) {
         teams: teams,
         courses: courses
     }
-    console.log("final result is: ")
-    console.log(result)
+    // console.log("final result is: ")
+    // console.log(result)
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
     const response = await fetch(`${baseUrl}/api/adminSystem/initialise`, {
@@ -185,7 +185,7 @@ export async function POST(req: NextRequest) {
     } else {
         const errorObj = await response.json()
         const err = errorObj.error
-        console.log(err)
+        // console.log(err)
         return NextResponse.json(err, { status: 500 })
     }
     // return NextResponse.json(validResults, { status: 200 })
@@ -196,7 +196,7 @@ function parseCSV(stream: Readable): Promise<rawResult[]> {
     return new Promise((resolve, reject) => {
         stream.pipe(csvParser())
             .on('data', (row) => {
-                console.log(Object.keys(row));
+                // console.log(Object.keys(row));
                 results.push(row)
             })
             .on('end', () => resolve(results))
