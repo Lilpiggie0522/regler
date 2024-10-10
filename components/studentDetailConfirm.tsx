@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ModalProps } from "@/components/modals/ModalProps";
-
+import { useStudentContext } from '@/context/studentContext';
 
 const WrongGroupModal = ({ onClose }: ModalProps) => {
     
@@ -28,8 +28,11 @@ const WrongGroupModal = ({ onClose }: ModalProps) => {
 export default function StudentDetailConfirm() {
 
     const router = useRouter();
-
+    
     const [showModal, setShowModal] = useState(false);
+    const [team, setTeam] = useState('')
+    const [mentors, setMentors] = useState('')
+    const [course, setCourse] = useState('')
 
     const handleNotThisGroup = () => {
         setShowModal(true);
@@ -39,6 +42,41 @@ export default function StudentDetailConfirm() {
         setShowModal(false);
     };
 
+    // api/util/{courseId}
+    const {teamId, courseId} = useStudentContext()
+    console.log("teamId:", teamId); // Check the value of teamId
+    console.log("courseId:", courseId); // Check the value of teamId
+    useEffect(() => {
+      if (teamId && courseId) {
+        fetchTeam(teamId, courseId);
+      }
+    }, [teamId, courseId]);  // Run effect when these values change
+    
+    const fetchTeam = async (teamId: string, courseId: string) => {
+      try {
+        const teamResponse = await fetch(`/api/util/getTeamById/${teamId}`)
+        if (!teamResponse.ok) {
+          const errObj = await teamResponse.json()
+          throw Error(errObj.error)
+        }
+        const teamObj = await teamResponse.json()
+        // console.log(teamObj)
+        // console.log(teamObj.teamName)
+        // console.log(teamObj.mentors)
+        setTeam(teamObj.teamName)
+        setMentors(teamObj.mentors)
+        const courseResponse = await fetch(`/api/util/getCourseById/${courseId}`)
+        if (!courseResponse.ok) {
+          const errObj = await courseResponse.json()
+          throw Error(errObj.error)
+        }
+        const courseObj = await courseResponse.json()
+        setCourse(courseObj.courseName)
+      } catch (error) {
+        throw error
+      }
+    }
+    
     return (
         <div className="min-h-screen bg-yellow-400 flex justify-center items-center">
         {/* Outer container for the confirmation card */}
@@ -54,21 +92,21 @@ export default function StudentDetailConfirm() {
                 Course Code:
                 </p>
                 <p className="text-left font-bold text-black">
-                COMP3900
+                {course}
                 </p>
 
                 <p className="text-right font-bold text-gray-500">
                 Group Name:
                 </p>
                 <p className="text-left font-bold text-black">
-                Cow Horse
+                {team}
                 </p>
 
                 <p className="text-right font-bold text-gray-500">
                 Mentor Name:
                 </p>
                 <p className="text-left font-bold text-black">
-                Someone
+                {mentors}
                 </p>
             </div>
 

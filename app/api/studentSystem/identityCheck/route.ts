@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
         //1. find email from zid
         //2.  add check for student in this course
         // Check if email exists and student name is correct
+        console.log()
         await dbConnect();
         // Retrieve student and team to check their relations
         const student = await Student.findOne({ zid: zID }).exec();
@@ -39,9 +40,14 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Student is not in this course" }, { status: 404 });
         }
         //please note that port may change
-        const authcodeCreationResponse = await fetch('http://localhost:3002/api/authcodeSystem/createAuthcode', {method: 'POST', body: JSON.stringify({zid: zID})})
+        const authcodeCreationResponse = await fetch('http://localhost:3000/api/authcodeSystem/createAuthcode', {method: 'POST', body: JSON.stringify({zid: zID})})
         if (!authcodeCreationResponse.ok) {
             return authcodeCreationResponse;
+        }
+        const authCode = await authcodeCreationResponse.json();
+        const sendAuthCodeResponse = await fetch('http://localhost:3000/api/mailingSystem/sendAuthCode', {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode.authCode})})
+        if (!sendAuthCodeResponse.ok) {
+            return sendAuthCodeResponse
         }
         // objectId of student, team and course
         return NextResponse.json({studentId: student._id, teamId: teamId, courseId: course._id}, {status: authcodeCreationResponse.status})

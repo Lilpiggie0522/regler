@@ -6,8 +6,7 @@ const AuthCode = models.AuthCode;
 export async function POST(request: NextRequest) {
     try {
         await dbConnect();
-        // find the user id and code from the request
-        // todo: zid 
+        // find the zid and code from the request
         const { zid, code }: { zid: string; code: string } = await request.json();
 
         // find the auth code entry for the user

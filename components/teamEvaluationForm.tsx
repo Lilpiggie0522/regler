@@ -1,6 +1,6 @@
 'use client'
+import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
-
 
 interface FormData {
 	teamMembers: string;
@@ -17,6 +17,7 @@ interface TeamEvaluationFormProps{
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Define state for the form inputs
+	const router = useRouter();
 	const {teamId, courseId, studentId, issueId} = props;
 	const [formData, setFormData] = useState<FormData>({
 		teamMembers: '',
@@ -47,28 +48,46 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		if (!issueId){
-			return;
-			
-		}
-	/*	if (issueId) {
+
+		if (issueId) {
 			// Update issue with new data
             const title = 'testing title'
             const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
             `
             try {
-                const res = await fetch(`/api/issueSystem/issues/${issueId}`, {
+                const res = await fetch(`/api/issueSystem/updateIssue/`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        filesUrl: '',
-                        title: title,
-                        content: content,
+						studentId: studentId,
+						teamId: teamId,
+						courseId: courseId,
+						filesUrl: '',
+						title: title,
+						content: content,
+						issueId: issueId,
                     }),
                 });
-		}*/
+				if (res.ok) {
+					const result = await res.json();
+					console.log("Form submitted successfully:", result);
+					alert('Success!');
+			
+				}
+				if (!res.ok) {
+					//const result = await res.json();
+					alert('Error sending the form data. Please try again later.');
+				}
+				return;
+
+			} catch (error) {
+				console.error(error);
+                alert('Error updating the issue. Please try again later.');
+                return;
+			}
+		}
 
 		// Log the collected form data
 		console.log('Form submitted:', formData);
@@ -77,6 +96,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		const title = 'testing title'
 		const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
 		`
+		console.log(studentId)
 		try {
 			const res = await fetch("/api/issueSystem/createIssue", {
                 method: "POST",
@@ -97,9 +117,11 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                 const result = await res.json();
                 console.log("Form submitted successfully:", result);
 				alert('Success!');
+				//router.push('/studentLogout'); 
 			}
 			if (!res.ok) {
-                //const result = await res.json();
+                const errObj = await res.json();
+				console.log(errObj.error)
                 alert('Error sending the form data. Please try again later.');
 			}
 		} 
@@ -170,7 +192,10 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					onChange={handleChange}
 				/>
 
-				<button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">
+				<button 
+					type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto"
+					onClick={() => router.push('/studentLogout')}
+				>
 					Submit
 				</button>
 			</form>
