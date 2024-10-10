@@ -21,6 +21,7 @@ export async function POST(request: NextRequest) {
         const { zid } = await request.json();
         let isUnique = false;
         let authCode = '';
+        await AuthCode.deleteMany({zid: zid})
         // ensure code is unique
         while (!isUnique) {
             authCode = generateAuthCode();

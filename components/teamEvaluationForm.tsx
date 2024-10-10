@@ -1,7 +1,6 @@
 'use client'
-import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-
+import { useState, ChangeEvent, FormEvent } from 'react';
 
 interface FormData {
 	teamMembers: string;
@@ -97,6 +96,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		const title = 'testing title'
 		const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
 		`
+		console.log(studentId)
 		try {
 			const res = await fetch("/api/issueSystem/createIssue", {
                 method: "POST",
@@ -120,7 +120,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 				//router.push('/studentLogout'); 
 			}
 			if (!res.ok) {
-                //const result = await res.json();
+                const errObj = await res.json();
+				console.log(errObj.error)
                 alert('Error sending the form data. Please try again later.');
 			}
 		} 
