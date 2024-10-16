@@ -52,50 +52,7 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // Get email addresses from the rest of the team
-        // const emailList = []
-        // for (const tempId of team.students) {
-        //     const student = await Student.findById(tempId);
-        //     if (student && tempId.toString() !== studentId.toString()) {
-        //         emailList.push(student.email);
-        //     }
-        // }
-
-        // const mailingParameters = {
-        //     from: process.env.SMTP_EMAIL,
-        //     to: emailList.join(','),
-        //     subject: 'Group Project Contribution Dispute',
-        //     html: `
-        //     <p>
-        //         Hi!
-        //     </p>
-        //     <p>
-        //         We have received a dispute application regarding 
-        //         the contribution to your group <strong>${team.teamName}</strong> 
-        //         in the course <strong>${course.courseName}</strong>. 
-        //         To ensure fairness and uphold the quality of learning, 
-        //         we sincerely ask that you fill out the following form 
-        //         to assist us solve the issue promptly. 
-        //         We appreciate your cooperation!
-        //     </p>
-        //     <p>
-        //         If the information is not correct, or this message does
-        //         not apply to you, please ignore this message. Thank you!
-        //     </p>
-        //     <p>
-        //         Regards,<br>
-        //         UNSW Development Team
-        //     </p>
-            
-        //     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-        //     href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${studentId}&teamId=${teamId}&courseId=${courseId}&issurId=${issueId}"><strong>Complete Here</strong></a>
-        //     `,
-        // };
-
-        // const info = await transport.sendMail(mailingParameters);
-        // return NextResponse.json({data: info}, {status: 200})
-
-
+        // course.email
         for (const tempId of team.students) {
             const student = await Student.findById(tempId);
             if (student && tempId.toString() !== studentId.toString()) {
@@ -119,7 +76,8 @@ export async function POST(request: NextRequest) {
                     </p>
                     <p>
                         If the information is not correct, or this message does
-                        not apply to you, please ignore this message. Thank you!
+                        not apply to you, please inform our course admin via the course
+                        email <strong>cowhorse3900@gmail.com</strong> as soon as possible. Thank you!
                     </p>
                     <p>
                         Regards,<br>
@@ -162,8 +120,6 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        
-        // const info = await transport.sendMail(mailingParameters);
         return NextResponse.json({message: 'Notification sent successfully'}, {status: 200})
 
 
