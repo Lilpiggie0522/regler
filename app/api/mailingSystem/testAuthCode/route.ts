@@ -4,7 +4,6 @@ export async function POST() {
     // Sample input
     // Request studentName (optional?), email and authCode
     const input = {
-        studentName: 'Cow Horse',
         email: 'cowhorse3900@outlook.com',
         authCode: '114514'
     }

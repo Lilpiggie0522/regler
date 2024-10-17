@@ -76,8 +76,7 @@ export async function POST(request: NextRequest) {
                     </p>
                     <p>
                         If the information is not correct, or this message does
-                        not apply to you, please inform our course admin via the course
-                        email <strong>cowhorse3900@gmail.com</strong> as soon as possible. Thank you!
+                        not apply to you, please inform your course admin as soon as possible. Thank you!
                     </p>
                     <p>
                         Regards,<br>
