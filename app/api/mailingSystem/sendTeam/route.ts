@@ -15,6 +15,7 @@ const Course = models.Course;
         - teamId: Unique object id of team
         - courseId: Unique object id of course
         - studentId: Unique object id of student who submits application
+        - issueId: Unique object id of issue
     Output: 
         Send email contains evaluation link to the rest of members
         Send confirmation email to initial applicant
@@ -52,7 +53,6 @@ export async function POST(request: NextRequest) {
             },
         });
 
-        // course.email
         for (const tempId of team.students) {
             const student = await Student.findById(tempId);
             if (student && tempId.toString() !== studentId.toString()) {
@@ -76,7 +76,8 @@ export async function POST(request: NextRequest) {
                     </p>
                     <p>
                         If the information is not correct, or this message does
-                        not apply to you, please inform your course admin as soon as possible. Thank you!
+                        not apply to you, please contact your course admin as 
+                        soon as possible. Thank you!
                     </p>
                     <p>
                         Regards,<br>
@@ -105,7 +106,8 @@ export async function POST(request: NextRequest) {
                     </p>
                     <p>
                         If the information is not correct, or this message does
-                        not apply to you, please ignore this message. Thank you!
+                        not apply to you, please contact your course admin as 
+                        soon as possible. Thank you!
                     </p>
                     <p>
                         Regards,<br>
@@ -119,13 +121,23 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        return NextResponse.json({message: 'Notification sent successfully'}, {status: 200})
+        // const tutor_input = {
+        //     mentors: team.mentors
+        // }
+
+        // // Call notifyTutor
+        // const response = await fetch('http://localhost:3000/api/mailingSystem/notifyTutor', {method: 'POST', body: JSON.stringify(tutor_input)})
+        // if (!response.ok) {
+        //     return NextResponse.json({ error: "Error sending email to tutor" }, { status: 404 })
+        // }
+        
+        return NextResponse.json({ message: 'Notification sent successfully' }, { status: 200 })
 
 
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - Team Email:', error);
-            return NextResponse.json({error: error.message}, {status: 502})
+            console.error('Error - sendTeam', error);
+            return NextResponse.json({ error: error.message }, { status: 502 })
         }
     }
 }
