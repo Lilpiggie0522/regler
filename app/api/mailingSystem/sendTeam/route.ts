@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
                 const mailingParameters = {
                     from: process.env.SMTP_EMAIL,
                     to: student.email,
-                    subject: 'Submission Comfirmed (Do not reply)',
+                    subject: 'Submission Confirmed (Do not reply)',
                     html: 
                     `
                     <p>
@@ -100,9 +100,10 @@ export async function POST(request: NextRequest) {
                     </p>
                     <p>
                         We have received your request of contribution review and
-                        inform the rest of your team members to fill out forms 
+                        inform the rest of your team members in <strong>
+                        ${team.teamName}</strong> to fill out forms 
                         anonymously. The evaluation result will be released via
-                        email after lecturers make adjustment. Please rest assure.
+                        email after lecturers make adjustment. Please be rest assured.
                     </p>
                     <p>
                         If the information is not correct, or this message does
@@ -121,17 +122,23 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // const tutor_input = {
-        //     mentors: team.mentors
-        // }
+        const tutor_input = {
+            mentors: team.mentors,
+            team: team.teamName,
+            course: course.courseName,
+        };
 
-        // // Call notifyTutor
-        // const response = await fetch('http://localhost:3000/api/mailingSystem/notifyTutor', {method: 'POST', body: JSON.stringify(tutor_input)})
-        // if (!response.ok) {
-        //     return NextResponse.json({ error: "Error sending email to tutor" }, { status: 404 })
-        // }
+        // Call notifyTutor
+        const response = await fetch('http://localhost:3000/api/mailingSystem/notifyTutor', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', }, 
+            body: JSON.stringify(tutor_input),
+        });
+        if (!response.ok) {
+            return NextResponse.json({ error: "Error sending email to tutor" }, { status: 404 })
+        }
         
-        return NextResponse.json({ message: 'Notification sent successfully' }, { status: 200 })
+        return NextResponse.json({ message: 'Notification sent to the team and tutors successfully' }, { status: 200 })
 
 
     } catch (error) {
