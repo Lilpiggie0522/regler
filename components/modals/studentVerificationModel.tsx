@@ -14,6 +14,7 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
   const [countdown, setCountdown] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
 
+
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
 
@@ -56,13 +57,10 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
         body: JSON.stringify({ zid: zID, code: verificationCode }),
       });
 
-      // Testing!!!!!!!!!!!!
-      onVerificationSuccess();
-
       if (!response.ok) {
-        throw new Error('Verification failed.');
+        const resObj = await response.json()
+        throw new Error('Verification failed.' + resObj.error);
       }
-
       // successful verification, jump to team evaluation form
       onVerificationSuccess();
 
