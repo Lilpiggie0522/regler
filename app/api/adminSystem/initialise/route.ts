@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 import models from "@/models/models";
 
-const Issue = models.Issue;
+//const Issue = models.Issue;
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
@@ -69,11 +69,7 @@ export async function POST(req : NextRequest) {
         await Course.deleteMany({});
         await Issue.deleteMany({});
         */
-        await Admin.deleteMany({});
-        await Student.deleteMany({});
-        await Team.deleteMany({});
-        await Course.deleteMany({});
-        await Issue.deleteMany({});
+       
 
         for (const courseAdmin of courseAdmins) {
             const password = await bcrypt.hash(courseAdmin.passwordRaw, 10);
