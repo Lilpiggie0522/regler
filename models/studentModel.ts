@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export const studentSchema = new Schema({
     studentName: {
@@ -6,5 +6,5 @@ export const studentSchema = new Schema({
     },
     email: { type: 'string', required: true, unique: true},
     zid: { type: 'string', required: true, select: false, unique: true},
-
+    course: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true}]
 });
