@@ -8,6 +8,8 @@ import models from "@/models/models";
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
+const Reminder = models.Reminder;
+const Admin = models.Admin;
 
 
 /*
@@ -31,7 +33,7 @@ export async function POST(request: NextRequest) {
 
         await dbConnect();
         const team = await Team.findById(teamId);
-        const course = await Course.findById(courseId)
+        const course = await Course.findById(courseId);
         if (!team) {
             return NextResponse.json({ error: "Team not found"}, { status: 404 })
         }
@@ -53,9 +55,11 @@ export async function POST(request: NextRequest) {
             },
         });
 
+        const restId = []
         for (const tempId of team.students) {
             const student = await Student.findById(tempId);
             if (student && tempId.toString() !== studentId.toString()) {
+                restId.push(tempId);
                 const mailingParameters = {
                     from: process.env.SMTP_EMAIL,
                     to: student.email,
@@ -122,21 +126,72 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        const tutor_input = {
-            mentors: team.mentors,
-            team: team.teamName,
-            course: course.courseName,
-        };
+        // const tutor_input = {
+        //     mentors: team.mentors,
+        //     team: team.teamName,
+        //     course: course.courseName,
+        // };
 
-        // Call notifyTutor
-        const response = await fetch('http://localhost:3000/api/mailingSystem/notifyTutor', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', }, 
-            body: JSON.stringify(tutor_input),
-        });
-        if (!response.ok) {
-            return NextResponse.json({ error: "Error sending email to tutor" }, { status: 404 })
+        // // Call notifyTutor
+        // const response = await fetch('http://localhost:3000/api/mailingSystem/notifyTutor', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json', }, 
+        //     body: JSON.stringify(tutor_input),
+        // });
+        // if (!response.ok) {
+        //     return NextResponse.json({ error: "Error sending email to tutor" }, { status: 404 })
+        // }
+
+        // Send notification to tutors
+        const emailList = [];
+        for (const mentorId of team.mentors) {
+            const temp = await Admin.findById(mentorId);
+            if (!temp) {
+                return NextResponse.json({ error: "Tutor not found"}, { status: 404 })
+            }
+            emailList.push(temp.email);
         }
+        const mailingParameters = {
+            from: process.env.SMTP_EMAIL,
+            to: emailList.join(','),
+            subject: 'New Contribution Dispute',
+            html: 
+            `
+            <p>
+                Hi!
+            </p>
+            <p>
+                We have received a new dispute application regarding 
+                the contribution to the group <strong>${team}</strong> 
+                in the course <strong>${course}</strong>. 
+                Please log in to Contribalance and provide your opinion
+                to assist us solve the issue promptly.
+                We appreciate your cooperation!
+            </p>
+            <p>
+                If the information is not correct, or this message does
+                not apply to you, please contact the course admin as 
+                soon as possible. Thank you!
+            </p>
+            <p>
+                Regards,<br>
+                UNSW Development Team
+            </p>
+            `
+        };
+        await transport.sendMail(mailingParameters);
+
+
+        // Set reminder for the rest of team member
+        const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
+        await Reminder.create({
+            team: teamId,
+            course: courseId,
+            issue: issueId,
+            // timestamp: timestamp,
+            schedule: weeklySchedule,
+            students: restId,
+        });
         
         return NextResponse.json({ message: 'Notification sent to the team and tutors successfully' }, { status: 200 })
 

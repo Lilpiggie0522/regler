@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import models from './models';
 
 export const issueSchema = new Schema({
     status: {
@@ -25,3 +26,16 @@ export const issueSchema = new Schema({
     }, { timestamps: true }]
 });
 
+issueSchema.pre('deleteMany', async function(next) {
+  try {
+      const query = this.getFilter();
+      const issueDelete = await models.Issue.find(query, '_id');
+      const issueId = issueDelete.map(issue => issue._id);
+      await models.Reminder.deleteMany({ issue: issueId });
+      next();
+  } catch (error) {
+      if (error instanceof Error) {
+          next(error);
+      }
+  }
+});

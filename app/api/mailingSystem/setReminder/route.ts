@@ -1,13 +1,18 @@
-import nodemailer from 'nodemailer';
+// import nodemailer from 'nodemailer';
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-
+// import mongoose from 'mongoose';
 import models from "@/models/models";
+// import cron from 'node-cron';
+import reminderMod from '@/lib/reminderMod';
+// import { Queue } from 'bullmq';
 
 
-const Student = models.Student;
-const Team = models.Team;
-const Course = models.Course;
+// const Student = models.Student;
+// const Team = models.Team;
+// const Course = models.Course;
+// const Issue = models.Issue;
+const Reminder = models.Reminder
 
 
 /*
@@ -15,7 +20,7 @@ const Course = models.Course;
         - teamId: Unique object id of team
         - courseId: Unique object id of course
         - studentId: Unique object id of student who submits application
-        - issueId: Unique object id of issue
+        - restId: List of students Id
     Output: 
         Send email contains evaluation link to the rest of members
         Send confirmation email to initial applicant
@@ -26,125 +31,69 @@ const Course = models.Course;
         - Check if student given in team or not
 */
 export async function POST(request: NextRequest) {
-    try {
-        const { teamId, courseId, studentId, issueId } = await request.json()
+    await dbConnect();
+    const { teamId, courseId, issueId, restId } = await request.json();
+    
 
-        await dbConnect();
-        const team = await Team.findById(teamId);
-        const course = await Course.findById(courseId)
-        if (!team) {
-            return NextResponse.json({ error: "Team not found"}, { status: 404 })
-        }
-        if (!course) {
-            return NextResponse.json({ error: "Course not found"}, { status: 404 })
-        } 
-        if (!course.teams.includes(teamId)) {
-            return NextResponse.json({ error: "Team not found from course"}, { status: 404 })
-        }
-        if (!team.students.includes(studentId)) {
-            return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
-        }
+    const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
+    // const timestamp = {
+    //     minute: time.getMinutes().toString(),
+    //     hour: time.getHours().toString(),
+    //     day: time.getDay().toString(),
+    // };
 
-        const transport = nodemailer.createTransport({
-            service: 'gmail',
-            auth: {
-                user: process.env.SMTP_EMAIL,
-                pass: process.env.SMTP_PASSWORD,
-            },
-        });
+    // Record job into database
+    await Reminder.create({
+        team: teamId,
+        course: courseId,
+        issue: issueId,
+        // timestamp: timestamp,
+        schedule: weeklySchedule,
+        students: restId
+    });
 
-        for (const tempId of team.students) {
-            const student = await Student.findById(tempId);
-            if (student && tempId.toString() !== studentId.toString()) {
-                const mailingParameters = {
-                    from: process.env.SMTP_EMAIL,
-                    to: student.email,
-                    subject: 'Group Project Contribution Dispute',
-                    html: 
-                    `
-                    <p>
-                        Hi, <strong>${student.studentName}</strong>!
-                    </p>
-                    <p>
-                        We have received a dispute application regarding 
-                        the contribution to your group <strong>${team.teamName}</strong> 
-                        in the course <strong>${course.courseName}</strong>. 
-                        To ensure fairness and uphold the quality of learning, 
-                        we sincerely ask that you fill out the following form 
-                        to assist us solve the issue promptly. 
-                        We appreciate your cooperation!
-                    </p>
-                    <p>
-                        If the information is not correct, or this message does
-                        not apply to you, please contact your course admin as 
-                        soon as possible. Thank you!
-                    </p>
-                    <p>
-                        Regards,<br>
-                        UNSW Development Team
-                    </p>
-                    <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-                    href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
-                    `
-                };
-                await transport.sendMail(mailingParameters);       
-            } else if (student && tempId.toString() === studentId.toString()) {
-                const mailingParameters = {
-                    from: process.env.SMTP_EMAIL,
-                    to: student.email,
-                    subject: 'Submission Confirmed (Do not reply)',
-                    html: 
-                    `
-                    <p>
-                        Hi, <strong>${student.studentName}</strong>!
-                    </p>
-                    <p>
-                        We have received your request of contribution review and
-                        inform the rest of your team members in <strong>
-                        ${team.teamName}</strong> to fill out forms 
-                        anonymously. The evaluation result will be released via
-                        email after lecturers make adjustment. Please be rest assured.
-                    </p>
-                    <p>
-                        If the information is not correct, or this message does
-                        not apply to you, please contact your course admin as 
-                        soon as possible. Thank you!
-                    </p>
-                    <p>
-                        Regards,<br>
-                        UNSW Development Team
-                    </p>
-                    `
-                };
-                await transport.sendMail(mailingParameters);  
-            } else {
-                console.log('Error: Partial notification failed due to student not exists');
-            }
-        }
+    // try {
+    //     await reminderMod(teamId, courseId, issueId, restId, timestamp)
+    // } catch (error) {
+    //     if (error instanceof Error) {
+    //         console.error('Error - setReminder (POST)', error);
+    //         return NextResponse.json({ error: error.message }, { status: 502 })
+    //     }
+    // }
 
-        const tutor_input = {
-            mentors: team.mentors,
-            team: team.teamName,
-            course: course.courseName,
-        };
+    return NextResponse.json({ message: 'Reminder for team is recorded in database' }, { status: 200 })
 
-        // Call notifyTutor
-        const response = await fetch('http://localhost:3000/api/mailingSystem/notifyTutor', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', }, 
-            body: JSON.stringify(tutor_input),
-        });
-        if (!response.ok) {
-            return NextResponse.json({ error: "Error sending email to tutor" }, { status: 404 })
-        }
-        
-        return NextResponse.json({ message: 'Notification sent to the team and tutors successfully' }, { status: 200 })
-
-
-    } catch (error) {
-        if (error instanceof Error) {
-            console.error('Error - sendTeam', error);
-            return NextResponse.json({ error: error.message }, { status: 502 })
-        }
-    }
 }
+
+
+// /*
+//     Overview:
+//     This function deletes job and update database when student submits form
+//     Input: 
+//         - id: Unique object id (team/student/course/issue)
+//         - type: strings to indicate type of id
+//     Output: 
+//         Delete object if id in (team/course/issue)
+//         Delete student if id in student
+//     Error:
+//         - 
+// // */
+
+
+// export async function DELETE(request: NextRequest) {
+//     try {
+//         await dbConnect();
+//         const { teamId, issueId, studentId, courseId } = await request.json();
+
+//         // if type = team and there is an object with field team:id or course:id or issue:id, delete the object that has the id
+//         // if type = student and id in students field, delete student in the list id in all object
+
+//         return NextResponse.json({ message: `Successfully remove delete ${type}: ${id}` }, { status: 200 }) 
+//     } catch (error) {
+//         if (error instanceof Error) {
+//             console.error('Error - setReminder (DELETE)', error);
+//             return NextResponse.json({ error: error.message }, { status: 502 })
+//         }
+//     }
+
+// }
