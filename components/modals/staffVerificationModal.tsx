@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 
-import { StaffVerificationModalProps, StudentVerificationModalProps } from "@/components/modals/ModalProps";
+import { StaffVerificationModalProps } from "@/components/modals/ModalProps";
 import ErrorModal from './errorModal';
-import { sendStaffVerificationEmail, sendVerificationEmail } from '@/components/services/emailService';
+import { sendStaffVerificationEmail } from '@/components/services/emailService';
 
 export default function StaffVerificationModal({ onClose, onVerificationSuccess, email }: StaffVerificationModalProps) {
 

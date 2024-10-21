@@ -210,8 +210,6 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify(result)
     })
     if (response.ok) {
-        const res = await response.json()
-        const {message, courses, teams} = res
         return NextResponse.json(converted, {status: 200})
     } else {
         const errorObj = await response.json()

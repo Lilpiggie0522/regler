@@ -44,8 +44,8 @@ export default function StudentDetailConfirm() {
 
     // api/util/{courseId}
     const { useLocalStorageState } = useStudentContext()
-    const [teamId, setTeamId] = useLocalStorageState('teamId', '')
-    const [courseId, setCourseId] = useLocalStorageState('courseId', '')
+    const [teamId,] = useLocalStorageState('teamId', '')
+    const [courseId,] = useLocalStorageState('courseId', '')
     console.log("teamId:", teamId); // Check the value of teamId
     console.log("courseId:", courseId); // Check the value of teamId
     useEffect(() => {
