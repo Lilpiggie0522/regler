@@ -12,7 +12,11 @@ import { useStudentContext } from '@/context/studentContext';
 
 export default function StudentLogin() {
   const router = useRouter();
-  const {setStudentId, setTeamId, setCourseId} = useStudentContext()
+  // const {setStudentId, setTeamId, setCourseId} = useStudentContext()
+  const { useLocalStorageState } = useStudentContext()
+  const [c_zid, setC_zid] = useLocalStorageState('studentId', '')
+  const [c_tid, setC_tid] = useLocalStorageState('teamId', '')
+  const [c_cid, setC_cid] = useLocalStorageState('courseId', '')
 
   const [errorMessage, setErrorMessage] = useState('');
   const [zID, setZid] = useState('');
@@ -61,11 +65,13 @@ export default function StudentLogin() {
       setShowVerificationModal(true);
       const student = await emailSent.json()
       const {studentId, teamId, courseId} = student
-      setStudentId(studentId)
-      setTeamId(teamId)
-      setCourseId(courseId)
-      // console.log("student got from email backend is:")
-      // console.log(student)
+      setC_zid(studentId)
+      setC_tid(teamId)
+      setC_cid(courseId)
+      // setStudentId(studentId)
+      // setTeamId(teamId)
+      // setCourseId(courseId)
+
     }
   };
 
@@ -150,7 +156,7 @@ export default function StudentLogin() {
               value={courseCode}
               type="text"
               className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
-              placeholder="Course Code: Comp3900"
+              placeholder="Course Code: COMP3900"
               onChange={(input) => setCourseCode(input.target.value)} // refresh course code
             />
           </div>

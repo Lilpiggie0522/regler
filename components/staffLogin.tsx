@@ -8,13 +8,13 @@ import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
 import StudentVerificationModal from "@/components/modals/studentVerificationModel";
 import ErrorModal from './modals/errorModal';
 import { sendStaffVerificationEmail, sendVerificationEmail } from '@/components/services/emailService';
-import { useStudentContext } from '@/context/studentContext';
+import { useLocalStorageState, useStudentContext } from '@/context/studentContext';
 import StaffVerificationModal from './modals/staffVerificationModal';
 
 export default function StaffLogin() {
   const router = useRouter();
-  const {setStudentId, setTeamId, setCourseId} = useStudentContext()
-
+  // const {setStudentId, setTeamId, setCourseId} = useStudentContext()
+  const { useLocalStorageState } = useStudentContext()
   const [errorMessage, setErrorMessage] = useState('');
   const [email, setEmail] = useState('');
 
@@ -30,10 +30,10 @@ export default function StaffLogin() {
   // frontend invalid check
   const validateInput = () => {
 
-    const zidRegex = /.*@[a-zA-Z.]+.com$/;
+    const emailRegex = /.*@[a-zA-Z\.]+((\.com)|(\.unsw.edu.au))$/;
 
-    if (!zidRegex.test(email)) {
-      setErrorMessage('Invalid zID format.');
+    if (!emailRegex.test(email)) {
+      setErrorMessage('Invalid email format.');
       return false;
     }
     return true;
@@ -54,11 +54,15 @@ export default function StaffLogin() {
       setShowLoginFail(true);
     } else {
       setShowVerificationModal(true);
-      const student = await emailSent.json()
-      const {studentId, teamId, courseId} = student
-      setStudentId(studentId)
-      setTeamId(teamId)
-      setCourseId(courseId)
+      const admin = await emailSent.json()
+      const { email, role } = admin
+      // setStudentId(studentId)
+      // setTeamId(teamId)
+      // setCourseId(courseId)
+      const [staffEmail, setStaffEmail] = useLocalStorageState('email', '')
+      const [staffRole, setStaffRole] = useLocalStorageState('role', '')
+      setStaffEmail(email)
+      setStaffRole(role)
     }
   };
   
