@@ -1,6 +1,6 @@
 import { SignJWT, jwtVerify} from 'jose'
 
-const secret = new TextEncoder().encode('shhhhh, piggie is coming!')
+const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 export async function signJWT(id: string, userGroup: string) {
     const alg = 'HS256'
     const token = await new SignJWT({ id: id, role: userGroup })
