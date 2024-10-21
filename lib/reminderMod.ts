@@ -1,79 +1,7 @@
 import dbConnect from '@/lib/dbConnect';
 import models from "@/models/models";
 import mongoose from 'mongoose';
-// import cron from 'node-cron';
 import nodemailer from 'nodemailer';
-
-// interface Timestamp {
-//     minute: string;
-//     hour: string;
-//     day: string;
-// }
-
-// const scheduledReminder = {
-//     'teamid,courseid,issueid': cron job object
-// }
-// const scheduledReminder = {};
-
-// Load in manager in-memory
-// export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId, 
-//                                 courseId: mongoose.Schema.Types.ObjectId, 
-//                                 issueId: mongoose.Schema.Types.ObjectId, 
-//                                 restId: mongoose.Schema.Types.ObjectId[], 
-//                                 timestamp: Timestamp) {
-//     await dbConnect();
-//     const transport = nodemailer.createTransport({
-//         service: 'gmail',
-//         auth: {
-//             user: process.env.SMTP_EMAIL,
-//             pass: process.env.SMTP_PASSWORD,
-//         },
-//     });
-
-//     const Student = models.Student;
-//     const Team = models.Team;
-//     const Course = models.Course;
-
-    
-//     const team = await Team.findById(teamId);
-//     const course = await Course.findById(courseId);
-//     for (const tempId of restId) {
-//         const student = await Student.findById(tempId);
-//         // cron.schedule(`50 22 * * 5`, async () => {
-//         cron.schedule(`${timestamp.minute} ${timestamp.hour} * * ${timestamp.day}`, async () => {
-//             if (student) {
-//                 const mailingParameters = {
-//                     from: process.env.SMTP_EMAIL,
-//                     to: student.email,
-//                     subject: 'Reminder for Form Completion',
-//                     html: 
-//                     `
-//                     <p>
-//                         Hi, <strong>${student.studentName}</strong>!
-//                     </p>
-//                     <p>
-//                         This is a reminder to complete the contribution form for
-//                         your group <strong>${team.teamName}</strong> 
-//                         in the course <strong>${course.courseName}</strong>.
-//                         Please click the button below and complete the form.
-//                         We appreciate your cooperation!
-//                     </p>
-//                     <p>
-//                         Regards,<br>
-//                         UNSW Development Team
-//                     </p>
-//                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-//                     href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
-//                     `
-//                 };
-//                 await transport.sendMail(mailingParameters);  
-//             }
-//         });
-//         // const jobId = '1';
-//         // scheduledReminder["jobId"] = newReminder;
-        
-//     }
-// }
 
 export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId, 
                                 courseId: mongoose.Schema.Types.ObjectId, 
@@ -152,8 +80,8 @@ export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId,
         </p>
         <p>
             This is a reminder to provide opinion regarding
-            the contribution to the group <strong>${team}</strong> 
-            in the course <strong>${course}</strong>. 
+            the contribution to the group <strong>${team.teamName}</strong> 
+            in the course <strong>${course.courseName}</strong>. 
             Please log in to Contribalance and provide your opinion
             to assist us solve the issue promptly.
             We appreciate your cooperation!

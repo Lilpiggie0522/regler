@@ -1,71 +1,3 @@
-// import nodemailer from 'nodemailer';
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
-// import mongoose from 'mongoose';
-import models from "@/models/models";
-// import cron from 'node-cron';
-import reminderMod from '@/lib/reminderMod';
-// import { Queue } from 'bullmq';
-
-
-// const Student = models.Student;
-// const Team = models.Team;
-// const Course = models.Course;
-// const Issue = models.Issue;
-const Reminder = models.Reminder
-
-
-/*
-    Input: 
-        - teamId: Unique object id of team
-        - courseId: Unique object id of course
-        - studentId: Unique object id of student who submits application
-        - restId: List of students Id
-    Output: 
-        Send email contains evaluation link to the rest of members
-        Send confirmation email to initial applicant
-    Error:
-        - Check if team exists
-        - Check if course exists
-        - Check if team is contained in courses
-        - Check if student given in team or not
-*/
-export async function POST(request: NextRequest) {
-    await dbConnect();
-    const { teamId, courseId, issueId, restId } = await request.json();
-    
-
-    const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
-    // const timestamp = {
-    //     minute: time.getMinutes().toString(),
-    //     hour: time.getHours().toString(),
-    //     day: time.getDay().toString(),
-    // };
-
-    // Record job into database
-    await Reminder.create({
-        team: teamId,
-        course: courseId,
-        issue: issueId,
-        // timestamp: timestamp,
-        schedule: weeklySchedule,
-        students: restId
-    });
-
-    // try {
-    //     await reminderMod(teamId, courseId, issueId, restId, timestamp)
-    // } catch (error) {
-    //     if (error instanceof Error) {
-    //         console.error('Error - setReminder (POST)', error);
-    //         return NextResponse.json({ error: error.message }, { status: 502 })
-    //     }
-    // }
-
-    return NextResponse.json({ message: 'Reminder for team is recorded in database' }, { status: 200 })
-
-}
-
-
 // /*
 //     Overview:
 //     This function deletes job and update database when student submits form
@@ -97,3 +29,61 @@ export async function POST(request: NextRequest) {
 //     }
 
 // }
+
+import dbConnect from '@/lib/dbConnect';
+import reminderMod from '@/lib/reminderMod';
+import models from "@/models/models";
+import { NextResponse } from 'next/server';
+import cron from 'node-cron';
+
+// const CHECK_TIME = '';
+// const PRO_INTERVAL = 7*24*60*60*1000;
+const TEST_INTERVAL = 10*60*1000;
+
+// Traverse the whole reminder to send notification
+async function reminderRequest() {
+    await dbConnect();
+    const reminders = await models.Reminder.find();
+    const currentTime = new Date();
+    for (const reminder of reminders) {
+        // Send email if schedule is after current time
+        if (currentTime > reminder.schedule) {
+            await reminderMod(reminder.team, reminder.course, reminder.issue, reminder.students, reminder.mentors);
+            // interval < one week, server shuts for < 1 week
+            let futureSchedule = new Date(reminder.schedule.getTime() + TEST_INTERVAL);
+
+            // Edge case: interval > one week, server shuts for > 1 week
+            if (currentTime.getTime() - reminder.schedule.getTime() > TEST_INTERVAL) {
+                futureSchedule = new Date(currentTime.getTime() + TEST_INTERVAL);
+            }
+            // update next schedule
+            reminder.schedule = futureSchedule;
+            await reminder.save();
+        }
+    };
+}
+
+// Immediately send reminder and set up reminders for every 9:00am when server starts
+// Using UTC time +00:00
+// 4am => 3pm daylight saving sydney. 
+// 
+
+async function InitialReminderCron() {
+    await reminderRequest();
+    // cron.schedule('25 4 * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
+        console.log('Check every 5 minutes');
+        await reminderRequest();
+    });
+}
+
+export async function POST() {
+    try {
+        await InitialReminderCron();
+        return NextResponse.json({ message: "Reminder Initialised" }, { status: 200 });
+    } catch (error) {
+        console.log(error);
+        return NextResponse.json({ error: error }, { status: 404 });
+    }
+
+}

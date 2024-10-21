@@ -126,22 +126,6 @@ export async function POST(request: NextRequest) {
             }
         }
 
-        // const tutor_input = {
-        //     mentors: team.mentors,
-        //     team: team.teamName,
-        //     course: course.courseName,
-        // };
-
-        // // Call notifyTutor
-        // const response = await fetch('http://localhost:3000/api/mailingSystem/notifyTutor', {
-        //     method: 'POST',
-        //     headers: { 'Content-Type': 'application/json', }, 
-        //     body: JSON.stringify(tutor_input),
-        // });
-        // if (!response.ok) {
-        //     return NextResponse.json({ error: "Error sending email to tutor" }, { status: 404 })
-        // }
-
         // Send notification to tutors
         const emailList = [];
         for (const mentorId of team.mentors) {
@@ -162,8 +146,8 @@ export async function POST(request: NextRequest) {
             </p>
             <p>
                 We have received a new dispute application regarding 
-                the contribution to the group <strong>${team}</strong> 
-                in the course <strong>${course}</strong>. 
+                the contribution to the group <strong>${team.teamName}</strong> 
+                in the course <strong>${course.courseName}</strong>. 
                 Please log in to Contribalance and provide your opinion
                 to assist us solve the issue promptly.
                 We appreciate your cooperation!
@@ -183,7 +167,8 @@ export async function POST(request: NextRequest) {
 
 
         // Set reminder for the rest of team member
-        const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
+        const weeklySchedule = new Date(new Date().getTime() + 10*60*1000);
+        // const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
         await Reminder.create({
             team: teamId,
             course: courseId,
@@ -191,6 +176,7 @@ export async function POST(request: NextRequest) {
             // timestamp: timestamp,
             schedule: weeklySchedule,
             students: restId,
+            mentors: team.mentors,
         });
         
         return NextResponse.json({ message: 'Notification sent to the team and tutors successfully' }, { status: 200 })
