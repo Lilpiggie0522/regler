@@ -13,7 +13,7 @@ export async function middleware(request: NextRequest) {
     const decoded = await verifyJWT(token)
     console.log('cookie is: ')
     console.log(decoded)
-    if (request.nextUrl.pathname === '/lecturer' && decoded.role !== 'admin') {
+    if (request.nextUrl.pathname === '/lecturer' && decoded.role !== 'tutor' && decoded.role !== 'lecturer') {
       return NextResponse.redirect(new URL('/studentDetailConfirm', request.url))
     }
     return NextResponse.next()
