@@ -14,9 +14,9 @@ export default function StudentLogin() {
   const router = useRouter();
   // const {setStudentId, setTeamId, setCourseId} = useStudentContext()
   const { useLocalStorageState } = useStudentContext()
-  const [c_zid, setC_zid] = useLocalStorageState('studentId', '')
-  const [c_tid, setC_tid] = useLocalStorageState('teamId', '')
-  const [c_cid, setC_cid] = useLocalStorageState('courseId', '')
+  const [, setC_zid] = useLocalStorageState('studentId', '')
+  const [, setC_tid] = useLocalStorageState('teamId', '')
+  const [, setC_cid] = useLocalStorageState('courseId', '')
 
   const [errorMessage, setErrorMessage] = useState('');
   const [zID, setZid] = useState('');

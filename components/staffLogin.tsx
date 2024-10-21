@@ -5,16 +5,17 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
-import StudentVerificationModal from "@/components/modals/studentVerificationModel";
 import ErrorModal from './modals/errorModal';
-import { sendStaffVerificationEmail, sendVerificationEmail } from '@/components/services/emailService';
-import { useLocalStorageState, useStudentContext } from '@/context/studentContext';
+import { sendStaffVerificationEmail } from '@/components/services/emailService';
+import { useStudentContext } from '@/context/studentContext';
 import StaffVerificationModal from './modals/staffVerificationModal';
 
 export default function StaffLogin() {
   const router = useRouter();
   // const {setStudentId, setTeamId, setCourseId} = useStudentContext()
   const { useLocalStorageState } = useStudentContext()
+  const [, setStaffEmail] = useLocalStorageState('email', '')
+  const [, setStaffRole] = useLocalStorageState('role', '')
   const [errorMessage, setErrorMessage] = useState('');
   const [email, setEmail] = useState('');
 
@@ -56,16 +57,12 @@ export default function StaffLogin() {
       setShowVerificationModal(true);
       const admin = await emailSent.json()
       const { email, role } = admin
-      // setStudentId(studentId)
-      // setTeamId(teamId)
-      // setCourseId(courseId)
-      const [staffEmail, setStaffEmail] = useLocalStorageState('email', '')
-      const [staffRole, setStaffRole] = useLocalStorageState('role', '')
+
       setStaffEmail(email)
       setStaffRole(role)
     }
   };
-  
+
 
   return (
     <div className="flex min-h-screen">
@@ -91,7 +88,7 @@ export default function StaffLogin() {
 
           {/* zID Input */}
           <div className="mb-6">
-          <label htmlFor="email" className="sr-only">zID:</label>
+            <label htmlFor="email" className="sr-only">zID:</label>
             <input
               id="email"
               name="email"
@@ -104,9 +101,9 @@ export default function StaffLogin() {
           </div>
 
           {/* Verify button */}
-          
-          <button 
-            onClick={ handleSendVerificationEmail } // check whether Input invalid
+
+          <button
+            onClick={handleSendVerificationEmail} // check whether Input invalid
             className="w-full bg-black text-white py-2 rounded-full mb-6">
             Verify with email
           </button>
@@ -121,7 +118,7 @@ export default function StaffLogin() {
 
           {/* showVerificationModal */}
           {showVerificationModal ? (
-            <StaffVerificationModal email={email} onClose={() => setShowVerificationModal(false)} onVerificationSuccess={handleVerificationSuccess}/>
+            <StaffVerificationModal email={email} onClose={() => setShowVerificationModal(false)} onVerificationSuccess={handleVerificationSuccess} />
           ) : null}
 
           {/* privacy policy */}
