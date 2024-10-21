@@ -16,7 +16,6 @@ export async function GET( req: NextRequest) {
     try {
         await dbConnect();
         const courseId = req.url.split('/').pop();
-        console.log(courseId);
         if (!mongoose.isValidObjectId(courseId)) {
             return NextResponse.json({error: "invalid course id"}, {status: 400});
         }

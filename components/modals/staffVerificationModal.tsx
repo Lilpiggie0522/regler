@@ -62,8 +62,9 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
         throw new Error('Verification failed.' + resObj.error);
       }
       // successful verification, jump to team evaluation form
+      const token = await response.json()
+      console.log(token)
       onVerificationSuccess();
-
     } catch (error) {
       console.error('Error during checking verification code:', error);
       setErrorMessage('Verification failed.');

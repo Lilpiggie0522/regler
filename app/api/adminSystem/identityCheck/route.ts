@@ -6,7 +6,6 @@ const {Admin} = models
 export async function POST(request: NextRequest) {
     try {
         const {email}: {email: string}  = await request.json();
-        console.log(email)
         await dbConnect();
         const admin = await Admin.findOne({email: email})
         if (!admin) {
@@ -24,7 +23,8 @@ export async function POST(request: NextRequest) {
             console.log(await sendAuthCodeResponse.json())
             return NextResponse.json(sendAuthCodeResponse, {status: 500})
         }
-        return NextResponse.json("ok", {status: 200})
+        // object id of staff and role
+        return NextResponse.json({email: admin.email, role: admin.role}, {status: 200})
     } catch (error) {
         if (error instanceof Error) {
             console.error('Error - Team Email:', error);

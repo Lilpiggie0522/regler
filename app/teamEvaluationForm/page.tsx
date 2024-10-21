@@ -7,7 +7,10 @@ export default function TeamEvaluationPage() {
   // const teamId = "6703551f9db9e11b3843691c";
   // const courseId = "6703551f9db9e11b3843692a";
   // const issueId = '';
-  const { teamId, studentId, courseId } = useStudentContext()
+  const { useLocalStorageState } = useStudentContext()
+  const [studentId, setStudentId] = useLocalStorageState('studentId', '')
+  const [teamId, setTeamId] = useLocalStorageState('teamId', '')
+  const [courseId, setCourseId] = useLocalStorageState('courseId', '')
   console.log(`student id is: ${studentId}`)
   console.log(`team id is: ${teamId}`)
   console.log(`course id is: ${courseId}`)

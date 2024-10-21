@@ -1,13 +1,20 @@
-import jwt from 'jsonwebtoken'
+import { SignJWT, jwtVerify} from 'jose'
 
-export function signJWT(zid: string, userGroup: string) {
-    const token = jwt.sign({
-        data: {
-            zid: 'piggie',
-            userGroup: 'staff',
-            teamId: '1'
-        },
-        exp: Math.floor(Date.now() / 1000) + (60 * 60 * 2)
-    }, 'shhhhh')
-    console.log(token)
+const secret = new TextEncoder().encode('shhhhh, piggie is coming!')
+export async function signJWT(id: string, userGroup: string) {
+    const alg = 'HS256'
+    const token = await new SignJWT({ id: id, role: userGroup })
+    .setProtectedHeader({alg})
+    .setExpirationTime('2h')
+    .sign(secret)
+    return token
+}
+
+export async function verifyJWT(token: string) {
+    try {
+        const { payload } = await jwtVerify(token, secret);
+        return payload;
+    } catch (error) {
+        throw error;
+    }
 }
