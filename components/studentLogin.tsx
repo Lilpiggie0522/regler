@@ -50,12 +50,12 @@ export default function StudentLogin() {
       return;
     }
 
-    const emailSent = await sendVerificationEmail(zID, courseCode); // 使用拆分后的逻辑
+    const emailSent = await sendVerificationEmail(zID, courseCode);
 
     if (!emailSent.ok) {
       const res = await emailSent.json()
       console.log(res.error)
-      setErrorMessage('Failed to send verification email.');
+      setErrorMessage('Course code or zID is invalid.');
       setShowLoginFail(true);
     } else {
       setShowVerificationModal(true);
@@ -68,42 +68,6 @@ export default function StudentLogin() {
       // console.log(student)
     }
   };
-
-  // const sendVerificationEmail = async () => {
-  //   // frontend check: if format wrong
-  //   if (!validateInput()) {
-  //     setShowLoginFail(true);
-  //     return;
-  //   }
-
-  //   // test for verification
-  //   setShowVerificationModal(true);
-
-  //   try {
-  //     const response = await fetch('/api/studentSystem/identityCheck', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ zid: zID, courseCode: courseCode }),
-  //     });
-
-  //     if (!response.ok) {
-  //       setErrorMessage('Failed to send verification email.');
-  //       setShowLoginFail(true);
-  //       alert(response);
-  //     } else {
-  //       setShowVerificationModal(true);
-  //       setShowLoginFail(false);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error during email sending:', error);
-  //     setErrorMessage('Server error. Please try again later.');
-  //     setShowLoginFail(true);
-  //   }
-
-  // };
-  
 
   return (
     <div className="flex min-h-screen">
