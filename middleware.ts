@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server'
 import { verifyJWT } from './util/jwt'
 // This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
+  console.log(`route is: ${request.url}`)
   const token = request.cookies.get("token")?.value
   if (!token && request.nextUrl.pathname !== '/') {
     console.log('no token, path not / redirect')
@@ -42,5 +43,5 @@ export async function middleware(request: NextRequest) {
  
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*Login).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*Login|Mainpage-prisci).*)'],
 }
