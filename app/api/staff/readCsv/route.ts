@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createStudentInput, createTeamInput, createCourseInput, createAdminInput, initialiseInput } from '../../adminSystem/initialise/route';
-import models from '@/models/models';
 import { convertFileData, courseNameRegexCheck, insertAdmin, insertStudent, insertTeam, insertTutor, validateConvertedData } from "./helpers";
-
-const { Student, Team, Course, Admin } = models;
-
-
 
 export async function POST(req: NextRequest) {
     // console.log("request received")

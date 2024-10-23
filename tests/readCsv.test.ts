@@ -289,7 +289,7 @@ describe("data insertion", () => {
             {
                 adminName: "real_piggie",
                 email: "z5414078@unsw.edu.au",
-                role: 'courseAdmin',
+                role: 'admin',
                 courseName: courseInfo[0],
                 term: courseInfo[1]
             }
@@ -303,7 +303,7 @@ describe("data insertion", () => {
             {
                 adminName: "real_piggie",
                 email: "z5414078@unsw.edu.au",
-                role: 'courseAdmin',
+                role: 'admin',
                 courseName: courseInfo[0],
                 term: courseInfo[1]
             }
