@@ -53,7 +53,7 @@ export async function convertFileData(file: File): Promise<convertedResult[]> {
     const results = await parseCSV(csvStream)
     const converted: convertedResult[] = results.map(row => {
         const lowerCaseRow = Object.fromEntries(
-            Object.entries(row).map(([key, value]) => [key.replace(/\s+/g, '').toLowerCase(), value])
+            Object.entries(row).map(([key, value]) => [key.replace(/\s+/g, '').toLowerCase(), value?.trim()])
         ) as convertedResult
         return lowerCaseRow
     })
@@ -143,13 +143,15 @@ export function insertTutor(row: convertedResult, staffAdmins: createAdminInput[
             }
         }
     } else {
-        if (!newCourse.mentorsEmails.split(',').includes(newMentorEmail)) {
-            // adding mentor email to course
-            if (newCourse.mentorsEmails) {
-                newCourse.mentorsEmails += ','
-            }
-            newCourse.mentorsEmails += newMentorEmail
-        }
+        // if (!newCourse.mentorsEmails.split(',').includes(newMentorEmail)) {
+        //     // adding mentor email to course
+        //     if (newCourse.mentorsEmails) {
+        //         newCourse.mentorsEmails += ','
+        //     }
+        //     newCourse.mentorsEmails += newMentorEmail
+        // }
+        
+        // adding mentor id to team
         if (teamToAdd) {
             if (!teamToAdd.mentorsEmails.split(',').includes(newMentorEmail)) {
                 if (teamToAdd.mentorsEmails) {
