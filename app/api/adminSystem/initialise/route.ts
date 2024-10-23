@@ -61,16 +61,6 @@ export async function POST(req: NextRequest) {
 
         const { courseAdmins, staffAdmins, students, teams, course } = request as initialiseInput;
         const term = course?.term
-        // await Admin.deleteMany({});
-        // await Student.deleteMany({});
-        // await Team.deleteMany({});
-        // await Course.deleteMany({});
-        // await Issue.deleteMany({});
-        await Admin.collection.drop()
-        await Course.collection.drop()
-        await Student.collection.drop()
-        await Team.collection.drop()
-        await Issue.collection.drop()
         
         // create course
         let courseId = null;

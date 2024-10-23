@@ -25,7 +25,7 @@ export default function StaffLogin() {
 
   const handleVerificationSuccess = () => {
     setShowVerificationModal(false);
-    router.push('/lecturer');
+    router.push('/staffCourseList');
   };
 
   // frontend invalid check

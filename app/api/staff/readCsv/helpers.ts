@@ -80,7 +80,7 @@ export function insertAdmin(converted: convertedResult[], courseAdmins: createAd
             const newAdmin: createAdminInput = {
                 adminName: newAdminName,
                 email: newAdminEmail,
-                role: 'courseAdmin',
+                role: 'admin',
                 courseName: courseName,
                 term: courseTerm
             }

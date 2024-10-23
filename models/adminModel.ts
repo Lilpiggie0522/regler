@@ -7,7 +7,7 @@ export const adminSchema = new Schema({
   email: { type: 'string', required: true, unique: true},
   role: {
       type: 'string', 
-      enum: ['courseAdmin', 'tutor'],
+      enum: ['admin', 'tutor'],
       message: '{VALUE} is not a valid role',
       required: true
   },
