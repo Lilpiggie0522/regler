@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import models from "@/models/models";
 
-const Issue = models.Issue;
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
