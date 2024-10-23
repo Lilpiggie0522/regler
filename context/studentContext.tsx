@@ -1,21 +1,8 @@
 'use client'
 import React, { createContext, useState, useContext, ContextType } from 'react';
 
-// // {studentId: student._id, teamId: teamId, courseId: course._id}
-// interface Student {
-//   studentId: string;
-//   teamId: string;
-//   courseId: string;
-// }
-
 interface contextType {
-  // student: Student | null;
-  studentId: string;
-  setStudentId: (stduentId: string) => void
-  teamId: string;
-  setTeamId: (teamId: string) => void
-  courseId: string;
-  setCourseId: (course: string) => void
+  useLocalStorageState: <T>(key: string, value: T) => [T, React.Dispatch<React.SetStateAction<T>>];
 }
 
 interface StudentProviderProps {
@@ -31,17 +18,43 @@ export function useStudentContext() {
   if (!context) {
     throw new Error("useStudent must be used within a StudentProvider");
   }
-  return context; 
+  return context;
 }
 
 // Provider component
-export function StudentProvider({children}: StudentProviderProps) {
-  const [studentId, setStudentId] = useState<string>('');
-  const [teamId, setTeamId] = useState<string>('');
-  const [courseId, setCourseId] = useState<string>('');
+export function StudentProvider({ children }: StudentProviderProps) {
+  useLocalStorageState('studentId', '')
   return (
-    <StudentContext.Provider value={{ studentId, teamId, courseId, setStudentId, setTeamId, setCourseId}}>
+    // studentId, teamId, courseId, 
+    <StudentContext.Provider value={{ useLocalStorageState }}>
       {children}
     </StudentContext.Provider>
   );
+}
+
+
+export function useLocalStorageState<T>(key: string, defaultValue: T): [T, React.Dispatch<React.SetStateAction<T>>] {
+  const [state, setStateRaw] = useState<T>(getStorageItem(key, defaultValue))
+  const setState: React.Dispatch<React.SetStateAction<T>> = (value) => {
+    saveStorageItem(key, value as string)
+    setStateRaw(value)
+  }
+  
+  return [state, setState]
+}
+
+function getStorageItem<T>(key: string, defaultValue: T): T {
+  if (typeof window !== 'undefined') {
+    const value = localStorage.getItem(key)
+    if (value) {
+      return value as T;
+    }
+  }
+  return defaultValue;
+}
+
+function saveStorageItem(key: string, value: string): void {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem(key, value);
+  }
 }

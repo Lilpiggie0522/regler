@@ -13,4 +13,9 @@ export interface StudentVerificationModalProps extends ModalProps {
     courseCode: string;
 }
 
+export interface StaffVerificationModalProps extends ModalProps {
+    onVerificationSuccess: () => void;
+    email: string;
+}
+
   
