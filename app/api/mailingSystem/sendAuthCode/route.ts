@@ -23,19 +23,31 @@ export async function POST(request: NextRequest) {
                 pass: process.env.SMTP_PASSWORD,
             },
         });
-        const { email, authCode } = await request.json();
-        
+        const { email, authCode, role } = await request.json();
+
         // Check if email exists and student name is correct
         await dbConnect();
         const Student = models.Student;
-        const student = await Student.findOne({ email: email });
-        if (!student) {
-            return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
+        const Admin = models.Admin;
+        if (role === 'student') {
+            const student = await Student.findOne({ email: email });
+            if (!student) {
+                return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
+            }
+            if (student.email !== email) {
+                return NextResponse.json({ error: "Given email does not match student's email" }, { status: 400 });
+            }
+        } else if (role === 'admin') {
+            const admin = await Admin.findOne({ email: email });
+            if (!admin) {
+                return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
+            }
+            if (admin.email !== email) {
+                return NextResponse.json({ error: "Given email does not match admin's email" }, { status: 400 });
+            }
         }
-        if (student.email !== email) {
-            return NextResponse.json({ error: "Given email does not match student's email" }, { status: 400 });
-        }
-        
+
+
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
             to: email,
@@ -58,12 +70,12 @@ export async function POST(request: NextRequest) {
             `,
         };
         const info = await transport.sendMail(mailingParameters);
-        return NextResponse.json({data: info}, {status: 200})
-        
+        return NextResponse.json({ data: info }, { status: 200 })
+
     } catch (error) {
         if (error instanceof Error) {
             console.error('Error - Team Email:', error);
-            return NextResponse.json({error: error.message}, {status: 502})
+            return NextResponse.json({ error: error.message }, { status: 502 })
         }
     }
 }

@@ -18,21 +18,17 @@ export async function GET( req : NextRequest) {
     try {
         await dbConnect();
         const teamId = req.url.split('/').pop();
-        console.log(teamId);
         if (!mongoose.isValidObjectId(teamId)) {
             return NextResponse.json({error: "invalid team id"}, {status: 400});
         }
         const team = await Team.findById(teamId).exec();
-        //console.log(team);
         if (!team) {
             return NextResponse.json({error: "course not found"}, {status: 404});
         }
         const mentorsIds = team.mentors;
         let mentorsNames = '';
         for (const mentorId of mentorsIds) {
-            //console.log(mentorId);
             const mentor = await Admin.findById(mentorId).exec();
-            //console.log(mentor);
             if (mentor) {
                 mentorsNames += mentor.adminName + ',';
             }
