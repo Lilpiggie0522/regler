@@ -13,13 +13,14 @@ export async function POST(request: NextRequest) {
             return NextResponse.json("invalid email", {status: 401})
         }
         //please note that port may change
-        const authcodeCreationResponse = await fetch('http://localhost:3000/api/authcodeSystem/createAuthcode', {method: 'POST', body: JSON.stringify({zid: email})})
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const authcodeCreationResponse = await fetch(`${baseUrl}/api/authcodeSystem/createAuthcode`, {method: 'POST', body: JSON.stringify({zid: email})})
         if (!authcodeCreationResponse.ok) {
             console.log(await authcodeCreationResponse.json())
             return NextResponse.json(authcodeCreationResponse, {status: 500})
         }
         const authCode = await authcodeCreationResponse.json();
-        const sendAuthCodeResponse = await fetch('http://localhost:3000/api/mailingSystem/sendAuthCode', {method: 'POST', body: JSON.stringify({email: email, authCode: authCode.authCode, role: 'admin'})})
+        const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify({email: email, authCode: authCode.authCode, role: 'admin'})})
         if (!sendAuthCodeResponse.ok) {
             console.log(await sendAuthCodeResponse.json())
             return NextResponse.json(sendAuthCodeResponse, {status: 500})
