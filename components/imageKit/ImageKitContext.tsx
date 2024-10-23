@@ -1,20 +1,20 @@
-import React from 'react'
-import { IKContext  } from 'imagekitio-react';
-import {urlEndpoint, publicKey, authenticator} from '../services/imageKitApi'
+import React, { ReactNode } from 'react';
+import { IKContext } from 'imagekitio-react';
+import { urlEndpoint, publicKey, authenticator } from '../services/imageKitApi';
 
-interface ImageKitProps {
-    path?: string;
+// Define the props type including `children`
+interface ImageKitContextProps {
+  children: ReactNode;
 }
 
-
-export const ImageKitContext = (props : ImageKitProps) => {
-    const path = props.path  || "default-image.jpg";
+export const ImageKitContext: React.FC<ImageKitContextProps> = ({ children }) => {
   return (
     <IKContext
-        urlEndpoint={urlEndpoint}
-        publicKey={publicKey}
-        authenticator={authenticator}
-    />
-
-  )
-}
+      urlEndpoint={urlEndpoint}
+      publicKey={publicKey}
+      authenticator={authenticator}
+    >
+      {children}
+    </IKContext>
+  );
+};

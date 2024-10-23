@@ -1,6 +1,6 @@
 import React from 'react'
 import {IKImage } from 'imagekitio-react';
-import { ImageKitContext } from './imageKitContext';
+import { ImageKitContext } from './ImageKitContext';
 
 interface ImageKitProps {
     path?: string;
@@ -8,11 +8,9 @@ interface ImageKitProps {
 
 
 const ImageKitImage = (props : ImageKitProps) => {
-    const path = props.path  || "default-image.jpg";
+    const path = props.path  || "guest_JWvEXQSZ2";
   return (
-    <ImageKitContext
-        path={props.path}
-    >
+    <ImageKitContext>
         <IKImage
             path={path}
             transformation={[{ height: '300', width: '400' }]}
@@ -26,3 +24,4 @@ const ImageKitImage = (props : ImageKitProps) => {
     </ImageKitContext>
   )
 }
+export default ImageKitImage

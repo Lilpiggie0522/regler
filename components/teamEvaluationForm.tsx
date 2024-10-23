@@ -1,11 +1,12 @@
 'use client'
 import { useRouter } from 'next/navigation';
 import { useState, ChangeEvent, FormEvent } from 'react';
+import ImageKitUpload from './imageKit/ImageKitUpload';
+
 
 interface FormData {
 	teamMembers: string;
 	situationExplanation: string;
-	file: File | null;
 	fileLink: string;
 }
 interface TeamEvaluationFormProps{
@@ -22,7 +23,6 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	const [formData, setFormData] = useState<FormData>({
 		teamMembers: '',
 		situationExplanation: '',
-		file: null,
 		fileLink: '',
 	});
 
@@ -35,25 +35,29 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		}));
 	};
 
-	// Handle file upload input
-	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files ? e.target.files[0] : null;
+	const handleUploadSuccess = (fileUrl: string) => {
+		console.log('File uploaded successfully:', fileUrl);
+		
 		setFormData((prevData) => ({
 			...prevData,
-			file: file,
-		}));
-	};
+            fileLink: fileUrl,
+		})
+		);
+		console.log('File uploaded successfully:', fileUrl);
+		
+	  };
 
 	// Handle form submission
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-
+		const filesUrl = formData.fileLink;
 
 		if (issueId) {
 			// Update issue with new data
             const title = 'testing title'
             const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
             `
+			
             try {
                 const res = await fetch(`/api/issueSystem/updateIssue/`, {
                     method: "PUT",
@@ -64,7 +68,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 						studentId: studentId,
 						teamId: teamId,
 						courseId: courseId,
-						filesUrl: '',
+						filesUrl: filesUrl,
 						title: title,
 						content: content,
 						issueId: issueId,
@@ -107,7 +111,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					studentId: studentId,
 					teamId: teamId,
 					courseId: courseId,
-					filesUrl: '',
+					filesUrl: filesUrl,
 					title: title,
 					content: content,
 				}),
@@ -133,10 +137,9 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	finally {
 		setFormData({
 			teamMembers: '',
-			situationExplanation: '',
-			file: null,
-			fileLink: '',
+			situationExplanation: '',			fileLink: '',
 		});
+		
 	}
 	};
 
@@ -175,11 +178,22 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 				/>
 
 				<label className="text-lg text-black">3. You can upload your files here.</label>
-				<input
-					type="file"
-					className="border border-gray-300 text-black p-2 rounded-md"
-					onChange={handleFileChange}
+
+				<ImageKitUpload
+					path={studentId || 'guest'}
+					onUploadSuccess={handleUploadSuccess}
+					onUploadError={(error) => alert(`Upload error: ${error.message}`)}
 				/>
+				{formData.fileLink && (
+				<a
+					href={formData.fileLink}
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-blue-600 underline"
+				>
+					View Uploaded File
+				</a>
+				)}
 
 				<label className="text-lg text-black">
 					4. If your file is not supported, please upload them to a server and put the link here.
