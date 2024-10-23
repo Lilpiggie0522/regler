@@ -7,6 +7,7 @@ export async function POST(request: NextRequest) {
     try {
         const {email}: {email: string}  = await request.json();
         await dbConnect();
+        console.log(`email is ${email}`)
         const admin = await Admin.findOne({email: email})
         if (!admin) {
             return NextResponse.json("invalid email", {status: 401})

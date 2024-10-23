@@ -37,12 +37,6 @@ export async function POST(req: NextRequest) {
         teams: ''
     }
 
-    await Admin.deleteMany({});
-    await Student.deleteMany({});
-    await Team.deleteMany({});
-    await Course.deleteMany({});
-
-    
     const courseInfo = [courseName, courseTerm]
     // create and insert course
     insertAdmin(converted, courseAdmins, courseInfo)
