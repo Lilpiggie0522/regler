@@ -17,8 +17,8 @@ export default function Home() {
         <Image
           src="/Mainpage-priscilla-du-preez-unsplash.jpg"
           alt="Students working together"
-          fill
-          style={{ objectFit: 'cover' }}
+          layout="fill"
+          objectFit="cover"
           className="absolute inset-0"
         />
         <div className="absolute bottom-4 left-4 text-white text-xs">
