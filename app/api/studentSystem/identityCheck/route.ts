@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 
-
 import models from "@/models/models";
-
 
 const Student = models.Student;
 const Team = models.Team;
@@ -13,20 +11,20 @@ export async function POST(request: NextRequest) {
         const {zID, courseCode }: {zID: string ; courseCode: string }  = await request.json();
         // * convert inputs to lowercase
         //todo
+        //1. find email from zid
+        //2.  add check for student in this course
+        // Check if email exists and student name is correct
+        console.log()
         await dbConnect();
         // Retrieve student and team to check their relations
         const student = await Student.findOne({ zid: zID }).exec();
         if (!student) {
             return NextResponse.json({ error: "Invalid zid" }, { status: 404 });
         }
-        const courses = await Course.find({ courseName: courseCode }).exec();
-        if (courses.length === 0) {
+        const course = await Course.findOne({ courseName: courseCode }).exec();
+        if (!course) {
             return NextResponse.json({ error: "Invalid course code" }, { status: 404 });
         }
-        courses.sort((a, b) => a.term - b.term);
-        console.log(courses);
-        const course = courses.at(-1);
-        const courseTerm : string = course.term;
         const teams = course.teams;
         let teamId = null;
         let isStudentInCourse = false;
@@ -53,12 +51,11 @@ export async function POST(request: NextRequest) {
             return sendAuthCodeResponse
         }
         // objectId of student, team and course
-        return NextResponse.json({ studentId: student._id, teamId: teamId, courseId: course._id, term: courseTerm }, {status: authcodeCreationResponse.status})
+        return NextResponse.json({studentId: student._id, teamId: teamId, courseId: course._id}, {status: authcodeCreationResponse.status})
     } catch (error) {
         if (error instanceof Error) {
-            return NextResponse.json({error: error.message}, {status: 500})
+            console.error('Error - Team Email:', error);
+            return NextResponse.json({error: error.message}, {status: 502})
         }
     }
 }
-
-
