@@ -7,7 +7,7 @@ const imagekit = new ImageKit({
     privateKey: process.env.IMAGEKIT_PRIVATE_KEY as string,
   });
  
-export async function GET(res : NextResponse) {
+export async function GET() {
   const result = imagekit.getAuthenticationParameters();
   return NextResponse.json(result, {status: 200});
 }
