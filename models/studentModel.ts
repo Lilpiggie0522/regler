@@ -1,6 +1,4 @@
-// import { Schema } from 'mongoose';
 import mongoose, { Schema } from 'mongoose';
-// import { reminderSchema } from './reminderModel';
 import models from './models';
 
 export const studentSchema = new Schema({

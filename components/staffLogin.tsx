@@ -5,22 +5,19 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
-import StudentVerificationModal from "@/components/modals/studentVerificationModel";
 import ErrorModal from './modals/errorModal';
-import { sendVerificationEmail } from '@/components/services/emailService';
+import { sendStaffVerificationEmail } from '@/components/services/emailService';
 import { useStudentContext } from '@/context/studentContext';
+import StaffVerificationModal from './modals/staffVerificationModal';
 
-export default function StudentLogin() {
+export default function StaffLogin() {
   const router = useRouter();
   // const {setStudentId, setTeamId, setCourseId} = useStudentContext()
   const { useLocalStorageState } = useStudentContext()
-  const [, setC_zid] = useLocalStorageState('studentId', '')
-  const [, setC_tid] = useLocalStorageState('teamId', '')
-  const [, setC_cid] = useLocalStorageState('courseId', '')
-
+  const [, setStaffEmail] = useLocalStorageState('email', '')
+  const [, setStaffRole] = useLocalStorageState('role', '')
   const [errorMessage, setErrorMessage] = useState('');
-  const [zID, setZid] = useState('');
-  const [courseCode, setCourseCode] = useState('');
+  const [email, setEmail] = useState('');
 
   const [showLoginFail, setShowLoginFail] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -28,21 +25,16 @@ export default function StudentLogin() {
 
   const handleVerificationSuccess = () => {
     setShowVerificationModal(false);
-    router.push('/studentDetailConfirm');
+    router.push('/staffCourseList');
   };
 
   // frontend invalid check
   const validateInput = () => {
 
-    const zidRegex = /^z[0-9]{7}$/;
-    const courseCodeRegex = /^[A-Za-z]{4}[0-9]{4}$/;
+    const emailRegex = /.*@[a-zA-Z\.]+((\.com)|(\.unsw.edu.au))$/;
 
-    if (!zidRegex.test(zID)) {
-      setErrorMessage('Invalid zID format.');
-      return false;
-    }
-    if (!courseCodeRegex.test(courseCode)) {
-      setErrorMessage('Invalid Course Code format.');
+    if (!emailRegex.test(email)) {
+      setErrorMessage('Invalid email format.');
       return false;
     }
     return true;
@@ -54,26 +46,23 @@ export default function StudentLogin() {
       return;
     }
 
-    const emailSent = await sendVerificationEmail(zID, courseCode);
+    const emailSent = await sendStaffVerificationEmail(email);
 
     if (!emailSent.ok) {
       const res = await emailSent.json()
       console.log(res.error)
-      setErrorMessage('Course code or zID is invalid.');
+      setErrorMessage('Failed to send verification email.');
       setShowLoginFail(true);
     } else {
       setShowVerificationModal(true);
-      const student = await emailSent.json()
-      const {studentId, teamId, courseId} = student
-      setC_zid(studentId)
-      setC_tid(teamId)
-      setC_cid(courseId)
-      // setStudentId(studentId)
-      // setTeamId(teamId)
-      // setCourseId(courseId)
+      const admin = await emailSent.json()
+      const { email, role } = admin
 
+      setStaffEmail(email)
+      setStaffRole(role)
     }
   };
+
 
   return (
     <div className="flex min-h-screen">
@@ -95,40 +84,26 @@ export default function StudentLogin() {
       <div className="w-2/5 bg-yellow-400 flex flex-col justify-center items-center p-8">
         <div className="max-w-sm w-full text-left">
           <h1 className="text-4xl font-bold text-black text-left mb-8">Log in</h1>
-          <p className="text-black mb-6 text-left">Enter your zID and Course code below to login:</p>
+          <p className="text-black mb-6 text-left">Enter your email below to login:</p>
 
           {/* zID Input */}
           <div className="mb-6">
-          <label htmlFor="zID" className="sr-only">zID:</label>
+            <label htmlFor="email" className="sr-only">zID:</label>
             <input
-              id="zID"
-              name="zID"
-              value={zID}
+              id="email"
+              name="email"
+              value={email}
               type="text"
               className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
-              placeholder="zID: z1234567"
-              onChange={(input) => setZid(input.target.value)} // refresh zID
-            />
-          </div>
-
-          {/* Course Code Input */}
-          <div className="mb-6">
-          <label htmlFor="courseCode" className="sr-only">Course Code:</label>
-            <input
-              id="courseCode"
-              name="courseCode"
-              value={courseCode}
-              type="text"
-              className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
-              placeholder="Course Code: COMP3900"
-              onChange={(input) => setCourseCode(input.target.value)} // refresh course code
+              placeholder="email: john.smith@unsw.edu.au"
+              onChange={(input) => setEmail(input.target.value)} // refresh zID
             />
           </div>
 
           {/* Verify button */}
-          
-          <button 
-            onClick={ handleSendVerificationEmail } // check whether Input invalid
+
+          <button
+            onClick={handleSendVerificationEmail} // check whether Input invalid
             className="w-full bg-black text-white py-2 rounded-full mb-6">
             Verify with email
           </button>
@@ -143,12 +118,7 @@ export default function StudentLogin() {
 
           {/* showVerificationModal */}
           {showVerificationModal ? (
-            <StudentVerificationModal
-              onClose={() => setShowVerificationModal(false)}
-              onVerificationSuccess={handleVerificationSuccess}
-              zID={zID}
-              courseCode={courseCode}
-            />
+            <StaffVerificationModal email={email} onClose={() => setShowVerificationModal(false)} onVerificationSuccess={handleVerificationSuccess} />
           ) : null}
 
           {/* privacy policy */}

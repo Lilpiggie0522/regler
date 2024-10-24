@@ -1,12 +1,13 @@
-import mongoose, { InferSchemaType, Schema, model } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import models from './models';
 
 export const courseSchema = new Schema({
     courseName: {
-        type: 'string', required: true, unique: true
+        type: 'string', required: true
     },
     teams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Team', required: false}],
     mentors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false}],
+    term: {type: 'string', required: true}
 });
 
 courseSchema.pre('deleteMany', async function(next) {

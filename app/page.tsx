@@ -15,10 +15,10 @@ export default function Home() {
       {/* Left part image */}
       <div className="w-3/5 relative">
         <Image
-          src="/Mainpage-priscilla-du-preez-unsplash.jpg" 
+          src="/Mainpage-priscilla-du-preez-unsplash.jpg"
           alt="Students working together"
-          fill
-          style={{ objectFit: 'cover' }}
+          layout="fill"
+          objectFit="cover"
           className="absolute inset-0"
         />
         <div className="absolute bottom-4 left-4 text-white text-xs">
@@ -44,9 +44,11 @@ export default function Home() {
           <p className="text-center text-black mb-4">or</p>
 
           {/* staff login button */}
-          <button className="w-full bg-white text-black py-2 rounded-full">
-            Staff
-          </button>
+          <div className="flex justify-center">
+            <Link href="/staffLogin" className="w-full bg-white text-black py-2 rounded-full text-center">
+              Staff
+            </Link>
+          </div>
 
           {/* privacy policy */}
           <p className="text-center text-s text-gray-700 mt-4">

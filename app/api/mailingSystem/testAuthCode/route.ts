@@ -7,8 +7,9 @@ export async function POST() {
         email: 'z5361545@ad.unsw.edu.au',
         authCode: '114514'
     }
-    try {  
-        const response = await fetch('http://localhost:3000/api/mailingSystem/sendAuthCode', {method: 'POST', body: JSON.stringify(input)})
+    try {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const response = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify(input)})
         const result = await response.json();
         if (!response.ok) {
             throw new Error(`HTTP Status: ${response.status}`);
