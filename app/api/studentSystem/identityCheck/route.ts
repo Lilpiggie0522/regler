@@ -19,13 +19,13 @@ export async function POST(request: NextRequest) {
         if (!student) {
             return NextResponse.json({ error: "Invalid zid" }, { status: 404 });
         }
-        let courses = await Course.find({ courseName: courseCode }).exec();
-        if (courses.length == 0) {
+        const courses = await Course.find({ courseName: courseCode }).exec();
+        if (courses.length === 0) {
             return NextResponse.json({ error: "Invalid course code" }, { status: 404 });
         }
         courses.sort((a, b) => a.term - b.term);
+        console.log(courses);
         const course = courses.at(-1);
-        console.log(course);
         const courseTerm : string = course.term;
         const teams = course.teams;
         let teamId = null;
