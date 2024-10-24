@@ -15,11 +15,6 @@ export const reminderSchema = new Schema({
     issue: {
         type: mongoose.Schema.Types.ObjectId, ref: 'Issue', required: true
     },
-    // timestamp: {
-    //     minute: {type: 'string', required: true},
-    //     hour: {type: 'string', required: true},
-    //     day: {type: 'string', required: true},
-    // },
     schedule: {
         type: Date
     },
