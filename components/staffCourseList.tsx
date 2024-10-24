@@ -53,9 +53,9 @@ export default function CourseList() {
 
 useEffect(() => {
     const sorted = [...coursesData].sort((a, b) => {
-        // compare term
-      if (a.term > b.term) return -1;
-      if (a.term < b.term) return 1;
+    //     // compare term
+    //   if (a.term > b.term) return -1;
+    //   if (a.term < b.term) return 1;
 
       // same term, course code 
       if (a.code < b.code) return -1;
@@ -97,39 +97,38 @@ useEffect(() => {
             </div>
         </div>
       {/* Table */}
-      <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
-      <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-white sticky top-0 z-10">
-            <tr className="bg-white text-left mt-6">
-                <th className="py-2 px-4 font-bold text-black">Course Code</th>
-                <th className="py-2 px-4 font-bold text-black">Course Name</th>
-                <th className="py-2 px-4 font-bold text-black">Lecturer</th>
-                <th className="py-2 px-4 font-bold text-black">Term</th>
-                <th className="py-2 px-4 font-bold text-black"> </th>
+                {/* <thead className="bg-gray-200"></thead> */}
+        <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
+        <table className="min-w-full table-fixed">
+        <thead className="bg-gray-200 sticky">
+            <tr className="text-left">
+                <th className="w-1/4 py-2 px-4 font-bold text-black">Course Code</th>
+                <th className="w-1/4 py-2 px-4 font-bold text-black">Course Name</th>
+                <th className="w-1/4 py-2 px-4 font-bold text-black">Term</th>
+                <th className="w-1/4 py-2 px-4 font-bold text-black text-center">Action</th>
             </tr>
-        </thead>
+            </thead>
 
-          <tbody>
+            <tbody>
             {filteredCourses.length > 0 ? (
-              filteredCourses.map((course, index) => (
+                filteredCourses.map((course, index) => (
                 <tr key={index} className="border-b border-gray-200">
-                  <td className="py-3 px-4 text-black">{course.code}</td>
-                  <td className="py-3 px-4 text-black">{course.name}</td>
-                  <td className="py-3 px-4 text-black">{course.lecturer}</td>
-                  <td className="py-3 px-4 text-black">{course.term}</td>
-                  <td className="py-3 px-4">
-                    <button className="bg-black text-white py-1 px-3 rounded-lg">Select</button>
-                  </td>
+                    <td className="w-1/4 py-3 px-4 text-black">{course.code}</td>
+                    <td className="w-1/4 py-3 px-4 text-black">{course.name}</td>
+                    <td className="w-1/4 py-3 px-4 text-black">{course.term}</td>
+                    <td className="w-1/4 py-3 px-4 text-center">
+                        <button className="bg-black text-white py-1 px-4 rounded-lg">Select</button>
+                    </td>
                 </tr>
-              ))
+                ))
             ) : (
-              <tr>
+                <tr>
                 <td colSpan={4} className="text-center py-4 text-gray-500">No results found</td>
-              </tr>
+                </tr>
             )}
-          </tbody>
+            </tbody>
         </table>
-      </div>
+        </div>
     </div>
   );
 }
