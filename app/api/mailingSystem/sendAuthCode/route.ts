@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
             </p>
             <p>
                 Regards,<br>
-                UNSW Development Team
+                Contribalance
             </p>
             `,
         };

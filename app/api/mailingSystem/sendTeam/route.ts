@@ -85,7 +85,7 @@ export async function POST(request: NextRequest) {
                     </p>
                     <p>
                         Regards,<br>
-                        UNSW Development Team
+                        Contribalance
                     </p>
                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
                     href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
                     </p>
                     <p>
                         Regards,<br>
-                        UNSW Development Team
+                        Contribalance
                     </p>
                     `
                 };
@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
             </p>
             <p>
                 Regards,<br>
-                UNSW Development Team
+                Contribalance
             </p>
             `
         };
