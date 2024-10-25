@@ -15,7 +15,7 @@ export async function POST(request : NextRequest) {
             return NextResponse.json("invalid staff email", {status: 401})
         }
         const courses = admin.courses;
-        let studentSet = new Set();
+        const studentSet = new Set();
         for (const course of courses) {
             const currentCourse = await Course.findById(course).exec();
             const teams = currentCourse.teams;

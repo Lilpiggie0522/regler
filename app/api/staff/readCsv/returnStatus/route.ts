@@ -3,7 +3,8 @@ import dbConnect from '@/lib/dbConnect';;
 import models from "@/models/models";
 
 const Admin = models.Admin;
-const Course = models.Course;
+
+
 // get courseById
 export async function POST(request : NextRequest) {
     try {
@@ -13,16 +14,7 @@ export async function POST(request : NextRequest) {
         if (!admin) {
             return NextResponse.json("invalid staff email", {status: 401})
         }
-        const courses = admin.courses;
-        const groupList = [];
-        for (const course of courses) {
-            const currentCourse = await Course.findById(course).exec();
-            const teams = currentCourse.teams;
-            for (const team of teams) {
-                groupList.push(team)
-            }
-        }
-        return NextResponse.json({teams: groupList}, {status: 200});
+        return NextResponse.json({courses: admin.courses}, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
     }
