@@ -1,5 +1,6 @@
 import { createCourseInput, createStudentInput, createTeamInput, createAdminInput } from '@/app/api/adminSystem/initialise/route';
 import models from '@/models/models';
+//import mongoose from 'mongoose';
 
 
 // Destructure models for convenience
@@ -67,4 +68,12 @@ export async function initialiseDatabase(input: initialiseInput) {
 
   // Save the course with all assigned teams and mentors
   await courseDoc.save();
+}/*
+export async function getTeamIdByStudentId(studentId: string): Promise<string | null> {
+  
 }
+export async function getCourseIdByTeamId(teamId: string): Promise<string | null> {
+
+}*/
+
+

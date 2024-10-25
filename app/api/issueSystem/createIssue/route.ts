@@ -38,6 +38,9 @@ interface TutorCommentInput {
     filesUrl: string,
     tutor: string,
 }
+interface DeleteIssueInput {
+    issueId: string,
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -115,22 +118,25 @@ export async function POST(req: NextRequest) {
         // calling mailing function send teams
         // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-        const mailResponse = await fetch(`${baseUrl}/api/mailingSystem/sendTeam`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                teamId: teamId,
-                studentId: studentId,
-                courseId: courseId,
-                issueId: issueId,
-            }),
-        });
+        
+        if (!(process.env.NODE_ENV === 'test')) {
+            const mailResponse = await fetch(`${baseUrl}/api/mailingSystem/sendTeam`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    teamId: teamId,
+                    studentId: studentId,
+                    courseId: courseId,
+                    issueId: issueId,
+                }),
+            });
 
-        if (!mailResponse.ok) {
-            return NextResponse.json({ error: "Failed to send team information to mailing system" }, { status: 500 });
-        } 
+            if (!mailResponse.ok) {
+                return NextResponse.json({ error: "Failed to send team information to mailing system" }, { status: 500 });
+            } 
+        }
 
         return NextResponse.json({ success: true, issue }, { status: 200 });
 
@@ -140,6 +146,25 @@ export async function POST(req: NextRequest) {
 
     } catch (error) {
         console.error("Error in POST request:", error);
+        return NextResponse.json({ error: error }, { status: 500 });
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        await dbConnect();
+        const request = await req.json();
+        const { issueId } = request as DeleteIssueInput;
+        const response = await validateId(issueId, "Issue");
+        if (response) return response;
+        const issue = await Issue.findByIdAndDelete(issueId).exec();
+        if (!issue) {
+            return NextResponse.json({ error: "Issue not found" }, { status: 404 });
+        }
+        return NextResponse.json({ message: "Issue deleted" }, { status: 200 });
+    }
+    catch (error) {
+        console.error("Error in DELETE request:", error);
         return NextResponse.json({ error: error }, { status: 500 });
     }
 }
