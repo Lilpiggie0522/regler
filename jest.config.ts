@@ -22,7 +22,9 @@ const config: Config = {
   collectCoverage: true,
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
-  // collectCoverageFrom: undefined,
+  collectCoverageFrom: [
+    "app/api/**/*.ts"
+  ],
 
   // The directory where Jest should output its coverage files
   coverageDirectory: "coverage",
@@ -75,7 +77,7 @@ const config: Config = {
   // An array of directory names to be searched recursively up from the requiring module's location
   moduleDirectories: [
      "node_modules",
-     '<rootDir>/'
+     
    ],
 
   // An array of file extensions your modules use
