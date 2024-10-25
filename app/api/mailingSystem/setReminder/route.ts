@@ -19,18 +19,16 @@ async function reminderRequest() {
     for (const reminder of reminders) {
         // Send email if schedule is after current time
         if (currentTime > reminder.schedule) {
-            // If team/course/issue is not found, delete the reminder.
+            // If team/course/issue is not found or issue closed, delete the reminder.
             const [teamCheck, issueCheck, courseCheck] = await Promise.all([
                 Team.findById(reminder.team),
                 Issue.findById(reminder.issue),
                 Course.findById(reminder.course)
             ]);
-            if (!teamCheck || !issueCheck || !courseCheck) {
+            if (!teamCheck || !issueCheck || !courseCheck || issueCheck.status === 'closed') {
                 await models.Reminder.deleteOne({ _id: reminder._id });
                 continue;
             }
-            // Check if students and tutors exists and in the team.
-            // Check if students and tutors added into team?
 
             await reminderMod(reminder.team, reminder.course, reminder.issue, reminder.students, reminder.mentors);
             // interval < one week, server shuts for < 1 week

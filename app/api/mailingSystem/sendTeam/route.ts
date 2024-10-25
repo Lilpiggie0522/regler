@@ -46,7 +46,6 @@ export async function POST(request: NextRequest) {
         if (!team.students.includes(studentId)) {
             return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
         }
-
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {

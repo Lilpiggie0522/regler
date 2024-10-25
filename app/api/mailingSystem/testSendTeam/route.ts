@@ -2,13 +2,21 @@ import { NextResponse } from 'next/server';
 
 export async function POST() {
     // Sample input
-    // Request studentName (optional?), email and authCode
+    // const input = {
+    //     teamId: '6700eaee7ae942fe983415c8',
+    //     courseId: '67187e110571bd5e45bca1f4',
+    //     studentId: '67187e120571bd5e45bca21f',
+    //     issueId: '670799fbb7b79c4588c8177d',
+    // }
+
+    // sample input - general
     const input = {
-        teamId: '6700eaee7ae942fe983415c8',
-        courseId: '6701f96d84f93badca934c10',
-        studentId: '670222deb7b79c45884600d7',
-        issueId: '670799fbb7b79c4588c8177d',
+        teamId: '671b324f6f957635b88e6d86',
+        courseId: '671b2e336f957635b8875eb4',
+        studentId: '67187e120571bd5e45bca228',
+        issueId: '671b30806f957635b88b49f8',
     }
+
     try {  
         const response = await fetch('http://localhost:3000/api/mailingSystem/sendTeam', {
             method: 'POST', 
