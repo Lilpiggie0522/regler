@@ -1,5 +1,7 @@
 import { createCourseInput, createStudentInput, createTeamInput, createAdminInput } from '@/app/api/adminSystem/initialise/route';
 import models from '@/models/models';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
 //import mongoose from 'mongoose';
 
 
@@ -68,7 +70,29 @@ export async function initialiseDatabase(input: initialiseInput) {
 
   // Save the course with all assigned teams and mentors
   await courseDoc.save();
-}/*
+}
+
+
+
+export async function createDatabase(input : initialiseInput, mongoServer: MongoMemoryServer) : Promise<MongoMemoryServer> {
+  try {
+    mongoServer = await MongoMemoryServer.create();
+    const uri = mongoServer.getUri();
+    await mongoose.connect(uri);
+    await initialiseDatabase(input);
+    return mongoServer;
+  }
+  catch (error) {
+    throw error;
+  }
+}
+export async function terminateDatabase(mongoServer: MongoMemoryServer) {
+  await mongoose.connection.dropDatabase();
+  await mongoose.connection.close();
+  await mongoServer.stop();
+}
+
+/*
 export async function getTeamIdByStudentId(studentId: string): Promise<string | null> {
   
 }

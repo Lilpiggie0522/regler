@@ -1,8 +1,35 @@
 import {POST} from '@/app/api/adminSystem/initialise/route';
 import { NextRequest } from 'next/server';
 //import { createMocks } from 'node-mocks-http';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
+
+// In-memory MongoDB server instance
+let mongoServer: MongoMemoryServer;
+
+beforeAll(async () => {
+  // Start a new MongoDB server and connect Mongoose
+
+  // Mock input data to initialize the database
+  const input: initialiseInput = {
+    courseAdmins: [{ adminName: "Admin1", email: "admin1@example.com", role: "admin", courseName: "CS101", term: "T1" }],
+    staffAdmins: [{ adminName: "Tutor1", email: "tutor1@example.com", role: "tutor", courseName: "CS101", term: "T1" }],
+    students: [{ studentName: "Alice", email: "alice@example.com", zid: "z1234567" }],
+    teams: [{ teamName: "Team1", studentsZids: "z1234567", mentorsEmails: "tutor1@example.com" }],
+    course: { courseName: "CS101", mentorsEmails: "tutor1@example.com", teams: "Team1", term: "T1" },
+  };
+
+  // Initialize the database with the mock data
+  mongoServer = await createDatabase(input, mongoServer);
+});
+
+afterAll(async () => {
+  // Drop the database and close the server after each test
+  await terminateDatabase(mongoServer);
+});
 
 describe('Initialisation API Tests', () => {
+  
   it('if submit the same structured files should initialize the database and return success', async () => {
     const body = {
         courseAdmins: [{ adminName: 'Admin1', email: 'admin1@example.com', role: 'admin', courseName: 'CS101', term: 'T1' }],
@@ -54,9 +81,9 @@ describe('Initialisation API Tests', () => {
       // Verify response status and content
       expect(res.status).toBe(200);
       const json = await res.json(); // Parse the JSON response
-      console.log(json);
-      console.log("courses: " + json.curCourses);
-      console.log("teams: " + json.curTeams);
+      //console.log(json);
+      //console.log("courses: " + json.curCourses);
+      //console.log("teams: " + json.curTeams);
       expect(json.message).toBe('Initialisation successful.');
       const expectedCourses = [{
         courseName: 'CS101',

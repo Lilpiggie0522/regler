@@ -85,10 +85,10 @@ export async function POST(req: NextRequest) {
         )
         .exec();
         const issuesIds = existingTeam.issues;
-        console.log(existingTeam)
+       // console.log(existingTeam)
         for (const issueId of issuesIds) {
             const existingIssue = await Issue.findById(issueId).exec();
-            console.log(existingIssue);
+           // console.log(existingIssue);
             if (existingIssue && existingIssue.status === 'pending') {
                 return NextResponse.json({ error: "A pending issue already exists for this team" }, { status: 409 });
             }
