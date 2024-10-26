@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
             }
 
             if (hasEveryoneComplete) {
-                status = "Complete";
+                status = "Need Feedback";
             }
 
             const teamSubmission = {
