@@ -431,7 +431,6 @@ describe("data insertion", () => {
             func.insertTutor(row, staffAdmins, courseInfo, newCourse, teamToAdd!)
             func.insertStudent(row, students, teamToAdd!)
         }
-        console.log(teams)
         expect(teams).toStrictEqual([
             {
                 teamName: 'piggie squad 0',
