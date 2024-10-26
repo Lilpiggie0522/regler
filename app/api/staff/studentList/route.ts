@@ -27,7 +27,7 @@ export async function POST(request : NextRequest) {
             }
         }
         const studentList = Array.from(studentSet);
-        return NextResponse.json({studnets: studentList}, {status: 200});
+        return NextResponse.json({students: studentList}, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
     }
