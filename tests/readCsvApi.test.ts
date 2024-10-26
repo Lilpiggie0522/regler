@@ -6,7 +6,6 @@ describe("api tests for data processing", () => {
     let mockFile: File
     let formData: FormData
     let req: NextRequest
-    
 
     beforeEach(() => {
         mockCsvData = 'Name,zid,group Name,Class,mentor,group_id,group_id2,email,mentor_email,course_admin,admin_email\
