@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
             const teamSubmission = {
                 course: teamSubList[0].course,
                 term: teamSubList[0].term,
+                mentors: teamSubList[0].mentors,
                 team: team,
                 status: status,
             };

@@ -49,6 +49,7 @@ export async function POST(request : NextRequest) {
                     const studentSubmission = {
                         course: teamObj.course,
                         term:  courseObj.term,
+                        mentors: teamObj.mentors,
                         student: student,
                         team: teamObj._id,
                         status: status,
