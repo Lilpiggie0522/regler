@@ -19,7 +19,10 @@ export async function POST(request : NextRequest) {
             const currentCourse = await Course.findById(course).exec();
             const teams = currentCourse.teams;
             for (const team of teams) {
-                groupList.push(team)
+                const teamObj = await models.Team.findById(team).exec();
+                if (admin.role === "admin" || (teamObj.mentors.includes(admin._id) && admin.role === "tutor")) {
+                    groupList.push(team);
+                }
             }
         }
         return NextResponse.json({teams: groupList}, {status: 200});

@@ -61,6 +61,7 @@ export async function POST(request : NextRequest) {
         console.log(studentSubmissions);
         return NextResponse.json({ submissionsRecord: studentSubmissions }, { status: 200 });
     } catch (error) {
+        console.error(error);
         return NextResponse.json({ error: error}, {status: 500});
     }
 }
