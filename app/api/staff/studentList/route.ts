@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';;
 import models from "@/models/models";
 
-const Admin = models.Admin;
-const Course = models.Course;
 const Team = models.Team;
 // get courseById
 export async function POST(request : NextRequest) {
