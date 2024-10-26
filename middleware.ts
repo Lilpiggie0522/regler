@@ -9,8 +9,11 @@ export async function middleware(request: NextRequest) {
     console.log('no token, path not / redirect')
     return NextResponse.redirect(new URL('/', request.url))
   }
+  if (!token) {
+    return;
+  }
   try {
-    const decoded = await verifyJWT(token!)
+    const decoded = await verifyJWT(token)
     if (request.nextUrl.pathname === '/' && (decoded.role === 'admin' || decoded.role === 'tutor')) {
       return NextResponse.redirect(new URL('/staffCourseList', request.url))
     } else if (request.nextUrl.pathname === '/' && decoded.role === 'student') {
@@ -33,9 +36,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   } catch (error) {
     console.log("something wrong mate!")
-    console.log(error)
+    console.error("there is unexpected error: " + error);
     if (request.nextUrl.pathname !== '/') {
-      console.log('no token, path not / redirect 22')
+      console.log('no token, path not2 / redirect 22')
       return NextResponse.redirect(new URL('/', request.url))
     }
   }

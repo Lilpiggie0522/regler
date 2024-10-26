@@ -7,6 +7,7 @@ env:
   MONGODB_URI: ${{secrets.MONGODB_URI}}
   SMTP_EMAIL: ${{secrets.SMTP_EMAIL}}
   SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
+  IMAGEKIT_PRIVATE_KEY: ${{secrets.IMAGEKIT_PRIVATE_KEY}}
 
 on:
   push:
