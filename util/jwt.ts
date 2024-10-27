@@ -10,7 +10,10 @@ export async function signJWT(id: string, userGroup: string) {
     return token
 }
 
-export async function verifyJWT(token: string) {
+export async function verifyJWT(token: string | undefined) {
+    if (!token) {
+        throw Error("no token")
+    }
     try {
         const { payload } = await jwtVerify(token, secret);
         return payload;

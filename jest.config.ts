@@ -23,7 +23,8 @@ const config: Config = {
 
   // An array of glob patterns indicating a set of files for which coverage information should be collected
   collectCoverageFrom: [
-    "app/api/**/*.ts"
+    "app/api/**/*.ts",
+    "middleware.ts"
   ],
 
   // The directory where Jest should output its coverage files
@@ -77,7 +78,6 @@ const config: Config = {
   // An array of directory names to be searched recursively up from the requiring module's location
   moduleDirectories: [
      "node_modules",
-     
    ],
 
   // An array of file extensions your modules use
@@ -158,7 +158,7 @@ const config: Config = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  testMatch: ['**/test/**/*.(test|spec).ts?(x)'],
+  testMatch: ['**/test*/**/*.(test|spec).ts?(x)'],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
