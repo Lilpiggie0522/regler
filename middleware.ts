@@ -23,58 +23,75 @@ const PROTECTED_ROUTES = [
     pathRegex: "/studentDetailConfirm",
     access: ["student"],
     redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/' }
-  },
+  }
+]
+
+const allowedRequest: NextResponse<unknown> = NextResponse.next()
+const declinedRequest: NextResponse<unknown> = NextResponse.json('Not authorised to access', { status: 401 })
+
+const PROTECTED_APIs = [
   {
     pathRegex: "/api/adminSystem/courses/.*",
-    access: ["admin", "tutor"],
-    redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/studentDetailConfirm' }
+    access: ["admin", "tutor"]
   },
   {
     pathRegex: "/api/adminSystem/initialise",
-    access: ["admin"],
-    redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/studentDetailConfirm' }
+    access: ["admin"]
   },
   {
     pathRegex: "/api/issueSystem/.*",
-    access: ["student"],
-    redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/studentDetailConfirm' }
+    access: ["student"]
   },
   {
     pathRegex: "/api/staff/.*",
-    access: ["admin"],
-    redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/studentDetailConfirm' }
+    access: ["admin"]
   },
   {
     pathRegex: "/api/util/.*",
-    access: ["admin", "tutor"],
-    redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/studentDetailConfirm' }
+    access: ["admin", "tutor"]
   }
 ]
-export async function middleware(request: NextRequest) {
+
+export async function middleware(request: NextRequest): Promise<NextResponse> {
   const token = request.cookies.get("token")?.value
   const path = request.nextUrl.pathname
-
-  for (const item of PROTECTED_ROUTES) {
-    const compiledRegex = new RegExp(item.pathRegex)
+  for (const api of PROTECTED_APIs) {
+    const compiledRegex = new RegExp(api.pathRegex)
     if (path.match(compiledRegex)) {
       try {
         const payload: JWTPayload = await verifyJWT(token)
         const role: string = payload.role as string
-        if (!item.access.includes(role)) {
+        if (!api.access.includes(role)) {
+          return declinedRequest
+        }
+      } catch (error) {
+        return declinedRequest
+      }
+      return allowedRequest
+    }
+  }
+
+  for (const route of PROTECTED_ROUTES) {
+    const compiledRegex = new RegExp(route.pathRegex)
+    if (path.match(compiledRegex)) {
+      try {
+        const payload: JWTPayload = await verifyJWT(token)
+        const role: string = payload.role as string
+        if (!route.access.includes(role)) {
           if (role === 'student') {
-            return NextResponse.redirect(new URL(item.redirect[role], request.url))
+            return NextResponse.redirect(new URL(route.redirect[role], request.url))
           } else if (role === 'tutor') {
-            return NextResponse.redirect(new URL(item.redirect[role], request.url))
+            return NextResponse.redirect(new URL(route.redirect[role], request.url))
           } else {
-            return NextResponse.redirect(new URL(item.redirect["admin"], request.url))
+            return NextResponse.redirect(new URL(route.redirect["admin"], request.url))
           }
         }
       } catch (error) {
-        console.log("no token provided")
         return NextResponse.redirect(new URL('/', request.url))
       }
     }
   }
+  return NextResponse.next()
 }
 
 // See "Matching Paths" below to learn more
