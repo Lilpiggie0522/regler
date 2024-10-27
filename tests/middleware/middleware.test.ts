@@ -406,7 +406,7 @@ describe("Tests for user access contorl on api end points", () => {
         expect(res.status).toBe(200)
     })
 
-    it("should not return 200 code, but a 401 code, student has no access to /api/util/.*", async () => {
+    it("should return 200 code, student has access to /api/util/.*", async () => {
         const token = await signJWT('piggie337', 'student')
         const req = new NextRequest("http://localhost:3000/api/util/getTeamById/3", {
             headers: {
@@ -414,6 +414,6 @@ describe("Tests for user access contorl on api end points", () => {
             }
         })
         const res = await middleware(req)
-        expect(res.status).toBe(401)
+        expect(res.status).toBe(200)
     })
 })
