@@ -1,5 +1,5 @@
 "use client";
-import { useLocalStorageState } from "@/context/studentContext";
+// import { useLocalStorageState } from "@/context/studentContext";
 import { ChangeEvent, useState } from "react";
 
 interface DisplayData {
@@ -20,10 +20,8 @@ export default function LecturerPage() {
     const [showWindow, setShowWindow] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null); // State to hold the selected file
     const [uploading, setUploading] = useState<boolean>(false)
-    const [email, ] = useLocalStorageState('email', '')
-    const [role, ] = useLocalStorageState('role', '')
-    console.log(`email is ${email}`)
-    console.log(`role is ${role}`)
+    // const [email, ] = useLocalStorageState('email', '')
+    // const [role, ] = useLocalStorageState('role', '')
     function cancelFile() {
         const fileInput = document.getElementById("csv") as HTMLInputElement;
         if (fileInput) {
