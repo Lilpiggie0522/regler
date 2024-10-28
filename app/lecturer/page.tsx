@@ -1,4 +1,5 @@
 "use client";
+// import { useLocalStorageState } from "@/context/studentContext";
 import { ChangeEvent, useState } from "react";
 
 interface DisplayData {
@@ -9,7 +10,7 @@ interface DisplayData {
     group_id: string;
     group_id2: string;
     mentor: string;
-    mentor_id:string;
+    mentor_email:string;
     email: string
 }
 
@@ -19,6 +20,8 @@ export default function LecturerPage() {
     const [showWindow, setShowWindow] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null); // State to hold the selected file
     const [uploading, setUploading] = useState<boolean>(false)
+    // const [email, ] = useLocalStorageState('email', '')
+    // const [role, ] = useLocalStorageState('role', '')
     function cancelFile() {
         const fileInput = document.getElementById("csv") as HTMLInputElement;
         if (fileInput) {
@@ -72,7 +75,7 @@ export default function LecturerPage() {
                 setDisplayData(displayData)
             } else {
                 const error = await response.json()
-                alert(error.message)
+                alert(error)
             }
         } catch (error) {
             console.log(error)
@@ -113,7 +116,7 @@ export default function LecturerPage() {
 
             {showData && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-gray-100 max-h-[700px] w-[80vw] rounded-lg relative flex flex-col items-center justify-center overflow-y-scroll">
+                    <div className="bg-gray-100 max-h-[700px] w-[90vw] rounded-lg relative flex flex-col items-center justify-center">
                         <button className="absolute top-2 right-3 text-black text-3xl" onClick={handleCloseData}>
                             &times;
                         </button>
@@ -126,13 +129,13 @@ export default function LecturerPage() {
                                     <tr>
                                         <th className="border border-gray-300 p-2">name</th>
                                         <th className="border border-gray-300 p-2">zid</th>
-                                        <th className="border border-gray-300 p-2">class</th>
                                         <th className="border border-gray-300 p-2">groupName</th>
+                                        <th className="border border-gray-300 p-2">class</th>
+                                        <th className="border border-gray-300 p-2">mentor</th>
                                         <th className="border border-gray-300 p-2">group Id</th>
                                         <th className="border border-gray-300 p-2">group Id2</th>
-                                        <th className="border border-gray-300 p-2">mentor</th>
-                                        <th className="border border-gray-300 p-2">mentor Id</th>
                                         <th className="border border-gray-300 p-2">email</th>
+                                        <th className="border border-gray-300 p-2">mentor_email</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -140,13 +143,13 @@ export default function LecturerPage() {
                                         <tr key={index}>
                                             <td className="border border-gray-300 p-2">{row.name}</td>
                                             <td className="border border-gray-300 p-2">{row.zid}</td>
-                                            <td className="border border-gray-300 p-2">{row.class}</td>
                                             <td className="border border-gray-300 p-2">{row.groupname}</td>
+                                            <td className="border border-gray-300 p-2">{row.class}</td>
+                                            <td className="border border-gray-300 p-2">{row.mentor}</td>
                                             <td className="border border-gray-300 p-2">{row.group_id}</td>
                                             <td className="border border-gray-300 p-2">{row.group_id2}</td>
-                                            <td className="border border-gray-300 p-2">{row.mentor}</td>
-                                            <td className="border border-gray-300 p-2">{row.mentor_id}</td>
                                             <td className="border border-gray-300 p-2">{row.email}</td>
+                                            <td className="border border-gray-300 p-2">{row.mentor_email}</td>
                                         </tr>
                                     ))}
                                 </tbody>

@@ -1,0 +1,1 @@
+// set up any variables you want before the tesing

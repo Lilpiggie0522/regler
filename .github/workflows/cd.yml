@@ -7,18 +7,20 @@ env:
   MONGODB_URI: ${{secrets.MONGODB_URI}}
   SMTP_EMAIL: ${{secrets.SMTP_EMAIL}}
   SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
-
+  IMAGEKIT_PRIVATE_KEY: ${{secrets.IMAGEKIT_PRIVATE_KEY}}
+  AZURE_WEBAPP_NAME: 3900cowhorse   # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'    # set this to the path to your web app project, defaults to the repository root
 on:
   push:
     branches: [ "master" ]
 
 jobs:
-  deploy:
+  azure-build-and-deploy:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -32,11 +34,13 @@ jobs:
       run: npm ci
     - name: lint
       run: npm run lint
-    - name: Install Vercel CLI
-      run: npm install --global vercel@latest
-    - name: Pull Vercel Environment Information
-      run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-    - name: Build Project Artifacts
-      run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-    - name: Deploy Project Artifacts to Vercel
-      run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+    - name: test
+      run: npm run test
+    - name: Build the Next.js app
+      run: npm run build
+    - name: 'Deploy to Azure WebApp Service'
+      uses: azure/webapps-deploy@v3
+      with: 
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
