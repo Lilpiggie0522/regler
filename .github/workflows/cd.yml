@@ -36,6 +36,8 @@ jobs:
       run: npm run lint
     - name: test
       run: npm run test
+    - name: Build the Next.js app
+      run: npm run build
     - name: 'Deploy to Azure WebApp Service'
       uses: azure/webapps-deploy@v3
       with: 
