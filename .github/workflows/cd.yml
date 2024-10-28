@@ -9,7 +9,7 @@ env:
   SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
   IMAGEKIT_PRIVATE_KEY: ${{secrets.IMAGEKIT_PRIVATE_KEY}}
   AZURE_WEBAPP_NAME: 3900cowhorse   # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: '.'    # set this to the path to your web app project, defaults to the repository root
+  AZURE_WEBAPP_PACKAGE_PATH: '/capstone'    # set this to the path to your web app project, defaults to the repository root
 on:
   push:
     branches: [ "master" ]
@@ -38,6 +38,7 @@ jobs:
       run: npm run test
     - name: 'Deploy to Azure WebApp Service'
       uses: azure/webapps-deploy@v3
+      working-directory: .
       with: 
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
         publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
