@@ -1,7 +1,7 @@
-import StaffCouseList from "@/components/staffCourseList";
+import StaffCourseList from "@/components/staffCourseList";
 
 export default function StaffCourseListPage() {
   return (
-    <StaffCouseList />
+    <StaffCourseList />
   );
 }
