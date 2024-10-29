@@ -27,3 +27,22 @@ export const authenticator =  async () => {
         throw error;
     }
 };
+
+export const deleteImage = async (fileId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/util/imagekit/${fileId}`, {
+        method: 'DELETE', 
+      });
+  
+      // Check if the response is OK (status 200-299)
+      if (!response.ok) {
+        throw new Error(`Failed to delete. HTTP Status: ${response.status}`);
+      }
+  
+      console.log(response);
+      return response.json();
+    } catch (error) {
+      console.error('Error in deleteImage:', error);
+      throw error; // Re-throw the error for higher-level handling
+    }
+  };
