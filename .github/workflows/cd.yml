@@ -2,14 +2,11 @@
 name: continuous-development
 
 env:
-  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   MONGODB_URI: ${{secrets.MONGODB_URI}}
   SMTP_EMAIL: ${{secrets.SMTP_EMAIL}}
   SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
   IMAGEKIT_PRIVATE_KEY: ${{secrets.IMAGEKIT_PRIVATE_KEY}}
-  AZURE_WEBAPP_NAME: 3900cowhorse   # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: '.'    # set this to the path to your web app project, defaults to the repository root
+  
 on:
   push:
     branches: [ "master" ]
@@ -38,9 +35,3 @@ jobs:
       run: npm run test
     - name: Build the Next.js app
       run: npm run build
-    - name: 'Deploy to Azure WebApp Service'
-      uses: azure/webapps-deploy@v3
-      with: 
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}

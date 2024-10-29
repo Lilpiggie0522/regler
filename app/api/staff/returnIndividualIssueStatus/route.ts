@@ -46,12 +46,14 @@ export async function POST(request : NextRequest) {
                         }
                     }
                     const courseObj = await Course.findById(teamObj.course).exec();
+                    const studentObj = await models.Student.findById(student).exec();
                     const studentSubmission = {
-                        course: teamObj.course,
+                        course: courseObj.courseName,
                         term:  courseObj.term,
+                        student: studentObj.studentName,
                         mentors: teamObj.mentors,
-                        student: student,
-                        team: teamObj._id,
+                        team: teamObj.teamName,
+                        teamId: teamObj._id,
                         status: status,
                     };
                     studentSubmissions.push(studentSubmission);
