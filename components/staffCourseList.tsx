@@ -68,11 +68,11 @@ export default function CourseList() {
 
                 if (!coursesResponse.ok) {
                     const errObj = await coursesResponse.json();
-                    // console.log('Error Response:', errObj);
+                    console.log('Error Response:', errObj);
                     throw Error(errObj.error);
                 }
                 const courseObj = await coursesResponse.json();
-                // console.log('Fetched Courses:', courseObj.courses);
+                console.log('Fetched Courses:', courseObj);
 
                 setCoursesData(courseObj.courses);
             } catch (error) {
