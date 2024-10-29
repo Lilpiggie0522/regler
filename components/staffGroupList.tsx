@@ -1,7 +1,9 @@
 'use client';
 
+import { useStudentContext } from '@/context/studentContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -13,37 +15,79 @@ enum GroupStatus {
 
 // Define a type for the group
 interface Group {
+    id: string;
     name: string;
     tutor: string;
     status: GroupStatus;
 }
 
 const GroupList: React.FC = () => {
+    const router = useRouter();
+
+    const { useLocalStorageState } = useStudentContext();
+    const [email,] = useLocalStorageState('email', '');
+
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<GroupStatus | ''>('');
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const groups: Group[] = [
-        { name: 'Group 1', tutor: 'Yu Chen', status: GroupStatus.Complete },
-        { name: 'Group 2', tutor: 'ANNA', status: GroupStatus.Complete },
-        { name: 'Group 3', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 4', tutor: 'ANNA', status: GroupStatus.NotStarted },
-        { name: 'Group 5', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 6', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 7', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 8', tutor: 'ANNA', status: GroupStatus.NotStarted },
-        { name: 'Group 9', tutor: 'Rokecy', status: GroupStatus.NotStarted },
-        { name: 'Group 10', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 11', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 12', tutor: 'Yu Chen', status: GroupStatus.Pending },
-        { name: 'Group 13', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
-        { name: 'Group 14', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
-        { name: 'Group 15', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 16', tutor: 'Yu Chen', status: GroupStatus.Pending },
-    ];
+    const [groups, setGroups] = useState<Group[]>([]); // State for groups
 
-    
+    // const groups: Group[] = [
+    //     { name: 'Group 1', tutor: 'Yu Chen', status: GroupStatus.Complete },
+    //     { name: 'Group 2', tutor: 'ANNA', status: GroupStatus.Complete },
+    //     { name: 'Group 3', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 4', tutor: 'ANNA', status: GroupStatus.NotStarted },
+    //     { name: 'Group 5', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 6', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 7', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 8', tutor: 'ANNA', status: GroupStatus.NotStarted },
+    //     { name: 'Group 9', tutor: 'Rokecy', status: GroupStatus.NotStarted },
+    //     { name: 'Group 10', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 11', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 12', tutor: 'Yu Chen', status: GroupStatus.Pending },
+    //     { name: 'Group 13', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
+    //     { name: 'Group 14', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
+    //     { name: 'Group 15', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 16', tutor: 'Yu Chen', status: GroupStatus.Pending },
+    // ];
+
+    // Fetch groups from the API
+    useEffect(() => {
+        if (email) {
+            fetchGroups(email);
+            }
+        }, [email]);  // Run effect when these values change
+        
+        const fetchGroups = async (email: string) => {
+            try {
+                // console.log('Sending email:', email);
+
+                const coursesResponse = await fetch('/api/staff/groupList', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+
+                // console.log('Response Status:', coursesResponse.status);
+
+                if (!coursesResponse.ok) {
+                    const errObj = await coursesResponse.json();
+                    // console.log('Error Response:', errObj);
+                    throw Error(errObj.error);
+                }
+                const courseObj = await coursesResponse.json();
+                // console.log('Fetched Courses:', courseObj.courses);
+
+                setGroups(courseObj.courses);
+            } catch (error) {
+                // console.error('Error fetching courses:', error);
+                throw error
+            }
+        }
 
     // Filter groups based on the search term and status filter
     const filteredGroups = groups.filter(group => {
@@ -100,6 +144,10 @@ const GroupList: React.FC = () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [dropdownRef]);
+
+    const handleSelectGroup = () => {
+        router.push(`/studentList`);
+    };
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -192,7 +240,10 @@ const GroupList: React.FC = () => {
                                     </div>
                                 </td>
                                 <td className="py-3 px-4 text-center">
-                                    <button className="bg-black text-white py-1 px-3 rounded-lg">Select</button>
+                                    <button 
+                                        className="bg-black text-white py-1 px-3 rounded-lg"
+                                        onClick={() => handleSelectGroup()}
+                                    >Select</button>
                                 </td>
                             </tr>
                         ))
