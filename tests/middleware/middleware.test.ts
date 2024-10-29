@@ -227,7 +227,7 @@ describe("Tests for user access contorl on api end points", () => {
         const res = await middleware(req)
         expect(res.status).toBe(401)
     })
-    
+
     it("should return 200 code, admin has access to /api/adminSystem/initialise", async () => {
         const token = await signJWT('piggie337', 'admin')
         const req = new NextRequest("http://localhost:3000/api/adminSystem/initialise", {
@@ -370,6 +370,39 @@ describe("Tests for user access contorl on api end points", () => {
     it("should not return 200 code, but return a 401 code, student has no access to /api/staff/readCsv", async () => {
         const token = await signJWT('piggie337', 'student')
         const req = new NextRequest("http://localhost:3000/api/staff/readCsv", {
+            headers: {
+                cookie: `token=${token}; HttpOnly; Path=/`
+            }
+        })
+        const res = await middleware(req)
+        expect(res.status).toBe(401)
+    })
+
+    it("should return 200 code, admin has access to /api/staff/courseList", async () => {
+        const token = await signJWT('piggie337', 'admin')
+        const req = new NextRequest("http://localhost:3000/api/staff/courseList", {
+            headers: {
+                cookie: `token=${token}; HttpOnly; Path=/`
+            }
+        })
+        const res = await middleware(req)
+        expect(res.status).toBe(200)
+    })
+
+    it("should return 200 code, tutor has access to /api/staff/courseList", async () => {
+        const token = await signJWT('piggie337', 'tutor')
+        const req = new NextRequest("http://localhost:3000/api/staff/courseList", {
+            headers: {
+                cookie: `token=${token}; HttpOnly; Path=/`
+            }
+        })
+        const res = await middleware(req)
+        expect(res.status).toBe(200)
+    })
+
+    it("should not return 200 code, but return a 401 code, student has no access to /api/staff/courseList", async () => {
+        const token = await signJWT('piggie337', 'student')
+        const req = new NextRequest("http://localhost:3000/api/staff/courseList", {
             headers: {
                 cookie: `token=${token}; HttpOnly; Path=/`
             }

@@ -75,6 +75,7 @@ export default function CourseList() {
                 console.log('Fetched Courses:', courseObj.courses);
 
                 setCoursesData(courseObj.courses);
+                console.log('Courses!!!!!!',courseObj.courses)
             } catch (error) {
                 // console.error('Error fetching courses:', error);
                 throw error
@@ -100,7 +101,7 @@ export default function CourseList() {
         course.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.term.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
+    
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Title */}
