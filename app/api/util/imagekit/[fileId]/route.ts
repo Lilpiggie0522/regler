@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { imagekit } from "../route";
+import { imagekit } from "../imagekit";
 
 type Params = {
     params: {
