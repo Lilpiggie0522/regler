@@ -56,6 +56,8 @@ export default function CourseList() {
         
         const fetchCourses = async (email: string) => {
             try {
+                // console.log('Sending email:', email);
+
                 const coursesResponse = await fetch('/api/staff/courseList', {
                     method: 'POST',
                     headers: {
@@ -64,14 +66,19 @@ export default function CourseList() {
                     body: JSON.stringify({ email }),
                 });
 
+                // console.log('Response Status:', coursesResponse.status);
+
                 if (!coursesResponse.ok) {
                     const errObj = await coursesResponse.json();
-                    console.log(errObj.error)
+                    // console.log('Error Response:', errObj);
                     throw Error(errObj.error);
                 }
                 const courseObj = await coursesResponse.json();
+                // console.log('Fetched Courses:', courseObj.courses);
+
                 setCoursesData(courseObj.courses);
             } catch (error) {
+                // console.error('Error fetching courses:', error);
                 throw error
             }
         }
