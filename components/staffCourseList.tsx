@@ -7,40 +7,15 @@ import { useStudentContext } from '@/context/studentContext';
 import { useRouter } from 'next/navigation';
 
 interface Course {
-    id: string;
     course: string;
     term: string;
-  }
-
-// const coursesData: Course[] = [
-//   { code: 'COMP3900', term: '22T3' },
-//   { code: 'COMP3121', term: '24T3' },
-//   { code: 'COMP9900', term: '22T3' },
-//   { code: 'COMP3900', term: '23T3' },
-//   { code: 'COMP4920', term: '22T3' },
-//   { code: 'COMP3311', term: '24T1' },
-//   { code: 'COMP3331', term: '21T3' },
-//   { code: 'COMP6991', term: '24T1' },
-//   { code: 'MATH1231', term: '22T2' },
-//   { code: 'MATH1131', term: '24T0' },
-//   { code: 'DESN1000', term: '22T3' },
-//   { code: 'ELEC1111', term: '24T3' },
-//   { code: 'PHYS1121', term: '22T3' },
-//   { code: 'MATH2089', term: '24T3' },
-//   { code: 'COMP1511', term: '22T3' },
-//   { code: 'ENGG1911', term: '24T3' },
-// ];
+}
 
 export default function CourseList() {
     const router = useRouter();
     
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
-    // const [role,] = useLocalStorageState('role', '');
-    // const [, setCourseId] = useLocalStorageState('courseId', '');
-
-    console.log("email:", email);
-    // console.log("role:", role);
     
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [sortedCourses, setSortedCourses] = useState<Course[]>([]);
@@ -54,8 +29,6 @@ export default function CourseList() {
         
         const fetchCourses = async (email: string) => {
             try {
-                // console.log('Sending email:', email);
-
                 const coursesResponse = await fetch('/api/staff/courseList', {
                     method: 'POST',
                     headers: {
@@ -64,20 +37,14 @@ export default function CourseList() {
                     body: JSON.stringify({ email }),
                 });
 
-                // console.log('Response Status:', coursesResponse.status);
-
                 if (!coursesResponse.ok) {
                     const errObj = await coursesResponse.json();
-                    // console.log('Error Response:', errObj);
                     throw Error(errObj.error);
                 }
                 const courseObj = await coursesResponse.json();
-                console.log('Fetched Courses:', courseObj.courses);
 
                 setCoursesData(courseObj.courses);
-                console.log('Courses!!!!!!',courseObj.courses)
             } catch (error) {
-                // console.error('Error fetching courses:', error);
                 throw error
             }
         }
