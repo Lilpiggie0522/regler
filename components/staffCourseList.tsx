@@ -69,7 +69,7 @@ export default function CourseList() {
                 if (!coursesResponse.ok) {
                     const errObj = await coursesResponse.json();
                     console.log('Error Response:', errObj);
-                    throw Error(errObj.error);
+                    throw new Error(errObj.error || 'Something went wrong');
                 }
                 const courseObj = await coursesResponse.json();
                 console.log('Fetched Courses:', courseObj);
