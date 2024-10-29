@@ -43,8 +43,12 @@ const PROTECTED_APIs = [
     access: ["student"]
   },
   {
-    pathRegex: "/api/staff/.*",
+    pathRegex: "/api/staff/readCsv",
     access: ["admin"]
+  },
+  {
+    pathRegex: "/api/staff/.*",
+    access: ["admin", "tutor"]
   },
   {
     pathRegex: "/api/util/.*",
