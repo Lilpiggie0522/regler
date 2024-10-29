@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 interface Course {
     id: string;
-    code: string;
+    course: string;
     term: string;
   }
 
@@ -36,11 +36,11 @@ export default function CourseList() {
     
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
-    const [role,] = useLocalStorageState('role', '');
+    // const [role,] = useLocalStorageState('role', '');
     // const [, setCourseId] = useLocalStorageState('courseId', '');
 
     console.log("email:", email);
-    console.log("role:", role);
+    // console.log("role:", role);
     
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [sortedCourses, setSortedCourses] = useState<Course[]>([]);
@@ -68,11 +68,11 @@ export default function CourseList() {
 
                 if (!coursesResponse.ok) {
                     const errObj = await coursesResponse.json();
-                    console.log('Error Response:', errObj);
-                    throw new Error(errObj.error || 'Something went wrong');
+                    // console.log('Error Response:', errObj);
+                    throw Error(errObj.error);
                 }
                 const courseObj = await coursesResponse.json();
-                console.log('Fetched Courses:', courseObj);
+                console.log('Fetched Courses:', courseObj.courses);
 
                 setCoursesData(courseObj.courses);
             } catch (error) {
@@ -86,8 +86,8 @@ export default function CourseList() {
         const sorted = [...coursesData].sort((a, b) => {
 
         // same term, course code 
-        if (a.code < b.code) return -1;
-        if (a.code > b.code) return 1;
+        if (a.course < b.course) return -1;
+        if (a.course > b.course) return 1;
 
         return 0;
         });
@@ -97,13 +97,9 @@ export default function CourseList() {
 
     // searching filter
     const filteredCourses = sortedCourses.filter((course) =>
-        course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        course.course.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.term.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    const handleSelectCourse = () => {
-        router.push(`/groupList`);
-    };
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -141,12 +137,12 @@ export default function CourseList() {
                 {filteredCourses.length > 0 ? (
                     filteredCourses.map((course, index) => (
                     <tr key={index} className="border-b border-gray-200">
-                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.code}</td>
+                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.course}</td>
                         <td className="w-1/3 py-3 px-4 text-black text-center">{course.term}</td>
                         <td className="w-1/3 py-3 px-4 text-center">
                             <button 
                                 className="bg-black text-white py-1 px-4 rounded-lg"
-                                onClick={() => handleSelectCourse()}
+                                onClick={() => router.push(`/staffGroupList`)}
                             >Select</button>
                         </td>
                     </tr>
