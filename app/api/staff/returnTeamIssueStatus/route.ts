@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import models from "@/models/models";
+const Admin = models.Admin;
 
 export async function POST(request: NextRequest) {
     try {
@@ -31,7 +33,7 @@ export async function POST(request: NextRequest) {
         const teamSubmissionsRecord = [];
 
         for (const team of teams) {
-            const teamSubList = individualSubList.filter((sub: { team: { toString: () => string; }; }) => sub.team.toString() === team.toString());
+            const teamSubList = individualSubList.filter((sub: { teamId : { toString: () => string; }; }) => sub.teamId.toString() === team.toString());
             if (teamSubList.length === 0) continue; 
 
             let status = "Not Started";
@@ -49,12 +51,18 @@ export async function POST(request: NextRequest) {
             if (hasEveryoneComplete) {
                 status = "Need Feedback";
             }
-
+            let mentors = [];
+            for (const mentor of teamSubList[0].mentors) { 
+                const mentorObj = await models.Admin.findById(mentor).exec();
+                if (mentorObj.role === "tutor") {
+                    mentors.push(mentorObj.adminName);
+                }
+            }
             const teamSubmission = {
                 course: teamSubList[0].course,
                 term: teamSubList[0].term,
-                mentors: teamSubList[0].mentors,
-                team: team,
+                mentors: mentors,
+                team: teamSubList[0].team,
                 status: status,
             };
             teamSubmissionsRecord.push(teamSubmission);
