@@ -37,7 +37,7 @@ export default function CourseList() {
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
     const [role,] = useLocalStorageState('role', '');
-    const [, setCourseId] = useLocalStorageState('courseId', '');
+    // const [, setCourseId] = useLocalStorageState('courseId', '');
 
     console.log("email:", email);
     console.log("role:", role);
@@ -101,9 +101,8 @@ export default function CourseList() {
         course.term.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleSelectCourse = (courseId: string) => {
-        setCourseId(courseId);
-        router.push(`/groupList/${courseId}`);
+    const handleSelectCourse = () => {
+        router.push(`/groupList`);
     };
 
     return (
@@ -147,7 +146,7 @@ export default function CourseList() {
                         <td className="w-1/3 py-3 px-4 text-center">
                             <button 
                                 className="bg-black text-white py-1 px-4 rounded-lg"
-                                onClick={() => handleSelectCourse(course.id)}
+                                onClick={() => handleSelectCourse()}
                             >Select</button>
                         </td>
                     </tr>
