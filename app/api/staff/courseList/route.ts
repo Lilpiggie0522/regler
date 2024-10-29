@@ -14,7 +14,7 @@ export async function POST(request : NextRequest) {
         if (!admin) {
             return NextResponse.json("invalid staff email", {status: 401})
         }
-        let courseList = [];
+        const courseList = [];
         for (const course of admin.courses) {
             const currentCourse = await Course.findById(course).exec();
             courseList.push(

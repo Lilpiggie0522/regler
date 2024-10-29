@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import models from "@/models/models";
-const Admin = models.Admin;
 
 export async function POST(request: NextRequest) {
     try {
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest) {
             if (hasEveryoneComplete) {
                 status = "Need Feedback";
             }
-            let mentors = [];
+            const mentors = [];
             for (const mentor of teamSubList[0].mentors) { 
                 const mentorObj = await models.Admin.findById(mentor).exec();
                 if (mentorObj.role === "tutor") {
