@@ -9,28 +9,26 @@ import { useRouter } from 'next/navigation';
 interface Course {
     id: string;
     code: string;
-    name: string;
-    lecturer: string;
     term: string;
   }
 
 // const coursesData: Course[] = [
-//   { code: 'COMP3900', name: 'Computer science project', lecturer: 'Armin Chitizadeh', term: '22T3' },
-//   { code: 'COMP3121', name: 'Algorithm', lecturer: 'Anna', term: '24T3' },
-//   { code: 'COMP9900', name: 'Computer science project', lecturer: 'Armin Chitizadeh', term: '22T3' },
-//   { code: 'COMP3900', name: 'Computer science project', lecturer: 'Armin Chitizadeh', term: '23T3' },
-//   { code: 'COMP4920', name: 'Therom', lecturer: 'Jeffery', term: '22T3' },
-//   { code: 'COMP3311', name: 'SQL', lecturer: 'Wilson', term: '24T1' },
-//   { code: 'COMP3331', name: 'Web', lecturer: 'Ruiqi', term: '21T3' },
-//   { code: 'COMP6991', name: 'Rust', lecturer: 'Wilson', term: '24T1' },
-//   { code: 'MATH1231', name: 'Math1B', lecturer: 'Jeffery', term: '22T2' },
-//   { code: 'MATH1131', name: 'Math1A', lecturer: 'Rockey', term: '24T0' },
-//   { code: 'DESN1000', name: 'Design Basic', lecturer: 'Waner', term: '22T3' },
-//   { code: 'ELEC1111', name: 'Electrical', lecturer: 'Ruiqi', term: '24T3' },
-//   { code: 'PHYS1121', name: 'Physics', lecturer: 'Guojing', term: '22T3' },
-//   { code: 'MATH2089', name: 'Math2B', lecturer: 'Someone', term: '24T3' },
-//   { code: 'COMP1511', name: 'Computer science Basic', lecturer: 'Waner', term: '22T3' },
-//   { code: 'ENGG1911', name: 'Engineer Python', lecturer: 'Guojing', term: '24T3' },
+//   { code: 'COMP3900', term: '22T3' },
+//   { code: 'COMP3121', term: '24T3' },
+//   { code: 'COMP9900', term: '22T3' },
+//   { code: 'COMP3900', term: '23T3' },
+//   { code: 'COMP4920', term: '22T3' },
+//   { code: 'COMP3311', term: '24T1' },
+//   { code: 'COMP3331', term: '21T3' },
+//   { code: 'COMP6991', term: '24T1' },
+//   { code: 'MATH1231', term: '22T2' },
+//   { code: 'MATH1131', term: '24T0' },
+//   { code: 'DESN1000', term: '22T3' },
+//   { code: 'ELEC1111', term: '24T3' },
+//   { code: 'PHYS1121', term: '22T3' },
+//   { code: 'MATH2089', term: '24T3' },
+//   { code: 'COMP1511', term: '22T3' },
+//   { code: 'ENGG1911', term: '24T3' },
 // ];
 
 export default function CourseList() {
@@ -99,9 +97,7 @@ export default function CourseList() {
 
     // searching filter
     const filteredCourses = sortedCourses.filter((course) =>
-        course.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        course.lecturer.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.term.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -132,15 +128,13 @@ export default function CourseList() {
                 </div>
             </div>
         {/* Table */}
-                    {/* <thead className="bg-gray-200"></thead> */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
             <table className="min-w-full table-fixed">
             <thead className="bg-gray-200 sticky">
                 <tr className="text-left">
-                    <th className="w-1/4 py-2 px-4 font-bold text-black text-center">Course Code</th>
-                    <th className="w-1/4 py-2 px-4 font-bold text-black text-center">Course Name</th>
-                    <th className="w-1/4 py-2 px-4 font-bold text-black text-center">Term</th>
-                    <th className="w-1/4 py-2 px-4 font-bold text-black text-center">Action</th>
+                    <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Course Code</th>
+                    <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Term</th>
+                    <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Action</th>
                 </tr>
                 </thead>
 
@@ -148,10 +142,9 @@ export default function CourseList() {
                 {filteredCourses.length > 0 ? (
                     filteredCourses.map((course, index) => (
                     <tr key={index} className="border-b border-gray-200">
-                        <td className="w-1/4 py-3 px-4 text-black text-center">{course.code}</td>
-                        <td className="w-1/4 py-3 px-4 text-black text-center">{course.name}</td>
-                        <td className="w-1/4 py-3 px-4 text-black text-center">{course.term}</td>
-                        <td className="w-1/4 py-3 px-4 text-center">
+                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.code}</td>
+                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.term}</td>
+                        <td className="w-1/3 py-3 px-4 text-center">
                             <button 
                                 className="bg-black text-white py-1 px-4 rounded-lg"
                                 onClick={() => handleSelectCourse(course.id)}
