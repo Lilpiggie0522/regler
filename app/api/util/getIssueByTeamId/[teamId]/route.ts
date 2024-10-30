@@ -19,9 +19,10 @@ export async function GET(req : NextRequest, { params } : Params) {
     }
     const issue_id = team.issues[0]
     const issue = await Issue.findById(issue_id)
-    const tutorComment = issue.tutorComments[0]?.content
-    if (!tutorComment) {
-        return NextResponse.json('tutor has yet to comment', {status: 400})    
+
+    if (!issue || issue.status !== 'pending') {
+        return NextResponse.json("No response entered yet.", { status: 200 });    
     }
+    const tutorComment = issue.tutorComments[0]?.content
     return NextResponse.json(tutorComment, {status: 200})
 }

@@ -41,14 +41,14 @@ export default function UnifiedInfo() {
         async function getTutorOpinions() {
             try {
                 const response = await fetch(`/api/util/getIssueByTeamId/${teamId}`)
-                const comment: string = await response.json()
                 if (!response.ok) {
-                    console.log(comment)
+                    alert("Error: " + response.statusText);
                 } else {
-                    setTutorComment(comment)
+                    const comment = await response.json()
+                    setTutorComment(JSON.stringify(comment))
                 }
-            } catch {
-                throw Error('error fetching comment')
+            } catch (error) {
+                console.error(error);
             }
         }
         getTutorOpinions()
@@ -73,10 +73,12 @@ export default function UnifiedInfo() {
                 body: JSON.stringify({content: content, teamId: teamId})
             })
             if (!response.ok) {
-                console.log(await response.json())
+                const errorString = await response.json();
+                alert(JSON.stringify(errorString));
+                console.log(errorString)
             }
-        } catch {
-            throw Error('response error, check response')
+        } catch (error) {
+            console.error(error);
         }
         // Need to write more
     };
