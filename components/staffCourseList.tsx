@@ -16,6 +16,8 @@ export default function CourseList() {
     
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
+    // const [,setCourse] = useLocalStorageState('email', '');
+    // const [,setTerm] 
     
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [sortedCourses, setSortedCourses] = useState<Course[]>([]);
@@ -110,7 +112,7 @@ export default function CourseList() {
                         <td className="w-1/3 py-3 px-4 text-center">
                             <button 
                                 className="bg-black text-white py-1 px-4 rounded-lg"
-                                onClick={() => router.push(`/staffGroupList`)}
+                                onClick={() => router.push(`/staffGroupList?course=${course.course}&term=${course.term}`)}
                             >Select</button>
                         </td>
                     </tr>

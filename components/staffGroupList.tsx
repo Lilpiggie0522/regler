@@ -3,7 +3,7 @@
 import { useStudentContext } from '@/context/studentContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -15,17 +15,20 @@ enum GroupStatus {
 
 // Define a type for the group
 interface Group {
-    id: string;
-    name: string;
-    tutor: string;
+    team: string;
+    mentors: string[];
     status: GroupStatus;
 }
-
+  
 const GroupList: React.FC = () => {
     const router = useRouter();
+    const { course, term } = router.query;
+    const courseString = Array.isArray(course) ? course[0] : course;
+    const termString = Array.isArray(term) ? term[0] : term;
 
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
+    console.log("email:", email);
 
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<GroupStatus | ''>('');
@@ -55,50 +58,50 @@ const GroupList: React.FC = () => {
 
     // Fetch groups from the API
     useEffect(() => {
-        if (email) {
-            fetchGroups(email);
-            }
-        }, [email]);  // Run effect when these values change
-        
-        const fetchGroups = async (email: string) => {
-            try {
-                // console.log('Sending email:', email);
-
-                const coursesResponse = await fetch('/api/staff/groupList', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email }),
-                });
-
-                // console.log('Response Status:', coursesResponse.status);
-
-                if (!coursesResponse.ok) {
-                    const errObj = await coursesResponse.json();
-                    // console.log('Error Response:', errObj);
-                    throw Error(errObj.error);
-                }
-                const courseObj = await coursesResponse.json();
-                // console.log('Fetched Courses:', courseObj.courses);
-
-                setGroups(courseObj.courses);
-            } catch (error) {
-                // console.error('Error fetching courses:', error);
-                throw error
-            }
+        if (email && courseString && termString) {
+            fetchGroups(email, courseString, termString);
         }
+    }, [email, courseString, termString]);  // Run effect when these values change
+        
+    const fetchGroups = async (email: string, course: string, term: string) => {
+        try {
+            const res = await fetch('/api/staff/returnTeamIssueStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, course, term }),
+            });
+
+            if (!res.ok) {
+                const errObj = await res.json();
+                console.log("teams",errObj)
+
+                throw Error(errObj.error);
+            }
+            const groupObj = await res.json();
+            console.log("groupObj",groupObj)
+            setGroups(groupObj.teamSubmissionsRecord);
+            console.log("teams",groupObj.teamSubmissionsRecord)
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+        }
+    }
 
     // Filter groups based on the search term and status filter
     const filteredGroups = groups.filter(group => {
-        const matchesSearchTerm = 
-            group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            group.tutor.toLowerCase().includes(searchTerm.toLowerCase());
-    
+        const matchesTeam = group.team.toLowerCase().includes(searchTerm.toLowerCase());
+      
+        const matchesMentors = group.mentors.some(mentor => 
+          mentor.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      
+        const matchesSearchTerm = matchesTeam || matchesMentors;
+      
         const matchesStatus = selectedStatus ? group.status === selectedStatus : true;
-    
+      
         return matchesSearchTerm && matchesStatus;
-    });
+    });      
     
 
     // Define the order of statuses for sorting
@@ -145,10 +148,6 @@ const GroupList: React.FC = () => {
         };
     }, [dropdownRef]);
 
-    const handleSelectGroup = () => {
-        router.push(`/studentList`);
-    };
-
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Title */}
@@ -181,10 +180,10 @@ const GroupList: React.FC = () => {
             {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
             <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-white sticky top-0 z-10">
-                    <tr className="bg-white text-left mt-6">
+                <thead className="bg-gray-200 sticky top-0 z-10">
+                    <tr className="text-left mt-6">
                         <th className="py-2 px-4 font-bold text-black text-center">Group Name</th>
-                        <th className="py-2 px-4 font-bold text-black text-center">Tutor</th>
+                        <th className="py-2 px-4 font-bold text-black text-center">Tutors</th>
                         <th className="py-2 px-4 font-bold text-black text-center flex items-center justify-center">
                             <div className="flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                                     <span>Status</span>
@@ -232,8 +231,10 @@ const GroupList: React.FC = () => {
                     {sortedGroups.length > 0 ? (
                         sortedGroups.map((group, index) => (
                             <tr key={index} className="border-b">
-                                <td className="py-3 px-4 text-black text-center">{group.name}</td>
-                                <td className="py-3 px-4 text-black text-center">{group.tutor}</td>
+                                <td className="py-3 px-4 text-black text-center">{group.team}</td>
+                                <td className="py-3 px-4 text-black text-center">
+                                    {group.mentors.join(', ')}
+                                </td>
                                 <td className="py-3 px-4 flex justify-center items-center">
                                 <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: '140px', height: '35px', borderRadius: '8px' }}>
                                         {group.status}
@@ -242,7 +243,7 @@ const GroupList: React.FC = () => {
                                 <td className="py-3 px-4 text-center">
                                     <button 
                                         className="bg-black text-white py-1 px-3 rounded-lg"
-                                        onClick={() => handleSelectGroup()}
+                                        onClick={() => router.push(`/unifiedInfo?course=${course}&term=${term}&group=${group.team}`)}
                                     >Select</button>
                                 </td>
                             </tr>
