@@ -1,5 +1,6 @@
 import { createAdminInput, createCourseInput, createStudentInput, createTeamInput } from '@/app/api/adminSystem/initialise/route'
-import * as func from '../app/api/staff/readCsv/helpers'
+import * as func from '@/app/api/staff/readCsv/helpers'
+
 import { convertedResult, convertFileData } from '@/app/api/staff/readCsv/helpers'
 
 const converted: convertedResult[] = [
@@ -431,7 +432,6 @@ describe("data insertion", () => {
             func.insertTutor(row, staffAdmins, courseInfo, newCourse, teamToAdd!)
             func.insertStudent(row, students, teamToAdd!)
         }
-        console.log(teams)
         expect(teams).toStrictEqual([
             {
                 teamName: 'piggie squad 0',

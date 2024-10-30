@@ -207,9 +207,11 @@ export async function POST(req: NextRequest) {
             }
             await currentCourse.save()
         }
-
+        const curCourses = await Course.find({}).select('+courseName +teams +mentors').exec();
+        const curTeams = await Team.find({}).exec();
+        const curStudents = await Student.find({}).exec();
         
-        return NextResponse.json({ message: "Initialisation successful.", course, teams }, { status: 200 });
+        return NextResponse.json({ message: "Initialisation successful.", curCourses, curTeams, curStudents }, { status: 200 });
     } catch (error) {
         console.log(error)
         return NextResponse.json({ error: error }, { status: 500 });
