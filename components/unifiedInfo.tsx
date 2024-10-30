@@ -1,5 +1,6 @@
 'use client'
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
 interface Student {
@@ -22,7 +23,11 @@ export default function UnifiedInfo() {
 	// 		[name]: value,
 	// 	}));
 	// };
+    const params = useSearchParams()
+    const teamId = params.get('teamId')
     const [searchTerm, setSearchTerm] = useState<string>('');
+    const [content, setContent] = useState<string>('')
+    const [tutorComment, setTutorComment] = useState<string>('')
 
     // Test student list
     const [students, setStudents] = useState<Student[]>([
@@ -33,18 +38,18 @@ export default function UnifiedInfo() {
     ]);
 
     useEffect(() => {
-        try {
-            const response = fetch('api/staff/tutorOpinions', {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify({})
-            })
-        } catch (error) {
-            
+        console.log(`team id is ${teamId}`)
+        async function getTutorOpinions() {
+            try {
+                const response = await fetch(`/api/util/getIssueByTeamId/${teamId}`)
+                const comment: string = await response.json()
+                setTutorComment(comment)
+            } catch (error) {
+                throw Error('error fetching comment')
+            }
         }
-    }, [])
+        getTutorOpinions()
+    }, [teamId, tutorComment])
 
     // Handle functions
     const handleDelete = (indexToDelete: number) => {
@@ -54,8 +59,21 @@ export default function UnifiedInfo() {
         setStudents(filteredStudents);
     };
 
-    const handleSubmit = (event: React.FormEvent) => {
+    const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        try {
+            const response = await fetch('api/staff/tutorOpinions', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify({content: content, teamId: teamId})
+            })
+            console.log(await response.json())
+        } catch (error) {
+            console.log(error)
+            throw Error('response error, check response')
+        }
         // Need to write more
     };
 
@@ -117,17 +135,16 @@ export default function UnifiedInfo() {
 
                 <form className="mt-6" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-4">
-                        <label className="text-lg text-black">Tutor's Opinion</label>
+                        <label className="text-lg text-black">Tutor&apos;s Opinion</label>
                         <p className="border border-gray-300 text-black p-2 rounded-md">
-                            I think they are doing great!
+                            {tutorComment}
                         </p>
                         <label className="text-lg text-black">Enter your opinion here</label>
                         <textarea
                             name="yourOpinion"
                             placeholder="Enter your opinion here"
                             className="border border-gray-300 text-black p-2 rounded-md h-20"
-                            //value={formData.}
-					        //onChange={handleChange}
+					        onChange={(input) => setContent(input.target.value)}
                         />
                         <button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">
                             Submit
