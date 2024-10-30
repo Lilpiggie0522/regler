@@ -3,7 +3,8 @@
 import { useStudentContext } from '@/context/studentContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -22,9 +23,10 @@ interface Group {
   
 const GroupList: React.FC = () => {
     const router = useRouter();
-    const { course, term } = router.query;
-    const courseString = Array.isArray(course) ? course[0] : course;
-    const termString = Array.isArray(term) ? term[0] : term;
+    const params = useSearchParams();
+    const courseName = params.get('course');
+    const term = params.get('term');
+
 
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
@@ -58,13 +60,16 @@ const GroupList: React.FC = () => {
 
     // Fetch groups from the API
     useEffect(() => {
-        if (email && courseString && termString) {
-            fetchGroups(email, courseString, termString);
+        if (email && courseName && term) {
+            fetchGroups(email, courseName, term);
         }
-    }, [email, courseString, termString]);  // Run effect when these values change
+    }, [email, courseName, term]);  // Run effect when these values change
         
     const fetchGroups = async (email: string, course: string, term: string) => {
         try {
+            console.log("course here", courseName)
+            console.log("term here", term)
+
             const res = await fetch('/api/staff/returnTeamIssueStatus', {
                 method: 'POST',
                 headers: {
@@ -243,7 +248,7 @@ const GroupList: React.FC = () => {
                                 <td className="py-3 px-4 text-center">
                                     <button 
                                         className="bg-black text-white py-1 px-3 rounded-lg"
-                                        onClick={() => router.push(`/unifiedInfo?course=${course}&term=${term}&group=${group.team}`)}
+                                        onClick={() => router.push(`/unifiedInfo?course=${courseName}&term=${term}&group=${group.team}`)}
                                     >Select</button>
                                 </td>
                             </tr>
