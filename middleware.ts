@@ -20,10 +20,20 @@ const PROTECTED_ROUTES = [
     redirect: { tutor: '/', admin: '/', student: '/studentDetailConfirm' }
   },
   {
+    pathRegex: "/staffGroupList",
+    access: ["admin", "tutor"],
+    redirect: { tutor: '/', admin: '/', student: '/studentDetailConfirm' }
+  },
+  {
     pathRegex: "/studentDetailConfirm",
     access: ["student"],
     redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/' }
-  }
+  },
+  {
+    pathRegex: "/unifiedInfo",
+    access: ["admin", "tutor"],
+    redirect: { tutor: '/', admin: '/', student: '/studentDetailConfirm' }
+  },
 ]
 
 const allowedRequest: NextResponse<unknown> = NextResponse.next()
@@ -48,6 +58,10 @@ const PROTECTED_APIs = [
   },
   {
     pathRegex: "/api/staff/.*",
+    access: ["admin", "tutor"]
+  },
+  {
+    pathRegex: "/api/tutorOpinions/.*",
     access: ["admin", "tutor"]
   },
   {

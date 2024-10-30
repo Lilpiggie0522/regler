@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
                     groupName: teamFound.teamName,
                     tutors: mentorStr,
                     lecturer: lecturerName,
-                    status: status
+                    status: status,
+                    teamId: teamFound._id
                 }
                 result.push(newGroupInfo)
             }

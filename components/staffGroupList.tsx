@@ -20,6 +20,7 @@ interface Group {
     lecturer: string;
     status: GroupStatus;
     tutors: string;
+    teamId: string;
 }
 
 const GroupList: React.FC = () => {
@@ -226,7 +227,7 @@ const GroupList: React.FC = () => {
                                     <td className="py-3 px-4 text-center">
                                         <button
                                             className="bg-black text-white py-1 px-3 rounded-lg"
-                                            onClick={() => router.push(`/unifiedInfo?course=${courseName}&term=${term}&group=${group.groupName}`)}
+                                            onClick={() => router.push(`/unifiedInfo?course=${courseName}&term=${term}&group=${group.groupName}&teamId=${group.teamId as string}`)}
                                         >Select</button>
                                     </td>
                                 </tr>
