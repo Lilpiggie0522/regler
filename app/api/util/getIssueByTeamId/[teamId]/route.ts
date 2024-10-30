@@ -17,13 +17,12 @@ export async function GET(req : NextRequest, { params } : Params) {
     if (!team) {
         return NextResponse.json('invalid teamId', {status: 400})    
     }
-    const issue_id = team.issues[0]
-    const issue = await Issue.findById(issue_id)
-
-    if (!issue) {
+    const issue_id = team.issues?.[0]
+    if (!issue_id) {
         const message = "This team does not have a pending issue,no tutor opinion needed yet"
         return NextResponse.json(message, { status: 200 });    
     }
+    const issue = await Issue.findById(issue_id)
     const tutorComment = issue.tutorComments[0]?.content
     return NextResponse.json(tutorComment, {status: 200})
 }
