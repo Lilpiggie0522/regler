@@ -50,7 +50,7 @@ const PROTECTED_APIs = [
   },
   {
     pathRegex: "/api/issueSystem/.*",
-    access: ["student"]
+    access: ["student","admin","tutor"]
   },
   {
     pathRegex: "/api/staff/readCsv",
@@ -83,6 +83,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
           return declinedRequest
         }
       } catch (error) {
+        console.error(error);
         return declinedRequest
       }
       return allowedRequest
@@ -105,6 +106,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
           }
         }
       } catch (error) {
+        console.error(error);
         return NextResponse.redirect(new URL('/', request.url))
       }
     }
