@@ -19,7 +19,6 @@ export async function GET(req : NextRequest, { params } : Params) {
     }
     const issue_id = team.issues[0]
     const issue = await Issue.findById(issue_id)
-    console.log(issue)
     const tutorComment = issue.tutorComments[0]?.content
     if (!tutorComment) {
         return NextResponse.json('tutor has yet to comment', {status: 400})    

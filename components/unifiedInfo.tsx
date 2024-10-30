@@ -38,13 +38,16 @@ export default function UnifiedInfo() {
     ]);
 
     useEffect(() => {
-        console.log(`team id is ${teamId}`)
         async function getTutorOpinions() {
             try {
                 const response = await fetch(`/api/util/getIssueByTeamId/${teamId}`)
                 const comment: string = await response.json()
-                setTutorComment(comment)
-            } catch (error) {
+                if (!response.ok) {
+                    console.log(comment)
+                } else {
+                    setTutorComment(comment)
+                }
+            } catch {
                 throw Error('error fetching comment')
             }
         }
@@ -69,9 +72,10 @@ export default function UnifiedInfo() {
                 },
                 body: JSON.stringify({content: content, teamId: teamId})
             })
-            console.log(await response.json())
-        } catch (error) {
-            console.log(error)
+            if (!response.ok) {
+                console.log(await response.json())
+            }
+        } catch {
             throw Error('response error, check response')
         }
         // Need to write more
