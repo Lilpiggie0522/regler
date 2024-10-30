@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+// import models from './models';
 
 export const issueSchema = new Schema({
     status: {
@@ -18,10 +19,8 @@ export const issueSchema = new Schema({
         student: {type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true},
       }, { timestamps: true }],
     tutorComments:[{
-        title: {type: 'string', required: true},
         content: {type: 'string', required: true},
-        filesUrl: {type: 'string'},
+        // filesUrl: {type: 'string'},
         tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
     }, { timestamps: true }]
 });
-
