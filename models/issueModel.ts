@@ -24,4 +24,3 @@ export const issueSchema = new Schema({
         tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
     }, { timestamps: true }]
 });
-
