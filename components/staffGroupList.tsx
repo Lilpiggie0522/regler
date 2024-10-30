@@ -1,7 +1,10 @@
 'use client';
 
+import { useStudentContext } from '@/context/studentContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -13,48 +16,97 @@ enum GroupStatus {
 
 // Define a type for the group
 interface Group {
-    name: string;
-    tutor: string;
+    team: string;
+    mentors: string[];
     status: GroupStatus;
 }
-
+  
 const GroupList: React.FC = () => {
+    const router = useRouter();
+    const params = useSearchParams();
+    const courseName = params.get('course');
+    const term = params.get('term');
+
+
+    const { useLocalStorageState } = useStudentContext();
+    const [email,] = useLocalStorageState('email', '');
+    console.log("email:", email);
+
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<GroupStatus | ''>('');
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    const groups: Group[] = [
-        { name: 'Group 1', tutor: 'Yu Chen', status: GroupStatus.Complete },
-        { name: 'Group 2', tutor: 'ANNA', status: GroupStatus.Complete },
-        { name: 'Group 3', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 4', tutor: 'ANNA', status: GroupStatus.NotStarted },
-        { name: 'Group 5', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 6', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 7', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 8', tutor: 'ANNA', status: GroupStatus.NotStarted },
-        { name: 'Group 9', tutor: 'Rokecy', status: GroupStatus.NotStarted },
-        { name: 'Group 10', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 11', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 12', tutor: 'Yu Chen', status: GroupStatus.Pending },
-        { name: 'Group 13', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
-        { name: 'Group 14', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
-        { name: 'Group 15', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-        { name: 'Group 16', tutor: 'Yu Chen', status: GroupStatus.Pending },
-    ];
+    const [groups, setGroups] = useState<Group[]>([]); // State for groups
 
-    
+    // const groups: Group[] = [
+    //     { name: 'Group 1', tutor: 'Yu Chen', status: GroupStatus.Complete },
+    //     { name: 'Group 2', tutor: 'ANNA', status: GroupStatus.Complete },
+    //     { name: 'Group 3', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 4', tutor: 'ANNA', status: GroupStatus.NotStarted },
+    //     { name: 'Group 5', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 6', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 7', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 8', tutor: 'ANNA', status: GroupStatus.NotStarted },
+    //     { name: 'Group 9', tutor: 'Rokecy', status: GroupStatus.NotStarted },
+    //     { name: 'Group 10', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 11', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 12', tutor: 'Yu Chen', status: GroupStatus.Pending },
+    //     { name: 'Group 13', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
+    //     { name: 'Group 14', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
+    //     { name: 'Group 15', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
+    //     { name: 'Group 16', tutor: 'Yu Chen', status: GroupStatus.Pending },
+    // ];
+
+    // Fetch groups from the API
+    useEffect(() => {
+        if (email && courseName && term) {
+            fetchGroups(email, courseName, term);
+        }
+    }, [email, courseName, term]);  // Run effect when these values change
+        
+    const fetchGroups = async (email: string, course: string, term: string) => {
+        try {
+            console.log("course here", courseName)
+            console.log("term here", term)
+
+            const res = await fetch('/api/staff/returnTeamIssueStatus', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, course, term }),
+            });
+
+            if (!res.ok) {
+                const errObj = await res.json();
+                console.log("teams",errObj)
+
+                throw Error(errObj.error);
+            }
+            const groupObj = await res.json();
+            console.log("groupObj",groupObj)
+            setGroups(groupObj.teamSubmissionsRecord);
+            console.log("teams",groupObj.teamSubmissionsRecord)
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+        }
+    }
 
     // Filter groups based on the search term and status filter
     const filteredGroups = groups.filter(group => {
-        const matchesSearchTerm = 
-            group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            group.tutor.toLowerCase().includes(searchTerm.toLowerCase());
-    
+        const matchesTeam = group.team.toLowerCase().includes(searchTerm.toLowerCase());
+      
+        const matchesMentors = group.mentors.some(mentor => 
+          mentor.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      
+        const matchesSearchTerm = matchesTeam || matchesMentors;
+      
         const matchesStatus = selectedStatus ? group.status === selectedStatus : true;
-    
+      
         return matchesSearchTerm && matchesStatus;
-    });
+    });      
     
 
     // Define the order of statuses for sorting
@@ -133,10 +185,10 @@ const GroupList: React.FC = () => {
             {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
             <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-white sticky top-0 z-10">
-                    <tr className="bg-white text-left mt-6">
+                <thead className="bg-gray-200 sticky top-0 z-10">
+                    <tr className="text-left mt-6">
                         <th className="py-2 px-4 font-bold text-black text-center">Group Name</th>
-                        <th className="py-2 px-4 font-bold text-black text-center">Tutor</th>
+                        <th className="py-2 px-4 font-bold text-black text-center">Tutors</th>
                         <th className="py-2 px-4 font-bold text-black text-center flex items-center justify-center">
                             <div className="flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                                     <span>Status</span>
@@ -184,15 +236,20 @@ const GroupList: React.FC = () => {
                     {sortedGroups.length > 0 ? (
                         sortedGroups.map((group, index) => (
                             <tr key={index} className="border-b">
-                                <td className="py-3 px-4 text-black text-center">{group.name}</td>
-                                <td className="py-3 px-4 text-black text-center">{group.tutor}</td>
+                                <td className="py-3 px-4 text-black text-center">{group.team}</td>
+                                <td className="py-3 px-4 text-black text-center">
+                                    {group.mentors.join(', ')}
+                                </td>
                                 <td className="py-3 px-4 flex justify-center items-center">
                                 <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: '140px', height: '35px', borderRadius: '8px' }}>
                                         {group.status}
                                     </div>
                                 </td>
                                 <td className="py-3 px-4 text-center">
-                                    <button className="bg-black text-white py-1 px-3 rounded-lg">Select</button>
+                                    <button 
+                                        className="bg-black text-white py-1 px-3 rounded-lg"
+                                        onClick={() => router.push(`/unifiedInfo?course=${courseName}&term=${term}&group=${group.team}`)}
+                                    >Select</button>
                                 </td>
                             </tr>
                         ))
