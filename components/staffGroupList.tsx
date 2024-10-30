@@ -16,11 +16,12 @@ enum GroupStatus {
 
 // Define a type for the group
 interface Group {
-    team: string;
-    mentors: string[];
+    groupName: string;
+    lecturer: string;
     status: GroupStatus;
+    tutors: string;
 }
-  
+
 const GroupList: React.FC = () => {
     const router = useRouter();
     const params = useSearchParams();
@@ -30,7 +31,6 @@ const GroupList: React.FC = () => {
 
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
-    console.log("email:", email);
 
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [selectedStatus, setSelectedStatus] = useState<GroupStatus | ''>('');
@@ -39,75 +39,49 @@ const GroupList: React.FC = () => {
 
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
 
-    // const groups: Group[] = [
-    //     { name: 'Group 1', tutor: 'Yu Chen', status: GroupStatus.Complete },
-    //     { name: 'Group 2', tutor: 'ANNA', status: GroupStatus.Complete },
-    //     { name: 'Group 3', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-    //     { name: 'Group 4', tutor: 'ANNA', status: GroupStatus.NotStarted },
-    //     { name: 'Group 5', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-    //     { name: 'Group 6', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-    //     { name: 'Group 7', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-    //     { name: 'Group 8', tutor: 'ANNA', status: GroupStatus.NotStarted },
-    //     { name: 'Group 9', tutor: 'Rokecy', status: GroupStatus.NotStarted },
-    //     { name: 'Group 10', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-    //     { name: 'Group 11', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-    //     { name: 'Group 12', tutor: 'Yu Chen', status: GroupStatus.Pending },
-    //     { name: 'Group 13', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
-    //     { name: 'Group 14', tutor: 'Rokecy', status: GroupStatus.NeedFeedback },
-    //     { name: 'Group 15', tutor: 'Yu Chen', status: GroupStatus.NotStarted },
-    //     { name: 'Group 16', tutor: 'Yu Chen', status: GroupStatus.Pending },
-    // ];
-
     // Fetch groups from the API
-    useEffect(() => {
-        if (email && courseName && term) {
-            fetchGroups(email, courseName, term);
-        }
-    }, [email, courseName, term]);  // Run effect when these values change
-        
-    const fetchGroups = async (email: string, course: string, term: string) => {
+    const fetchGroups = async (email: string, courseName: string, term: string) => {
         try {
-            console.log("course here", courseName)
-            console.log("term here", term)
-
-            const res = await fetch('/api/staff/returnTeamIssueStatus', {
+            const res = await fetch('/api/staff/groupList', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, course, term }),
+                body: JSON.stringify({ email, courseName, term }),
             });
-
+    
             if (!res.ok) {
                 const errObj = await res.json();
-                console.log("teams",errObj)
-
+    
                 throw Error(errObj.error);
             }
             const groupObj = await res.json();
-            console.log("groupObj",groupObj)
-            setGroups(groupObj.teamSubmissionsRecord);
-            console.log("teams",groupObj.teamSubmissionsRecord)
+            setGroups(groupObj);
         } catch (error) {
             console.error('Error fetching groups:', error);
         }
     }
 
+    useEffect(() => {
+        if (email && courseName && term) {
+            fetchGroups(email, courseName, term);
+        }
+    }, [email, courseName, term]);  // Run effect when these values change
+
+    
+
     // Filter groups based on the search term and status filter
     const filteredGroups = groups.filter(group => {
-        const matchesTeam = group.team.toLowerCase().includes(searchTerm.toLowerCase());
-      
-        const matchesMentors = group.mentors.some(mentor => 
-          mentor.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      
-        const matchesSearchTerm = matchesTeam || matchesMentors;
-      
+        const matchesTeam = group.groupName.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesMentors = group.tutors.split(',').map(tutor => tutor.toLowerCase()).includes(searchTerm.toLowerCase())
+        const matchesLecturer = group.lecturer.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearchTerm = matchesTeam || matchesMentors || matchesLecturer;
+
         const matchesStatus = selectedStatus ? group.status === selectedStatus : true;
-      
+
         return matchesSearchTerm && matchesStatus;
-    });      
-    
+    });
+
 
     // Define the order of statuses for sorting
     const statusOrder: Record<GroupStatus, number> = {
@@ -146,7 +120,7 @@ const GroupList: React.FC = () => {
                 setIsDropdownOpen(false);
             }
         };
-        
+
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
@@ -160,7 +134,7 @@ const GroupList: React.FC = () => {
                 <div>
                     {/* Back arrow icon */}
                     <button onClick={() => window.history.back()} className="text-black mb-1 flex items-center ">
-                        <FaArrowLeft className="mr-2" /> 
+                        <FaArrowLeft className="mr-2" />
                         {'Back'}
                     </button>
                     <h1 className="text-black text-3xl font-bold inline-block ml-2">Groups</h1>
@@ -179,89 +153,92 @@ const GroupList: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
-                
+
             </div>
 
             {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
-            <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-200 sticky top-0 z-10">
-                    <tr className="text-left mt-6">
-                        <th className="py-2 px-4 font-bold text-black text-center">Group Name</th>
-                        <th className="py-2 px-4 font-bold text-black text-center">Tutors</th>
-                        <th className="py-2 px-4 font-bold text-black text-center flex items-center justify-center">
-                            <div className="flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-200 sticky top-0 z-10">
+                        <tr className="text-left mt-6">
+                            <th className="py-2 px-4 font-bold text-black text-center">Group Name</th>
+                            <th className="py-2 px-4 font-bold text-black text-center">Lecturer</th>
+                            <th className="py-2 px-4 font-bold text-black text-center">Tutors</th>
+                            <th className="py-2 px-4 font-bold text-black text-center flex items-center justify-center">
+                                <div className="flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                                     <span>Status</span>
                                     <FaFilter className="ml-2" />
                                 </div>
 
-                            {isDropdownOpen && (
-                                <div 
-                                    ref={dropdownRef}
-                                    className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
-                                    style={{ marginTop: '100px' }}
-                                >
-        
-                                {/* Status options */}
-                                {Object.values(GroupStatus).map((status) => (
-                                    <div 
-                                        key={status} 
-                                        className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedStatus === status ? 'bg-gray-200' : ''}`}
-                                        onClick={() => {
-                                            setSelectedStatus(status);
-                                            setIsDropdownOpen(false);
-                                        }}
+                                {isDropdownOpen && (
+                                    <div
+                                        ref={dropdownRef}
+                                        className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+                                        style={{ marginTop: '100px' }}
                                     >
-                                        {status}
-                                    </div>
-                                ))}
 
-                                {/* Clear option */}
-                                <div 
-                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100"
-                                    onClick={() => {
-                                        setSelectedStatus(''); // Clear the selected status
-                                        setIsDropdownOpen(false);
-                                    }}
-                                >
-                                    Clear
-                                </div>
-                            </div>
-                            )}
-                        </th>
-                        <th className="py-2 px-4 font-bold text-black text-center">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {sortedGroups.length > 0 ? (
-                        sortedGroups.map((group, index) => (
-                            <tr key={index} className="border-b">
-                                <td className="py-3 px-4 text-black text-center">{group.team}</td>
-                                <td className="py-3 px-4 text-black text-center">
-                                    {group.mentors.join(', ')}
-                                </td>
-                                <td className="py-3 px-4 flex justify-center items-center">
-                                <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: '140px', height: '35px', borderRadius: '8px' }}>
-                                        {group.status}
+                                        {/* Status options */}
+                                        {Object.values(GroupStatus).map((status) => (
+                                            <div
+                                                key={status}
+                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedStatus === status ? 'bg-gray-200' : ''}`}
+                                                onClick={() => {
+                                                    setSelectedStatus(status);
+                                                    setIsDropdownOpen(false);
+                                                }}
+                                            >
+                                                {status}
+                                            </div>
+                                        ))}
+
+                                        {/* Clear option */}
+                                        <div
+                                            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                            onClick={() => {
+                                                setSelectedStatus(''); // Clear the selected status
+                                                setIsDropdownOpen(false);
+                                            }}
+                                        >
+                                            Clear
+                                        </div>
                                     </div>
-                                </td>
-                                <td className="py-3 px-4 text-center">
-                                    <button 
-                                        className="bg-black text-white py-1 px-3 rounded-lg"
-                                        onClick={() => router.push(`/unifiedInfo?course=${courseName}&term=${term}&group=${group.team}`)}
-                                    >Select</button>
-                                </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr>
-                            <td colSpan={5} className="text-center py-4 text-gray-500">No results found</td>
+                                )}
+                            </th>
+                            <th className="py-2 px-4 font-bold text-black text-center">Action</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
-        </div>
-
+                    </thead>
+                    <tbody>
+                        {sortedGroups.length > 0 ? (
+                            sortedGroups.map((group, index) => (
+                                <tr key={index} className="border-b">
+                                    <td className="py-3 px-4 text-black text-center">{group.groupName}</td>
+                                    <td className="py-3 px-4 text-black text-center">
+                                        {group.lecturer}
+                                    </td>
+                                    <td className="py-3 px-4 text-black text-center">
+                                        {group.tutors}
+                                    </td>
+                                    <td className="py-3 px-4 flex justify-center items-center">
+                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: '140px', height: '35px', borderRadius: '8px' }}>
+                                            {group.status}
+                                        </div>
+                                    </td>
+                                    <td className="py-3 px-4 text-center">
+                                        <button
+                                            className="bg-black text-white py-1 px-3 rounded-lg"
+                                            onClick={() => router.push(`/unifiedInfo?course=${courseName}&term=${term}&group=${group.groupName}`)}
+                                        >Select</button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={5} className="text-center py-4 text-gray-500">No results found</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
