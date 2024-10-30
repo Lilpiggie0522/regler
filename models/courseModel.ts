@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import models from './models';
 
 export const courseSchema = new Schema({
     courseName: {
@@ -10,16 +9,17 @@ export const courseSchema = new Schema({
     term: {type: 'string', required: true}
 });
 
-courseSchema.pre('deleteMany', async function(next) {
-    try {
-        const query = this.getFilter();
-        const courseDelete = await models.Course.find(query, '_id');
-        const courseId = courseDelete.map(course => course._id);
-        await models.Reminder.deleteMany({ course: courseId });
-        next();
-    } catch (error) {
-        if (error instanceof Error) {
-            next(error);
-        }
-    }
-});
+courseSchema.index({ courseName: 1, term: 1 }, { unique: true });
+// courseSchema.pre('deleteMany', async function(next) {
+//     try {
+//         const query = this.getFilter();
+//         const courseDelete = await models.Course.find(query, '_id');
+//         const courseId = courseDelete.map(course => course._id);
+//         await models.Reminder.deleteMany({ course: courseId });
+//         next();
+//     } catch (error) {
+//         if (error instanceof Error) {
+//             next(error);
+//         }
+//     }
+// });

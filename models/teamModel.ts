@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import models from './models';
 
 export const teamSchema = new Schema({
     teamName: {

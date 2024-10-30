@@ -24,8 +24,8 @@ const Admin = models.Admin;
     Error:
         - Check if team exists
         - Check if course exists
-        - Check if team is contained in courses
-        - Check if student given in team or not
+        // - Check if team is contained in courses
+        // - Check if student given in team or not
 */
 export async function POST(request: NextRequest) {
     try {
@@ -40,12 +40,12 @@ export async function POST(request: NextRequest) {
         if (!course) {
             return NextResponse.json({ error: "Course not found"}, { status: 404 })
         } 
-        if (!course.teams.includes(teamId)) {
-            return NextResponse.json({ error: "Team not found from course"}, { status: 404 })
-        }
-        if (!team.students.includes(studentId)) {
-            return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
-        }
+        // if (!course.teams.includes(teamId)) {
+        //     return NextResponse.json({ error: "Team not found from course"}, { status: 404 })
+        // }
+        // if (!team.students.includes(studentId)) {
+        //     return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
+        // }
         const transport = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -87,9 +87,10 @@ export async function POST(request: NextRequest) {
                         Contribalance
                     </p>
                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-                    href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
+                    href="http://localhost:3000/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
                     `
                 };
+                // href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
                 await transport.sendMail(mailingParameters);       
             } else if (student && tempId.toString() === studentId.toString()) {
                 const mailingParameters = {

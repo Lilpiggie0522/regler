@@ -11,7 +11,8 @@ export const adminSchema = new Schema({
       enum: ['admin', 'tutor'],
       message: '{VALUE} is not a valid role',
       required: true
-    }
+  },
+  courses: [{type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true}]
 });
 
 
