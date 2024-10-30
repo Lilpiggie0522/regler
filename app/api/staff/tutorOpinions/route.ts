@@ -21,20 +21,18 @@ export async function POST(req: NextRequest) {
         let response = await validateId(teamId, "Team");
         if (response) return response;
 
-        // Retrieve team and issue data
         const team = await Team.findById(teamId).populate("issues").exec();
-        if (!team) {
-            return NextResponse.json({ error: "Invalid team data" }, { status: 404 });
+        // If team ID not valid, validatedId.ts will return error 404
+
+        const issueId = team.issues[0];
+        const openIssue = await Issue.findById(issueId).exec();
+        // If no issue created or issue has closed, return 404
+        if (!openIssue || openIssue.status !== 'pending') {
+            return NextResponse.json({ error: "No pending issues for this team" }, { status: 404 });
         }
 
-        // Find the open issue for the team
-        const openIssue = team.issues.find((issue: any) => issue.status === 'pending');
-        // if (!openIssue) {
-        //     return NextResponse.json({ error: "No pending issues for this team" }, { status: 404 });
-        // }
-
         // Check if a tutor has already commented on this issue
-        if (openIssue.tutorComments && openIssue.tutorComments.length > 0) {
+        if (openIssue.tutorComments.length > 0) {
             return NextResponse.json({ error: "Tutor has already submitted an opinion on this issue" }, { status: 400 });
         }
 
@@ -57,7 +55,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: "Tutor opinion added successfully", updateIssue}, { status: 200 });
 
     } catch (error) {
-        console.error("Error in tutor opinion POST request:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
