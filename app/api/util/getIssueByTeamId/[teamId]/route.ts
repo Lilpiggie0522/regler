@@ -20,8 +20,9 @@ export async function GET(req : NextRequest, { params } : Params) {
     const issue_id = team.issues[0]
     const issue = await Issue.findById(issue_id)
 
-    if (!issue || issue.status !== 'pending') {
-        return NextResponse.json("No response entered yet.", { status: 200 });    
+    if (!issue) {
+        const message = "This team does not have a pending issue,no tutor opinion needed yet"
+        return NextResponse.json(message, { status: 200 });    
     }
     const tutorComment = issue.tutorComments[0]?.content
     return NextResponse.json(tutorComment, {status: 200})
