@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
         const { teamId, content } = request as TutorOpinionInput;
 
         // Validate the team ID
-        let response = await validateId(teamId, "Team");
+        const response = await validateId(teamId, "Team");
         if (response) return response;
 
         const team = await Team.findById(teamId).populate("issues").exec();
@@ -55,6 +55,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: "Tutor opinion added successfully", updateIssue}, { status: 200 });
 
     } catch (error) {
-        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+        return NextResponse.json({ error: error }, { status: 500 });
     }
 }
