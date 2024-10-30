@@ -4,8 +4,7 @@ export async function POST() {
     // Sample input
     // Request studentName (optional?), email and authCode
     const input = {
-        studentName: 'Cow Horse',
-        email: 'cowhorse3900@outlook.com',
+        email: 'z5361545@ad.unsw.edu.au',
         authCode: '114514'
     }
     try {

@@ -6,6 +6,7 @@ import { studentSchema } from './studentModel';
 import { issueSchema } from './issueModel';
 import { authCodeSchema } from './authcodeModel';
 // Import other model schemas as needed
+import { reminderSchema } from './reminderModel';
 
 const models = {
   Team: mongoose.models.Team || mongoose.model('Team', teamSchema),
@@ -15,6 +16,7 @@ const models = {
   Issue: mongoose.models.Issue || mongoose.model('Issue', issueSchema),
   AuthCode: mongoose.models.AuthCode || mongoose.model('AuthCode', authCodeSchema),
   // Add other model schemas as neede
+  Reminder: mongoose.models.Reminder || mongoose.model('Reminder', reminderSchema),
 };
 
 export default models;

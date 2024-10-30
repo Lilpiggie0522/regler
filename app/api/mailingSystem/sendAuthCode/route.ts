@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
             to: email,
-            subject: 'UNSW Evaluation System Verification Code (Do not reply)',
+            subject: 'Contribalance Verification Code (Do not reply)',
             html: `
             <p>
                 Hi!
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
             </p>
             <p>
                 Regards,<br>
-                UNSW Development Team
+                Contribalance
             </p>
             `,
         };

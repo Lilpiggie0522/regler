@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+// import models from './models';
 
 export const issueSchema = new Schema({
     status: {
