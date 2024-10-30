@@ -25,17 +25,3 @@ export const issueSchema = new Schema({
         tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
     }, { timestamps: true }]
 });
-
-// issueSchema.pre('deleteMany', async function(next) {
-//   try {
-//       const query = this.getFilter();
-//       const issueDelete = await models.Issue.find(query, '_id');
-//       const issueId = issueDelete.map(issue => issue._id);
-//       await models.Reminder.deleteMany({ issue: issueId });
-//       next();
-//   } catch (error) {
-//       if (error instanceof Error) {
-//           next(error);
-//       }
-//   }
-// });

@@ -43,7 +43,7 @@ describe('POST sendTeam Test', () => {
                 studentId: 'student1',
                 issueId: 'issue1',
             }),
-        } as Partial<NextRequest>;
+        } as unknown as NextRequest;
     
         (Team.findById as jest.Mock).mockResolvedValue({
             _id: 'team1',
