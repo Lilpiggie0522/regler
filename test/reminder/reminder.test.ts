@@ -2,7 +2,7 @@ import { POST, DELETE } from '@/app/api/mailingSystem/setReminder/route';
 import models from '@/models/models';
 import cron from 'node-cron';
 import { NextRequest } from 'next/server';
-import reminderMod from '@/lib/reminderMod';
+// import reminderMod from '@/lib/reminderMod';
 
 jest.mock('@/lib/dbConnect');
 jest.mock('node-cron');
