@@ -138,7 +138,12 @@ export async function POST(req: NextRequest) {
             } 
         }
 
-        return NextResponse.json({ success: true, issue }, { status: 200 });
+        return NextResponse.json({ success: true, issue,
+            teamId: teamId,
+            studentId: studentId,
+            courseId: courseId,
+            issueId: issueId,
+          }, { status: 200 });
 
         // Additional checks if necessary
 

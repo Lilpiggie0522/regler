@@ -25,17 +25,15 @@ export default function UnifiedInfo() {
 	// };
     const params = useSearchParams()
     const teamId = params.get('teamId')
+    const group = params.get('group');
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [content, setContent] = useState<string>('')
     const [tutorComment, setTutorComment] = useState<string>('')
 
+    
+
     // Test student list
-    const [students, setStudents] = useState<Student[]>([
-        { name: 'Waner Zheng', class: 'H16A', zid: 'z5417505', email: 'z5417505@ad.unsw.edu.au', status: 'Submitted' },
-        { name: 'Waner Zheng', class: 'H16A', zid: 'z5417505', email: 'z5417505@ad.unsw.edu.au', status: 'No Submission' },
-        { name: 'Waner Zheng', class: 'H16A', zid: 'z5417505', email: 'z5417505@ad.unsw.edu.au', status: 'No Submission' },
-        { name: 'Waner Zheng', class: 'H16A', zid: 'z5417505', email: 'z5417505@ad.unsw.edu.au', status: 'Submitted' },
-    ]);
+    const [students, setStudents] = useState<Student[]>([]);
 
     useEffect(() => {
         async function getTutorOpinions() {
@@ -53,6 +51,39 @@ export default function UnifiedInfo() {
         }
         getTutorOpinions()
     }, [teamId, tutorComment])
+
+    useEffect(() => {
+        async function getIssueInfo() {
+            try {
+                
+                const response = await fetch(`/api/issueSystem/getIssueInfo/${teamId}`)
+                if (!response.ok) {
+                    alert("Error: " + response.statusText);
+                } else {
+                    const students = await response.json();
+                    console.log(students.studentIssueInfos);
+                    const studentInfos : Student[] = [];
+                    if (students.studentIssueInfos !== undefined) {
+                        for (const student of students.studentIssueInfos) {
+                            const studentInfo : Student = {
+                                name: student.studentName,
+                                class: group || 'null',
+                                zid: student.zid,
+                                email: student.email,
+                                status: student.isSubmitted === true? 'Submitted' : 'No Submission'
+                            }
+                            studentInfos.push(studentInfo);
+                        }
+                    }
+                    setStudents(studentInfos);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+        }
+        getIssueInfo()
+    }, [teamId, group])
 
     // Handle functions
     const handleDelete = (indexToDelete: number) => {

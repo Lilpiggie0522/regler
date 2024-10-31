@@ -49,7 +49,15 @@ const PROTECTED_APIs = [
     access: ["admin"]
   },
   {
-    pathRegex: "/api/issueSystem/.*",
+    pathRegex: "/api/issueSystem/getIssueInfo",
+    access: ["student","admin","tutor"]
+  },
+  {
+    pathRegex: "/api/issueSystem/createIssue",
+    access: ["student"]
+  },
+  {
+    pathRegex: "/api/issueSystem/updateIssue",
     access: ["student"]
   },
   {
@@ -83,6 +91,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
           return declinedRequest
         }
       } catch (error) {
+        console.error(error);
         return declinedRequest
       }
       return allowedRequest
@@ -105,6 +114,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
           }
         }
       } catch (error) {
+        console.error(error);
         return NextResponse.redirect(new URL('/', request.url))
       }
     }
