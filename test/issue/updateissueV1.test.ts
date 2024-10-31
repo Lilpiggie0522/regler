@@ -1,4 +1,4 @@
-import {CreateIssueInput, POST, DELETE} from '@/app/api/issueSystem/createIssue/route';
+import {CreateIssueInput, POST} from '@/app/api/issueSystem/createIssue/route';
 import {PUT} from '@/app/api/issueSystem/updateIssue/route';
 import models from '@/models/models';
 import { NextRequest } from 'next/server';
@@ -8,7 +8,7 @@ import { UpdateIssueInput } from '@/app/api/issueSystem/updateIssue/route';
 
 
 let studentId : string, teamId : string, courseId: string;
-let sentTeamId: string, sentBy: string, sentCourseId: string, issueId: string;
+let sentTeamId: string, BobId: string, sentCourseId: string, issueId: string;
 
 let notInTeamStudentIds : string;
 const { Team, Course, Student} = models;
@@ -32,11 +32,14 @@ beforeAll(async () => {
   const course = await Course.findOne({}).exec();
   courseId = course._id;
   teamId = course.teams[0];
-  const team = await Team.findOne({_id: teamId}).exec();
-  studentId = team.students[0];
+  const team = await Team.findOne({teamName: "Team1"}).exec();
+  const student = await Student.findOne({studentName: "Alice"}).exec();
+  studentId = student._id;
+  teamId = team._id;
   const notInTeamStudent = await Student.findOne({studentName: "John"}).exec();
   notInTeamStudentIds = notInTeamStudent._id;
-
+  const bob = await Student.findOne({studentName: "Bob"}).exec();
+  BobId = bob._id;
   const body : CreateIssueInput = {
     studentId: studentId,
     teamId: teamId,
@@ -56,8 +59,10 @@ beforeAll(async () => {
     const res = await POST(req);
 
     const json = await res.json();
+    console.log(json.issue.studentComments);
     sentTeamId = json.teamId;
-    sentBy = json.studentId;
+
+    
     sentCourseId = json.courseId;
     issueId = json.issueId;
   
@@ -73,11 +78,14 @@ describe('update issue API Tests', () => {
   it('bob should be able to update his issue', async () => {
 
     // TODO: check before updating
+    // now use bob Id
+    
+
 
     const body : UpdateIssueInput = {
-      studentId: studentId,
-      teamId: teamId,
-      courseId: courseId,
+      studentId: BobId,
+      teamId: sentTeamId,
+      courseId: sentCourseId,
       filesUrl: "anc.png,dasd.jpg",
       title: "disagreement to the babalala",
       content: "this is a very important issue!!!!",
@@ -94,6 +102,7 @@ describe('update issue API Tests', () => {
       // Call the POST handler
       const res = await PUT(req);
       const json = await res.json();
+      console.log(JSON.stringify(json));
       expect(res.status).toBe(200);
       expect(json.message).toBe("Issue updated successfully");
     
@@ -123,7 +132,7 @@ describe('update issue API Tests', () => {
       });
     
       
-      let res = await POST(req);
+      let res = await PUT(req);
       
       // if the student is not in the team 400
       expect(res.status).toBe(400);
@@ -150,13 +159,13 @@ describe('update issue API Tests', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      res = await POST(req);
+      res = await PUT(req);
       expect(res.status).toBe(404);
 
       body  = {
         studentId: studentId,
-        teamId: teamId,
-        courseId: courseId,
+        teamId: sentTeamId,
+        courseId: sentCourseId,
         filesUrl: "anc.png,dasd.jpg",
         title: "",
         content: "this is a very important issue!!!!",
@@ -167,8 +176,8 @@ describe('update issue API Tests', () => {
         body: JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' },
       });
-      res = await POST(req);
-      res = await res.json();
+      res = await PUT(req);
+      
       expect(res.status).toBe(400);
   
     

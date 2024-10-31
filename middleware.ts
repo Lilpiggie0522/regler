@@ -49,8 +49,16 @@ const PROTECTED_APIs = [
     access: ["admin"]
   },
   {
-    pathRegex: "/api/issueSystem/.*",
+    pathRegex: "/api/issueSystem/getIssueInfo",
     access: ["student","admin","tutor"]
+  },
+  {
+    pathRegex: "/api/issueSystem/createIssue",
+    access: ["student"]
+  },
+  {
+    pathRegex: "/api/issueSystem/updateIssue",
+    access: ["student"]
   },
   {
     pathRegex: "/api/staff/readCsv",
