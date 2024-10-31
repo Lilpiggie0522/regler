@@ -63,15 +63,17 @@ export default function UnifiedInfo() {
                     const students = await response.json();
                     console.log(students.studentIssueInfos);
                     const studentInfos : Student[] = [];
-                    for (const student of students.studentIssueInfos) {
-                        const studentInfo : Student = {
-                            name: student.studentName,
-                            class: group || 'null',
-                            zid: student.zid,
-                            email: student.email,
-                            status: student.isSubmitted === true? 'Submitted' : 'No Submission'
+                    if (students.studentIssueInfos !== undefined) {
+                        for (const student of students.studentIssueInfos) {
+                            const studentInfo : Student = {
+                                name: student.studentName,
+                                class: group || 'null',
+                                zid: student.zid,
+                                email: student.email,
+                                status: student.isSubmitted === true? 'Submitted' : 'No Submission'
+                            }
+                            studentInfos.push(studentInfo);
                         }
-                        studentInfos.push(studentInfo);
                     }
                     setStudents(studentInfos);
                 }
