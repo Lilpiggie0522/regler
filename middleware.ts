@@ -44,10 +44,10 @@ const PROTECTED_APIs = [
     pathRegex: "/api/adminSystem/courses/.*",
     access: ["admin", "tutor"]
   },
-  {
-    pathRegex: "/api/adminSystem/initialise",
-    access: ["admin"]
-  },
+  // {
+  //   pathRegex: "/api/adminSystem/initialise",
+  //   access: ["admin"]
+  // },
   {
     pathRegex: "/api/issueSystem/getIssueInfo",
     access: ["student","admin","tutor"]
@@ -64,10 +64,10 @@ const PROTECTED_APIs = [
     pathRegex: "/api/staff/readCsv",
     access: ["admin"]
   },
-  {
-    pathRegex: "/api/staff/.*",
-    access: ["admin", "tutor"]
-  },
+  // {
+  //   pathRegex: "/api/staff/.*",
+  //   access: ["admin", "tutor"]
+  // },
   {
     pathRegex: "/api/tutorOpinions/.*",
     access: ["admin", "tutor"]
