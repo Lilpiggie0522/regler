@@ -44,10 +44,10 @@ const PROTECTED_APIs = [
     pathRegex: "/api/adminSystem/courses/.*",
     access: ["admin", "tutor"]
   },
-  {
-    pathRegex: "/api/adminSystem/initialise",
-    access: ["admin"]
-  },
+  // {
+  //   pathRegex: "/api/adminSystem/initialise",
+  //   access: ["admin"]
+  // },
   {
     pathRegex: "/api/issueSystem/getIssueInfo",
     access: ["student","admin","tutor"]
@@ -64,10 +64,10 @@ const PROTECTED_APIs = [
     pathRegex: "/api/staff/readCsv",
     access: ["admin"]
   },
-  {
-    pathRegex: "/api/staff/.*",
-    access: ["admin", "tutor"]
-  },
+  // {
+  //   pathRegex: "/api/staff/.*",
+  //   access: ["admin", "tutor"]
+  // },
   {
     pathRegex: "/api/tutorOpinions/.*",
     access: ["admin", "tutor"]
@@ -90,8 +90,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
         if (!api.access.includes(role)) {
           return declinedRequest
         }
-      } catch (error) {
-        console.error(error);
+      } catch {
         return declinedRequest
       }
       return allowedRequest
@@ -113,8 +112,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
             return NextResponse.redirect(new URL(route.redirect["admin"], request.url))
           }
         }
-      } catch (error) {
-        console.error(error);
+      } catch {
         return NextResponse.redirect(new URL('/', request.url))
       }
     }

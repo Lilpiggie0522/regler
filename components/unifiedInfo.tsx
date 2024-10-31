@@ -47,8 +47,9 @@ export default function UnifiedInfo() {
                     alert("Error: " + response.statusText);
                 } else {
                     const comment = await response.json()
-                    console.log("comment: " + comment)
-                    setTutorComment(JSON.stringify(comment))
+
+                    setTutorComment(JSON.stringify(comment).slice(1,).slice(0,-1))
+
                 }
             } catch (error) {
                 console.error(error);
@@ -66,7 +67,6 @@ export default function UnifiedInfo() {
                     alert("Error: " + response.statusText);
                 } else {
                     const students = await response.json();
-                    console.log(students.studentIssueInfos);
                     const studentInfos : Student[] = [];
                     if (students.studentIssueInfos !== undefined) {
                         for (const student of students.studentIssueInfos) {
