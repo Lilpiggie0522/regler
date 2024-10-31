@@ -18,6 +18,7 @@ export interface UpdateIssueInput {
     teamId: string,
     courseId: string,
     filesUrl: string,
+    filesName: string,
     title: string,
     content: string,
     issueId: string,
@@ -28,7 +29,7 @@ export async function PUT(req: NextRequest) {
     try {
         await dbConnect();
         const request = await req.json();
-        const { studentId, teamId, courseId, filesUrl, title, content, issueId } = request as UpdateIssueInput;
+        const { studentId, teamId, courseId, filesUrl, title, content, issueId, filesName } = request as UpdateIssueInput;
         let response = await validateId(studentId, "Student");
         if (response) return response; // Return error response if validation fails
 
@@ -74,6 +75,7 @@ export async function PUT(req: NextRequest) {
             title: title,
             content: content,
             filesUrl: filesUrl,
+            filesName: filesName,
             student: studentId
         } 
         // update issue

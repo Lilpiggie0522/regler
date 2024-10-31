@@ -25,11 +25,13 @@ export interface CreateIssueInput {
     filesUrl: string,
     title: string,
     content: string,
+    filesName: string,
 }
 export interface StudentCommentInput {
     title: string,
     content: string,
     filesUrl: string,
+    filesName: string,
     student: string,
 }
 interface TutorCommentInput {
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const request = await req.json();
-        const { studentId, teamId, courseId, filesUrl, title, content } = request as CreateIssueInput;
+        const { studentId, teamId, courseId, filesUrl, title, content, filesName } = request as CreateIssueInput;
 
         // Validate that IDs exist in their respective collections
         let response = await validateId(studentId, "Student");
@@ -99,6 +101,7 @@ export async function POST(req: NextRequest) {
             title: title,
             content: content,
             filesUrl: filesUrl,
+            filesName: filesName,
             student: studentId
         }
         const studentCommemts: StudentCommentInput[] = [];

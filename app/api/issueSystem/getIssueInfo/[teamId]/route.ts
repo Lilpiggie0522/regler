@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import models from '@/models/models';
+import StudentComment from '../../../../../components/studentComment';
 
 const Team = models.Team;
 const Issue = models.Issue;
@@ -9,11 +10,12 @@ interface StudentResponse {
   email: string;
   zid: string;
   isSubmitted: boolean;
-  //comment : StudentComment;
+  comment : StudentComment;
 }
 interface StudentComment {
   content: string;
   filesUrl: string;
+  filesName: string;
   student: string;
 }
 
@@ -60,17 +62,29 @@ export async function GET(req : NextRequest, { params } : Params) {
     const studentIssueInfos : StudentResponse[] = [];
     for (const studentId of existingTeam.students) {
       const studentDetails = await models.Student.findById(studentId).exec();
-      const isSubmitted = existingIssue.studentComments.some(
-        (comment : StudentComment) => comment.student.toString() === studentId.toString()
+      const studentComment = existingIssue.studentComments.find(
+        (comment: StudentComment) => comment.student.toString() === studentId.toString()
       );
+    
+      const isSubmitted = Boolean(studentComment);
       
-      const studentIssueInfo : StudentResponse = {
+      const studentIssueInfo: StudentResponse = {
         studentName: studentDetails.studentName,
         email: studentDetails.email,
         zid: studentDetails.zid,
         isSubmitted,
-        //comment: existingIssue.studentComments.find(comment => comment.student.toString() === studentId.toString()) || {content: '', filesUrl: '', student: ''},
-      }
+        comment: isSubmitted ? {
+          content: studentComment.content,
+          filesUrl: studentComment.filesUrl,
+          filesName: studentComment.filesName,
+          student: studentId
+        } : {
+          content: 'not submitted', 
+          filesUrl: 'not submitted',
+          filesName: 'not submitted',
+          student: studentId
+        }
+      };
       studentIssueInfos.push(studentIssueInfo);
 
     }

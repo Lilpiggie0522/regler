@@ -1,31 +1,43 @@
-import dbConnect from '@/lib/dbConnect'
-import models from '@/models/models'
-import { NextRequest, NextResponse } from 'next/server'
+import dbConnect from '@/lib/dbConnect';
+import models from '@/models/models';
+import { NextRequest, NextResponse } from 'next/server';
+
 type Params = {
     params: {
-      teamId: string
-    }
-}
-const Issue = models.Issue
-const Team = models.Team
+      teamId: string;
+    };
+};
 
-export async function GET(req : NextRequest, { params } : Params) {
+const Issue = models.Issue;
+const Team = models.Team;
 
-    const {teamId} = params
-    await dbConnect()
-    const team = await Team.findById(teamId)
-    if (!team) {
-        return NextResponse.json('invalid teamId', {status: 400})    
+export async function GET(req: NextRequest, { params }: Params) {
+    try {
+        const { teamId } = params;
+        await dbConnect();
+
+        const team = await Team.findById(teamId).exec();
+        if (!team) {
+            return NextResponse.json({ message: 'invalid teamId' }, { status: 400 });
+        }
+
+        const issueId = team.issues?.[0]?.toString();
+        if (!issueId) {
+            return NextResponse.json({ message: "This team does not have a pending issue, no tutor opinion needed yet" }, { status: 200 });
+        }
+
+        const issue = await Issue.findById(issueId).exec();
+        if (!issue) {
+            return NextResponse.json({ message: 'Issue not found' }, { status: 404 });
+        }
+
+        const tutorComment = issue.tutorComments?.[0]?.content || 'No tutor comments available';
+        
+        return NextResponse.json({ tutorComment }, { status: 200 });
+    } catch (error) {
+        console.error(error);
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
     }
-    const issue_id = team.issues?.[0]
-    if (!issue_id) {
-        const message = "This team does not have a pending issue,no tutor opinion needed yet"
-        return NextResponse.json(message, { status: 200 });    
-    }
-    const issue = await Issue.findById(issue_id)
-    const tutorComment = issue.tutorComments[0]?.content
-    if (!tutorComment) {
-        return NextResponse.json('no tutor comments yet', {status: 200})
-    }
-    return NextResponse.json(tutorComment, {status: 200})
+
 }
+

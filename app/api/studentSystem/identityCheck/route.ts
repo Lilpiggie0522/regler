@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
         await dbConnect();
         // Retrieve student and team to check their relations
         const student = await Student.findOne({ zid: zID }).exec();
+        console.log("student: " + student);
         if (!student) {
             return NextResponse.json({ error: "Invalid zid" }, { status: 404 });
         }
@@ -25,17 +26,24 @@ export async function POST(request: NextRequest) {
         if (!course) {
             return NextResponse.json({ error: "Invalid course code" }, { status: 404 });
         }
+        
         const teams = course.teams;
         let teamId = null;
         let isStudentInCourse = false;
         for (const team of teams) {
+            //console.log ("team: " + team);
             const currentTeam = await Team.findById(team).exec();
+            //console.log("team: " + currentTeam)
+            if (!currentTeam) {
+                continue;
+            }
             if (currentTeam.students.includes(student._id)) {
                 isStudentInCourse = true;
                 teamId = team._id;
                 break;
             }
         }
+        console.log("HI3")
         if (!isStudentInCourse) {
             return NextResponse.json({ error: "Student is not in this course" }, { status: 404 });
         }
@@ -45,6 +53,7 @@ export async function POST(request: NextRequest) {
         if (!authcodeCreationResponse.ok) {
             return authcodeCreationResponse;
         }
+        console.log("HI")
         const authCode = await authcodeCreationResponse.json();
         const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode.authCode, role: 'student'})})
         if (!sendAuthCodeResponse.ok) {

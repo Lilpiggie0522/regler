@@ -16,6 +16,7 @@ export const issueSchema = new Schema({
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
         filesUrl: {type: 'string'},
+        filesName: {type: 'string'},
         student: {type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true},
       }, { timestamps: true }],
     tutorComments:[{

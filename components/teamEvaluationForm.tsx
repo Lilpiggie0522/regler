@@ -77,15 +77,17 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		let filesUrl = '';
+		let filesName = '';
 		for (const file of formData.fileLinks) {
 			filesUrl += `${file.url},`;
+			filesName += `${file.name},`;
 		}
 		console.log('File uploaded successfully:', filesUrl);
 		if (issueId) {
 			// Update issue with new data
-            const title = 'testing title'
-            const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
-            `
+			const title = `Team members ratings: ${formData.teamMembers}.`;
+			const content = `situationExplanantions: ${formData.situationExplanation}
+			`
 			
             try {
                 const res = await fetch(`/api/issueSystem/updateIssue/`, {
@@ -98,6 +100,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 						teamId: teamId,
 						courseId: courseId,
 						filesUrl: filesUrl,
+						filesName: filesName,
 						title: title,
 						content: content,
 						issueId: issueId,
@@ -126,8 +129,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		console.log('Form submitted:', formData);
 
 		// Reset form (optional)
-		const title = 'testing title'
-		const content = `Team members ratings: ${formData.teamMembers}.\n situationExplanantions: ${formData.situationExplanation}
+		const title = `Team members ratings: ${formData.teamMembers}.`;
+		const content = `situationExplanantions: ${formData.situationExplanation}
 		`
 		console.log(studentId)
 		try {
@@ -141,6 +144,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					teamId: teamId,
 					courseId: courseId,
 					filesUrl: filesUrl,
+					filesName: filesName,
 					title: title,
 					content: content,
 				}),
