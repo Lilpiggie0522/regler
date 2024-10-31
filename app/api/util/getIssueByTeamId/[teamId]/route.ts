@@ -24,5 +24,8 @@ export async function GET(req : NextRequest, { params } : Params) {
     }
     const issue = await Issue.findById(issue_id)
     const tutorComment = issue.tutorComments[0]?.content
+    if (!tutorComment) {
+        return NextResponse.json('no tutor comments yet', {status: 200})
+    }
     return NextResponse.json(tutorComment, {status: 200})
 }
