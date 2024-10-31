@@ -45,6 +45,7 @@ beforeAll(async () => {
     teamId: teamId,
     courseId: courseId,
     filesUrl: "anc.png,dasd.jpg",
+    filesName: "anc,dasd",
     title: "disagreement to the babalala",
     content: "this is a very important issue!!!!"
     };
@@ -87,6 +88,7 @@ describe('update issue API Tests', () => {
       teamId: sentTeamId,
       courseId: sentCourseId,
       filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
       title: "disagreement to the babalala",
       content: "this is a very important issue!!!!",
       issueId: issueId
@@ -119,6 +121,7 @@ describe('update issue API Tests', () => {
       teamId: teamId,
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
       title: "disagreement to the babalala",
       content: "this is a very important issue!!!!",
       issueId: issueId
@@ -145,6 +148,7 @@ describe('update issue API Tests', () => {
         teamId: teamId,
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
+        filesName: "anc,dasd",
         title: "disagreement to the babalala",
         content: "this is a very important issue!!!!",
         issueId: issueId
@@ -167,6 +171,7 @@ describe('update issue API Tests', () => {
         teamId: sentTeamId,
         courseId: sentCourseId,
         filesUrl: "anc.png,dasd.jpg",
+        filesName: "anc,dasd",
         title: "",
         content: "this is a very important issue!!!!",
         issueId: issueId

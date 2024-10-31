@@ -1,9 +1,11 @@
 'use client'
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { Button } from 'react-bootstrap';
 import { FaSearch } from 'react-icons/fa';
 
-interface Student {
+export interface Student {
+    id: string;
     name: string;
     class: string;
     zid: string;
@@ -23,6 +25,8 @@ export default function UnifiedInfo() {
 	// 		[name]: value,
 	// 	}));
 	// };
+    const router = useRouter();
+    
     const params = useSearchParams()
     const teamId = params.get('teamId')
     const group = params.get('group');
@@ -43,6 +47,7 @@ export default function UnifiedInfo() {
                     alert("Error: " + response.statusText);
                 } else {
                     const comment = await response.json()
+                    console.log("comment: " + comment)
                     setTutorComment(JSON.stringify(comment))
                 }
             } catch (error) {
@@ -65,7 +70,9 @@ export default function UnifiedInfo() {
                     const studentInfos : Student[] = [];
                     if (students.studentIssueInfos !== undefined) {
                         for (const student of students.studentIssueInfos) {
+                            console.log(student)
                             const studentInfo : Student = {
+                                id : student.comment.student,
                                 name: student.studentName,
                                 class: group || 'null',
                                 zid: student.zid,
@@ -145,6 +152,7 @@ export default function UnifiedInfo() {
                             <th className="py-2">Email</th>
                             <th className="py-2">Status</th>
                             <th className="py-2">Actions</th>
+                            <th className="py-2">Details</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -156,6 +164,15 @@ export default function UnifiedInfo() {
                                 <td className="py-2">{student.email}</td>
                                 <td className={`py-2 ${student.status === 'Submitted' ? 'text-green-500' : 'text-red-500'}`}>
                                     {student.status}
+                                </td>
+                                <td>
+                                    
+                                    <Button
+                                        className="bg-blue-500 text-white py-1 px-3 rounded"
+                                        onClick={() => router.push(`/studentComment?studentId=${student.id}&teamId=${teamId}&studentName=${student.name}`)}
+                                    >
+                                        Details
+                                    </Button>
                                 </td>
                                 <td className="py-2">
                                     <button

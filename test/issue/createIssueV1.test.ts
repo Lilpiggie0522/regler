@@ -49,6 +49,7 @@ describe('Create issue API Tests', () => {
       teamId: teamId,
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
       title: "disagreement to the babalala",
       content: "this is a very important issue!!!!"
       };
@@ -101,6 +102,7 @@ describe('Create issue API Tests', () => {
       teamId: teamId,
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
       title: "disagreement to the babalala",
       content: "this is a very important issue!!!!"
       };
@@ -126,6 +128,7 @@ describe('Create issue API Tests', () => {
         teamId: teamId,
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
+        filesName: "anc,dasd",
         title: "disagreement to the babalala",
         content: "this is a very important issue!!!!"
         };
@@ -147,6 +150,7 @@ describe('Create issue API Tests', () => {
         teamId: teamId,
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
+        filesName: "anc,dasd",
         title: "",
         content: "this is a very important issue!!!!"
         };
