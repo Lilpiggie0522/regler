@@ -4,7 +4,7 @@ import mongoose, { Schema } from 'mongoose';
 export const issueSchema = new Schema({
     status: {
         type: 'string', 
-        enum: ['pending', 'closed'],
+        enum: ['pending', 'complete', 'Need Feedback'],
         message: '{VALUE} is not a valid role',
         required: true
       },
@@ -22,6 +22,6 @@ export const issueSchema = new Schema({
     tutorComments:[{
         content: {type: 'string', required: true},
         // filesUrl: {type: 'string'},
-        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
+        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true},
     }, { timestamps: true }]
 });

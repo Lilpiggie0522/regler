@@ -4,6 +4,7 @@ import dbConnect from "@/lib/dbConnect";
 import { validateId } from "@/lib/validateId";
 import models from "@/models/models";
 import { StudentCommentInput } from "../createIssue/route";
+import StudentComment from '../../../../components/studentComment';
 
 
 const Issue = models.Issue;
@@ -55,6 +56,8 @@ export async function PUT(req: NextRequest) {
         if (!course.teams.includes(team._id)) {
             return NextResponse.json({ error: "Team does not belong to this course" }, { status: 403 });
         }
+
+        
         if (!title || !content) {
             return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
         }
@@ -63,13 +66,18 @@ export async function PUT(req: NextRequest) {
         if (!existingIssue) {
             return NextResponse.json({ error: "Issue not found" }, { status: 404 });
         }
-        if (existingIssue.status === 'closed') {
-            return NextResponse.json({ error: "Issue has already been closed" }, { status: 400 });
+        if (existingIssue.status === 'complete') {
+            return NextResponse.json({ error: "Issue has already been closed" }, { status: 405 });
+        }
+        // Check if the issue exists in the team 
+        if (!team.issues.includes(existingIssue._id)) {
+            return NextResponse.json({ error: "Issue does not belong to this team" }, { status: 406 });
         }
         // can student submit multiple times?
+        
         const issues = existingIssue.studentComments.filter((comment: { student: string; }) => comment.student.toString() === studentId);
         if(issues.length > 0) {
-            return NextResponse.json({ error: "Student has already submitted an issue for this team" }, { status: 400 });
+            return NextResponse.json({ error: "Student has already submitted an issue for this team" }, { status: 401 });
         }
         const newStudentComment : StudentCommentInput = {
             title: title,
@@ -80,12 +88,28 @@ export async function PUT(req: NextRequest) {
         } 
         // update issue
         const updateIssue = await Issue.updateOne(
-            {_id: existingIssue._id }, // filter by the issue ID
-            { $push: { studentComments: newStudentComment } } 
+            {
+                _id: existingIssue._id,
+                
+             }, // filter by the issue ID
+            { 
+            $push: { studentComments: newStudentComment },
+            $set: { status: existingIssue.studentComments.length + 1 === team.students.length ? 'Need Feedback' : 'pending' } 
+        
+        } 
+            
         );
-        return NextResponse.json({ message: "Issue updated successfully", updateIssue}, { status: 200 });
+
+        const updatedIssue = await Issue.findById(existingIssue._id).exec();
+
+
+        // TODO: Should delete this student at remainder after submission
+
+
+        return NextResponse.json({ message: "Issue updated successfully", updatedIssue}, { status: 200 });
 
     } catch (error) {
+        console.error("Error updating issue:", error);
         return NextResponse.json({ error: error }, { status: 500 });
     };
 }

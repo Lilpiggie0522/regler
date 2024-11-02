@@ -1,4 +1,5 @@
 'use client'
+import { useLocalStorageState } from '@/context/studentContext';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
@@ -33,7 +34,8 @@ export default function UnifiedInfo() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [content, setContent] = useState<string>('')
     const [tutorComment, setTutorComment] = useState<string>('')
-
+    const [staffId,] = useLocalStorageState('staffId', '');
+    const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     
 
     // Test student list
@@ -44,18 +46,22 @@ export default function UnifiedInfo() {
             try {
                 const response = await fetch(`/api/util/getIssueByTeamId/${teamId}`)
                 if (!response.ok) {
-                    alert("Error: " + response.statusText);
+                    const error = await response.json();
+                    const message = error.message;
+                   // alert("Error: " + message);
+                    setTutorComment(message);
                 } else {
                     const comment = await response.json()
                     console.log("comment: " + comment)
-                    setTutorComment(JSON.stringify(comment))
+                    console.log("tutorName: " + comment.tutorName)
+                    setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment))
                 }
             } catch (error) {
                 console.error(error);
             }
         }
         getTutorOpinions()
-    }, [teamId, tutorComment])
+    }, [teamId, tutorComment, isUploadedSuccessfully])
 
     useEffect(() => {
         async function getIssueInfo() {
@@ -108,15 +114,20 @@ export default function UnifiedInfo() {
                 headers: {
                     'Content-type': 'application/json'
                 },
-                body: JSON.stringify({content: content, teamId: teamId})
-            })
+                body: JSON.stringify({content: content, teamId: teamId, staffId: staffId})
+                
+            });
             if (!response.ok) {
                 const errorString = await response.json();
                 alert(JSON.stringify(errorString));
-                console.log(errorString)
+                console.log(errorString);
+                setIsUploadedSuccessfully(false);
+            }else {
+                setIsUploadedSuccessfully(true);
             }
         } catch (error) {
             console.error(error);
+            setIsUploadedSuccessfully(false);
         }
         // Need to write more
     };

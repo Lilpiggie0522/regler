@@ -14,16 +14,15 @@ export async function POST(request : NextRequest) {
         if (!admin) {
             return NextResponse.json("invalid staff email", {status: 401})
         }
-        const courseList = [];
-        for (const course of admin.courses) {
-            const currentCourse = await Course.findById(course).exec();
-            courseList.push(
-                {
-                    course: currentCourse.courseName,
-                    term: currentCourse.term
-                }
-            );
-        }
+        // Step 1: Fetch all courses for the admin at once
+        const coursesFound = await Course.find({ _id: { $in: admin.courses } });
+
+        // Step 2: Map the course data to the required format
+        const courseList = coursesFound.map(course => ({
+            id: course._id,
+            course: course.courseName,
+            term: course.term
+        }));
         return NextResponse.json({courses: courseList}, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
