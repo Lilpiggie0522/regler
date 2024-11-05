@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { StudentProvider } from "@/context/studentContext";
 import { Suspense } from "react";
+import LoadingSpinner from "@/components/loadingSpinner";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -31,7 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
 
-        <Suspense fallback={<p>loading</p>}>
+        <Suspense fallback={<LoadingSpinner />}>
           <StudentProvider>
             {children}
           </StudentProvider>

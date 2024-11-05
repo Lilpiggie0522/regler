@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { StaffVerificationModalProps } from "@/components/modals/ModalProps";
 import ErrorModal from './errorModal';
 import { sendStaffVerificationEmail } from '@/components/services/emailService';
+import LoadingSpinner from "@/components/loadingSpinner";
 
 export default function StaffVerificationModal({ onClose, onVerificationSuccess, email }: StaffVerificationModalProps) {
 
@@ -13,6 +14,7 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
   const [errorMessage, setErrorMessage] = useState('');
   const [countdown, setCountdown] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -48,6 +50,7 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
 
 
   const handleVerificationSubmit = async () => {
+    setLoading(true);
     try {
       const response = await fetch('/api/authcodeSystem/checkAuthcode', {
         method: 'POST',
@@ -69,6 +72,8 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
       console.error('Error during checking verification code:', error);
       setErrorMessage('Verification failed.');
       setShowErrorModal(true);
+    } finally {
+      setLoading(false); // Stop loading regardless of success or failure
     }
   };
 
@@ -106,7 +111,7 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
               className="w-1/2 bg-black text-white py-2 rounded-full"
               onClick={handleVerificationSubmit}
             >
-              Sign in
+              {loading ? <LoadingSpinner /> : 'Sign in'} {/* Show spinner when loading */}
             </button>
           </div>
 
