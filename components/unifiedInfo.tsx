@@ -49,13 +49,15 @@ export default function UnifiedInfo() {
                     const error = await response.json();
                     const message = error.message;
                    // alert("Error: " + message);
-                    setTutorComment(message);
+                    setTutorComment(JSON.stringify(message).slice(1,).slice(0,-1));
                 } else {
                     const comment = await response.json()
+
                     console.log("comment: " + comment)
                     console.log("tutorName: " + comment.tutorName)
-                    setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment));
+                    setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment).slice(1,).slice(0,-1));
                     //加回去slice
+
                 }
             } catch (error) {
                 console.error(error);
@@ -73,7 +75,6 @@ export default function UnifiedInfo() {
                     alert("Error: " + response.statusText);
                 } else {
                     const students = await response.json();
-                    console.log(students.studentIssueInfos);
                     const studentInfos : Student[] = [];
                     if (students.studentIssueInfos !== undefined) {
                         for (const student of students.studentIssueInfos) {

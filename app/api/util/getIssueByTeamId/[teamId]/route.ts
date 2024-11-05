@@ -47,4 +47,6 @@ export async function GET(req: NextRequest, { params }: Params) {
         console.error(error);
         return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
     }
+
 }
+
