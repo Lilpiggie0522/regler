@@ -54,7 +54,8 @@ export default function UnifiedInfo() {
                     const comment = await response.json()
                     console.log("comment: " + comment)
                     console.log("tutorName: " + comment.tutorName)
-                    setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment))
+                    setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment));
+                    //加回去slice
                 }
             } catch (error) {
                 console.error(error);

@@ -4,6 +4,7 @@ import dbConnect from "@/lib/dbConnect";
 import { validateId } from "@/lib/validateId";
 import models from "@/models/models";
 import { StudentCommentInput } from "../createIssue/route";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import StudentComment from '../../../../components/studentComment';
 
 
@@ -87,6 +88,7 @@ export async function PUT(req: NextRequest) {
             student: studentId
         } 
         // update issue
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const updateIssue = await Issue.updateOne(
             {
                 _id: existingIssue._id,

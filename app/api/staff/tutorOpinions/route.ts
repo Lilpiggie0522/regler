@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
         // If team ID not valid, validatedId.ts will return error 404
 
         const issueId = team.issues[0];
-        let openIssue = await Issue.findById(issueId).exec();
+        const openIssue = await Issue.findById(issueId).exec();
         // If no issue created or issue has closed, return 404
         if (!openIssue || openIssue.status !== 'pending') {
             return NextResponse.json({ error: "No pending issues for this team" }, { status: 404 });

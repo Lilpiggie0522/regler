@@ -26,11 +26,13 @@ interface Group {
 const GroupList: React.FC = () => {
     const router = useRouter();
     const params = useSearchParams();
+    
     const courseId = params.get('courseId');
     
 
 
     const { useLocalStorageState } = useStudentContext();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [email,] = useLocalStorageState('email', '');
 
     const [searchTerm, setSearchTerm] = useState<string>('');
