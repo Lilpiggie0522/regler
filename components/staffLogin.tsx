@@ -22,6 +22,7 @@ export default function StaffLogin() {
   const [showLoginFail, setShowLoginFail] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleVerificationSuccess = () => {
     setShowVerificationModal(false);
@@ -46,6 +47,7 @@ export default function StaffLogin() {
       return;
     }
 
+    setLoading(true);
     const emailSent = await sendStaffVerificationEmail(email);
 
     if (!emailSent.ok) {
@@ -61,6 +63,7 @@ export default function StaffLogin() {
       setStaffEmail(email)
       setStaffRole(role)
     }
+    setLoading(false);
   };
 
 
@@ -103,9 +106,22 @@ export default function StaffLogin() {
           {/* Verify button */}
 
           <button
-            onClick={handleSendVerificationEmail} // check whether Input invalid
-            className="w-full bg-black text-white py-2 rounded-full mb-6">
-            Verify with email
+            type="button"
+            className={`w-full bg-black text-white py-2 rounded-full flex items-center justify-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={handleSendVerificationEmail}
+            disabled={loading}
+          >
+              {loading ? (
+                  <>
+                      <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 000 8v4a8 8 0 01-8-8z"></path>
+                      </svg>
+                      Processing...
+                  </>
+              ) : (
+                  'Verify with email'
+              )}
           </button>
 
           {/* showLoginFail */}
