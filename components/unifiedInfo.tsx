@@ -185,7 +185,7 @@ export default function UnifiedInfo() {
 
                 <form className="mt-6 w-full" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-4">
-                        <label className="text-lg text-black">Tutor's Opinion</label>
+                        <label className="text-lg text-black">Tutor&apos;s</label>
                         <div className="w-full bg-gray-100 border border-gray-300 rounded-md p-4">
                             <p className="text-black mt-1">{tutorComment}</p> 
                         </div>

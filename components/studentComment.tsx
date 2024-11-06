@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Student } from './unifiedInfo';
-import { Button } from 'react-bootstrap';
+//import { Button } from 'react-bootstrap';
 
 interface IssueStudent extends Student {
     comment: StudentComment;
