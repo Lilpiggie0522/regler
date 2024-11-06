@@ -6,6 +6,16 @@ export const courseSchema = new Schema({
     },
     teams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Team', required: false}],
     mentors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false}],
+    assignments: [{
+        assignmentName: {
+            type: 'string', required: true
+        }
+    }],
+    questionBanks: [{
+        question: {
+            type: 'string', required: true
+        }
+    }],
     term: {type: 'string', required: true}
 });
 
