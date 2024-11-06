@@ -245,7 +245,7 @@ export default function CourseList() {
                         </button>
                         <div className="p-5 text-black w-full overflow-y-scroll">
                             <p className="mb-4 text-lg font-bold text-left">
-                            Your file "{selectedFile?.name}" has been successfully imported:
+                            Your file {selectedFile?.name} has been successfully imported:
                             </p>
                             <table className="w-full">
                                 <thead>
