@@ -16,7 +16,6 @@ export default function TeamEvaluationPage() {
   console.log(`course id is: ${courseId}`)
   return (
     <>
-      <p>abc</p>
       <TeamEvaluationForm
         studentId={studentId}
         teamId={teamId}

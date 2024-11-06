@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server';
 import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { UpdateIssueInput } from '@/app/api/issueSystem/updateIssue/route';
+import StudentComment from '@/components/studentComment';
 
 
 let studentId : string, teamId : string, courseId: string;
@@ -18,14 +19,18 @@ beforeAll(async () => {
 
   const input: initialiseInput = {
     courseAdmins: [{ adminName: "Admin1", email: "admin1@example.com", role: "admin", courseName: "CS101", term: "T1" }],
-    staffAdmins: [{ adminName: "Tutor1", email: "tutor1@example.com", role: "tutor", courseName: "CS101", term: "T1" }],
+    staffAdmins: [{ adminName: "Tutor1", email: "tutor1@example.com", role: "tutor", courseName: "CS101", term: "T1" }
+      , { adminName: "Tutor2", email: "tutor2@example.com", role: "tutor", courseName: "CS101", term: "T1" }
+    ],
     students: [
         { studentName: "Alice", email: "alice@example.com", zid: "z1234567" },
       {studentName: "Bob", email: "bob@example.com",zid: "z5423255"},
       {studentName: "John", email: "Jogn@example.com", zid: "z2222222"}
     ],
-    teams: [{ teamName: "Team1", studentsZids: "z1234567,z5423255", mentorsEmails: "tutor1@example.com" }],
-    course: { courseName: "CS101", mentorsEmails: "tutor1@example.com", teams: "Team1", term: "T1" },
+    teams: [{ teamName: "Team1", studentsZids: "z1234567,z5423255", mentorsEmails: "tutor1@example.com" },
+      { teamName: "Team2", studentsZids: "z2222222", mentorsEmails: "tutor1@example.com,tutor2@example.com" },
+    ],
+    course: { courseName: "CS101", mentorsEmails: "tutor1@example.com,tutor2@example.com", teams: "Team1,Team2", term: "T1" },
   };
 
   mongoServer = await createDatabase(input, mongoServer);
@@ -60,7 +65,7 @@ beforeAll(async () => {
     const res = await POST(req);
 
     const json = await res.json();
-    console.log(json.issue.studentComments);
+    //console.log(json.issue.studentComments);
     sentTeamId = json.teamId;
 
     
@@ -80,9 +85,6 @@ describe('update issue API Tests', () => {
 
     // TODO: check before updating
     // now use bob Id
-    
-
-
     const body : UpdateIssueInput = {
       studentId: BobId,
       teamId: sentTeamId,
@@ -107,6 +109,10 @@ describe('update issue API Tests', () => {
       console.log(JSON.stringify(json));
       expect(res.status).toBe(200);
       expect(json.message).toBe("Issue updated successfully");
+      expect(json.updatedIssue.status).toBe("Need Feedback");
+      expect(json.updatedIssue._id.toString()).toBe(issueId);
+      expect(json.updatedIssue.studentComments.length).toBe(2);
+      
     
      
   });
@@ -184,11 +190,98 @@ describe('update issue API Tests', () => {
       res = await PUT(req);
       
       expect(res.status).toBe(400);
-  
-    
-      // TODO if the issue id is not the correct one return 404
-      // TODO if the issue is close return 400
-      // TODO if student is alreday submitted return 400
 
+  });
+      // TODO if the issue id is not found return 404
+
+
+    // TODO if the issue is complete return 405
+    
+  it('if id is invalid or bad request with empty input', async () => {
+    // TODO if student is alreday submitted return 401
+    let body : UpdateIssueInput = {
+      studentId: studentId,
+      teamId: teamId,
+      courseId: courseId,
+      filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
+      title: "disagreement to the babalala",
+      content: "this is a very important issue!!!!",
+      issueId: issueId
+      };
+    
+     
+      let req = new NextRequest(new URL('http://localhost/api/issueSystem/updateIssue'), {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    
+      
+      let res = await PUT(req);
+      
+      
+      expect(res.status).toBe(401);
+      const json = await res.json(); 
+      expect(json.error).toBe("Student has already submitted an issue for this team");
+    
+      // TODO if the issue id is not found return 404
+      body  = {
+        studentId: BobId,
+        teamId: teamId,
+        courseId: courseId,
+        filesUrl: "anc.png,dasd.jpg",
+        filesName: "anc,dasd",
+        title: "disagreement to the babalala",
+        content: "this is a very important issue!!!!",
+        issueId: "671b4dbbd1ab3e8a13457157"
+        };
+      //const json = await res.json(); // Parse the JSON response
+      //console.log(json);
+
+      req = new NextRequest(new URL('http://localhost/api/issueSystem/updateIssue'), {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      res = await PUT(req);
+      expect(res.status).toBe(404);
+
+
+
+  });
+  it('should refuse update if wrong team and wrong student send update to wrong issue', async () => {
+    // TODO if student is alreday submitted return 401
+    let John = await Student.findOne({studentName: 'John'}).exec();
+    let team = await Team.findOne({teamName: 'Team2'}).exec();
+    let JohnId = John._id;
+    let teamId2 = team._id;
+    let body : UpdateIssueInput = {
+      studentId: JohnId,
+      teamId: teamId2,
+      courseId: courseId,
+      filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
+      title: "disagreement to the babalala",
+      content: "this is a very important issue!!!!",
+      issueId: issueId
+      };
+    
+     
+      let req = new NextRequest(new URL('http://localhost/api/issueSystem/updateIssue'), {
+        method: 'PUT',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    
+      
+      let res = await PUT(req);
+      
+      
+      expect(res.status).toBe(406);
+      const json = await res.json(); 
+      expect(json.error).toBe("Issue does not belong to this team");
+    
   });
 });

@@ -85,9 +85,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		console.log('File uploaded successfully:', filesUrl);
 		if (issueId) {
 			// Update issue with new data
-			const title = `Team members ratings: ${formData.teamMembers}.`;
-			const content = `situationExplanantions: ${formData.situationExplanation}
-			`
+			const title = `${formData.teamMembers}`;
+			const content = `${formData.situationExplanation}`
 			
             try {
                 const res = await fetch(`/api/issueSystem/updateIssue/`, {
@@ -154,7 +153,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                 const result = await res.json();
                 console.log("Form submitted successfully:", result);
 				alert('Success!');
-				//router.push('/studentLogout'); 
+				router.push('/studentLogout'); 
 			}
 			if (!res.ok) {
                 const errObj = await res.json();
@@ -198,6 +197,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					className="border border-gray-300 text-black p-2 rounded-md h-20"
 					value={formData.teamMembers}
 					onChange={handleChange}
+					required
 				/>
 
 				<label className="text-lg text-black">
@@ -209,6 +209,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					className="border border-gray-300 text-black p-2 rounded-md h-28"
 					value={formData.situationExplanation}
 					onChange={handleChange}
+					required
 				/>
 
 				<label className="text-lg text-black">3. You can upload your files here.</label>
@@ -239,7 +240,6 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
 				<button 
 					type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto"
-					onClick={() => router.push('/studentLogout')}
 				>
 					Submit
 				</button>

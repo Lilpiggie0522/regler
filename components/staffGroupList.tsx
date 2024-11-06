@@ -26,11 +26,13 @@ interface Group {
 const GroupList: React.FC = () => {
     const router = useRouter();
     const params = useSearchParams();
-    const courseName = params.get('course');
-    const term = params.get('term');
+    
+    const courseId = params.get('courseId');
+    
 
 
     const { useLocalStorageState } = useStudentContext();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [email,] = useLocalStorageState('email', '');
 
     const [searchTerm, setSearchTerm] = useState<string>('');
@@ -41,14 +43,14 @@ const GroupList: React.FC = () => {
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
 
     // Fetch groups from the API
-    const fetchGroups = async (email: string, courseName: string, term: string) => {
+    const fetchTeams = async (courseId: string|null) => {
         try {
-            const res = await fetch('/api/staff/groupList', {
-                method: 'POST',
+            // should return a list of teams in this course
+            const res = await fetch(`/api/util/getTeamsByCourseId/${courseId}`, {
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, courseName, term }),
             });
     
             if (!res.ok) {
@@ -56,18 +58,19 @@ const GroupList: React.FC = () => {
     
                 throw Error(errObj.error);
             }
+
             const groupObj = await res.json();
-            setGroups(groupObj);
+            console.log(groupObj.teams);
+            setGroups(groupObj.teams);
         } catch (error) {
             console.error('Error fetching groups:', error);
         }
     }
 
     useEffect(() => {
-        if (email && courseName && term) {
-            fetchGroups(email, courseName, term);
-        }
-    }, [email, courseName, term]);  // Run effect when these values change
+        
+        fetchTeams(courseId);
+    }, [courseId]);  // Run effect when these values change
 
     
 
@@ -227,7 +230,7 @@ const GroupList: React.FC = () => {
                                     <td className="py-3 px-4 text-center">
                                         <button
                                             className="bg-black text-white py-1 px-3 rounded-lg"
-                                            onClick={() => router.push(`/unifiedInfo?course=${courseName}&term=${term}&group=${group.groupName}&teamId=${group.teamId as string}`)}
+                                            onClick={() => router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`)}
                                         >Select</button>
                                     </td>
                                 </tr>

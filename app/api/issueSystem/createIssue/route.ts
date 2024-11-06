@@ -80,6 +80,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
         }
         // if there is a pending issue for the team
+
+        // TODO: if there is additional field to 
         
         const existingTeam = await Team.findOne(
             { _id: teamId,
@@ -91,8 +93,8 @@ export async function POST(req: NextRequest) {
         for (const issueId of issuesIds) {
             const existingIssue = await Issue.findById(issueId).exec();
            // console.log(existingIssue);
-            if (existingIssue && existingIssue.status === 'pending') {
-                return NextResponse.json({ error: "A pending issue already exists for this team" }, { status: 409 });
+            if (existingIssue && ((existingIssue.status === 'pending' || existingIssue.status === 'Need Feedback'))) {
+                return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
             }
         }
 
