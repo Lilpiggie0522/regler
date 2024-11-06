@@ -10,6 +10,7 @@ interface IssueStudent extends Student {
 }
 
 interface StudentComment {
+    title: string;
     content: string;
     filesUrl: string;
     student: string;
@@ -56,7 +57,7 @@ export default function StudentComment() {
                     const filesNames = studentComment.filesName.split(',');
                     filesUrls = filesUrls.slice(0, -1);
                     const newFormData = {
-                        teamMembers: studentComment.content,
+                        teamMembers: studentComment.title,
                         situationExplanation: studentComment.content,
                         fileLinks: filesUrls.map((url: string, index: number) => ({
                             url,
@@ -74,14 +75,12 @@ export default function StudentComment() {
     }, [teamId, studentId]);
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-            {/* Title */}
+        <div className="min-h-screen bg-gray-100 flex flex-col items-center">
             <div className="bg-yellow-400 p-9 w-full text-center">
                 <h1 className="text-black text-3xl font-bold">Team Evaluation Form For {studentName}</h1>
             </div>
-
-            <div className="max-w-2xl w-full p-4">
-                {/* Questions */}
+    
+            <div className="max-w-7xl w-full p-8 mt-6 bg-white rounded-lg shadow-md">
                 <label className="text-lg text-black block mb-2">
                     1. Please write members of your team and give them a mark between 1 and 10. 1 being the worst case, and 10 being the best case.
                 </label>
@@ -91,7 +90,7 @@ export default function StudentComment() {
                     value={formData.teamMembers}
                     readOnly
                 />
-
+    
                 <label className="text-lg text-black block mb-2">
                     2. Please explain the situation.
                 </label>
@@ -101,23 +100,24 @@ export default function StudentComment() {
                     value={formData.situationExplanation}
                     readOnly
                 />
-
+    
                 <label className="text-lg text-black block mb-2">3. You can view your files here.</label>
                 <div className="mt-4">
                     {formData.fileLinks.map((file, index) => (
                         <div key={index} className="flex items-center justify-between border-b py-2">
-                            <Button
-                                variant="link"
-                                onClick={() => window.open(file.url, '_blank')}
-                                className="text-blue-600 underline bg-transparent border-none cursor-pointer"
+                            <a
+                                href={file.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline"
                             >
                                 {file.name}
-                            </Button>
+                            </a>
                         </div>
                     ))}
                 </div>
             </div>
         </div>
-
     );
+    
 }

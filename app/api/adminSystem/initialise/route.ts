@@ -21,6 +21,7 @@ export interface createStudentInput {
     studentName: string,
     email: string,
     zid: string,
+    //class: string
 }
 
 export interface createTeamInput {

@@ -15,17 +15,6 @@ export interface Student {
 }
 
 export default function UnifiedInfo() {
-    //const [formData, setFormData] = useState<FormData>({
-	//});
-
-    // // Handle input changes for text areas
-	// const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-	// 	const { name, value } = e.target;
-	// 	setFormData((prevData) => ({
-	// 		...prevData,
-	// 		[name]: value,
-	// 	}));
-	// };
     const router = useRouter();
     
     const params = useSearchParams()
@@ -36,9 +25,6 @@ export default function UnifiedInfo() {
     const [tutorComment, setTutorComment] = useState<string>('')
     const [staffId,] = useLocalStorageState('staffId', '');
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
-    
-
-    // Test student list
     const [students, setStudents] = useState<Student[]>([]);
 
     useEffect(() => {
@@ -57,7 +43,6 @@ export default function UnifiedInfo() {
                     console.log("tutorName: " + comment.tutorName)
                     setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment).slice(1,).slice(0,-1));
                     //加回去slice
-
                 }
             } catch (error) {
                 console.error(error);
@@ -131,18 +116,16 @@ export default function UnifiedInfo() {
             console.error(error);
             setIsUploadedSuccessfully(false);
         }
-        // Need to write more
     };
 
     return (
         <div className="min-h-screen bg-gray-100">
             <div className="bg-yellow-400 p-9 flex justify-between items-center">
-                <h1 className="text-black text-3xl font-bold">Group 1</h1>
+                <h1 className="text-black text-3xl font-bold">{group}</h1>
 
                 {/* Search bar section */}
                 <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        {/* Font Awesome Search Icon */}
                         <FaSearch className="absolute left-2 text-gray-400" />
                     </span>
                     <input
@@ -164,8 +147,8 @@ export default function UnifiedInfo() {
                             <th className="py-2">ZID</th>
                             <th className="py-2">Email</th>
                             <th className="py-2">Status</th>
-                            <th className="py-2">Actions</th>
                             <th className="py-2">Details</th>
+                            <th className="py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -200,24 +183,26 @@ export default function UnifiedInfo() {
                     </tbody>
                 </table>
 
-                <form className="mt-6" onSubmit={handleSubmit}>
+                <form className="mt-6 w-full" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-4">
-                        <label className="text-lg text-black">Tutor&apos;s Opinion</label>
-                        <p className="border border-gray-300 text-black p-2 rounded-md">
-                            {tutorComment}
-                        </p>
+                        <label className="text-lg text-black">Tutor's Opinion</label>
+                        <div className="w-full bg-gray-100 border border-gray-300 rounded-md p-4">
+                            <p className="text-black mt-1">{tutorComment}</p> 
+                        </div>
                         <label className="text-lg text-black">Enter your opinion here</label>
                         <textarea
                             name="yourOpinion"
                             placeholder="Enter your opinion here"
                             className="border border-gray-300 text-black p-2 rounded-md h-20"
-					        onChange={(input) => setContent(input.target.value)}
+                            onChange={(input) => setContent(input.target.value)}
+                            required
                         />
                         <button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">
                             Submit
                         </button>
                     </div>
                 </form>
+
             </div>
         </div>
     );
