@@ -13,6 +13,7 @@ interface StudentResponse {
   comment : StudentComment;
 }
 interface StudentComment {
+  title: string;
   content: string;
   filesUrl: string;
   filesName: string;
@@ -74,11 +75,13 @@ export async function GET(req : NextRequest, { params } : Params) {
         zid: studentDetails.zid,
         isSubmitted,
         comment: isSubmitted ? {
+          title: studentComment.title,
           content: studentComment.content,
           filesUrl: studentComment.filesUrl,
           filesName: studentComment.filesName,
           student: studentId
         } : {
+          title:'not submitted', 
           content: 'not submitted', 
           filesUrl: 'not submitted',
           filesName: 'not submitted',
