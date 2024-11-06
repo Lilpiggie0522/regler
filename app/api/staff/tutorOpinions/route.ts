@@ -9,16 +9,20 @@ const Team = models.Team;
 export interface TutorOpinionInput {
     teamId: string,
     content: string,
+    staffId: string,
 }
 
 export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const request = await req.json();
-        const { teamId, content } = request as TutorOpinionInput;
+        const { teamId, content, staffId } = request as TutorOpinionInput;
 
         // Validate the team ID
-        const response = await validateId(teamId, "Team");
+        let response = await validateId(teamId, "Team");
+        if (response) return response;
+
+        response = await validateId(staffId, "Admin");
         if (response) return response;
 
         const team = await Team.findById(teamId).populate("issues").exec();
@@ -44,15 +48,17 @@ export async function POST(req: NextRequest) {
         // Create a new tutor comment
         const tutorComment = {
             content: content,
+            tutor: staffId
         };
 
         // Update the issue by adding the tutor's opinion to the tutorComments array
-        const updateIssue = await Issue.updateOne(
+        let updateIssue = await Issue.updateOne(
             { _id: openIssue._id },
             { $push: { tutorComments: tutorComment } }
         );
+        updateIssue = await Issue.findById(issueId).exec();
 
-        return NextResponse.json({ message: "Tutor opinion added successfully", updateIssue}, { status: 200 });
+        return NextResponse.json({ message: "Tutor opinion added successfully", updateIssue, }, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ error: error }, { status: 500 });

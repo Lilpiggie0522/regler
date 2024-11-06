@@ -35,7 +35,9 @@ describe('Initialisation API Tests', () => {
         courseAdmins: [{ adminName: 'Admin1', email: 'admin1@example.com', role: 'admin', courseName: 'CS101', term: 'T1' }],
         staffAdmins: [{ adminName: 'Tutor1', email: 'tutor1@example.com', role: 'tutor', courseName: 'CS101', term: 'T1' }],
         students: [{ studentName: 'Alice', email: 'alice@example.com', zid: 'z1234567' }],
-        teams: [{ teamName: 'Team1', studentsZids: 'z1234567', mentorsEmails: 'tutor1@example.com' }],
+        teams: [{ teamName: 'Team1', studentsZids: 'z1234567', mentorsEmails: 'tutor1@example.com' },
+          { teamName: 'Team2', studentsZids: 'z1234567', mentorsEmails: 'tutor1@example.com' }
+        ],
         course: { courseName: 'CS101', mentorsEmails: 'tutor1@example.com', teams: 'Team1', term: 'T1' },
       };
     
