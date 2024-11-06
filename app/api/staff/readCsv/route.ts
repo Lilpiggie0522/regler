@@ -7,7 +7,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData()
     const file = formData.get('csv') as File
     if (!file) {
-        return NextResponse.json('Incorrect file type or no file attached', { status: 400 })
+        return NextResponse.json('Incorrect file type or no file attached.', { status: 400 })
     }
     const filename: string = file.name
     // console.log(`name is ${filename}`)
@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json(regexResult, { status: 400 })
     }
     const [courseName, courseTerm] = regexResult
+    // console.log(`term is ${courseTerm}`)
 
     const converted = await convertFileData(file)
     if (!validateConvertedData(converted)) {

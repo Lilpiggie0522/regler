@@ -25,11 +25,13 @@ export interface CreateIssueInput {
     filesUrl: string,
     title: string,
     content: string,
+    filesName: string,
 }
 export interface StudentCommentInput {
     title: string,
     content: string,
     filesUrl: string,
+    filesName: string,
     student: string,
 }
 interface TutorCommentInput {
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const request = await req.json();
-        const { studentId, teamId, courseId, filesUrl, title, content } = request as CreateIssueInput;
+        const { studentId, teamId, courseId, filesUrl, title, content, filesName } = request as CreateIssueInput;
 
         // Validate that IDs exist in their respective collections
         let response = await validateId(studentId, "Student");
@@ -78,6 +80,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
         }
         // if there is a pending issue for the team
+
+        // TODO: if there is additional field to 
         
         const existingTeam = await Team.findOne(
             { _id: teamId,
@@ -89,8 +93,8 @@ export async function POST(req: NextRequest) {
         for (const issueId of issuesIds) {
             const existingIssue = await Issue.findById(issueId).exec();
            // console.log(existingIssue);
-            if (existingIssue && existingIssue.status === 'pending') {
-                return NextResponse.json({ error: "A pending issue already exists for this team" }, { status: 409 });
+            if (existingIssue && ((existingIssue.status === 'pending' || existingIssue.status === 'Need Feedback'))) {
+                return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
             }
         }
 
@@ -99,6 +103,7 @@ export async function POST(req: NextRequest) {
             title: title,
             content: content,
             filesUrl: filesUrl,
+            filesName: filesName,
             student: studentId
         }
         const studentCommemts: StudentCommentInput[] = [];
@@ -138,7 +143,12 @@ export async function POST(req: NextRequest) {
             } 
         }
 
-        return NextResponse.json({ success: true, issue }, { status: 200 });
+        return NextResponse.json({ success: true, issue,
+            teamId: teamId,
+            studentId: studentId,
+            courseId: courseId,
+            issueId: issueId,
+          }, { status: 200 });
 
         // Additional checks if necessary
 

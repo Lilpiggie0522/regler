@@ -5,8 +5,10 @@ import { FaSearch, FaTrash } from 'react-icons/fa';
 
 import { useStudentContext } from '@/context/studentContext';
 import { useRouter } from 'next/navigation';
+import ErrorModal from "@/components/modals/errorModal";
 
 interface Course {
+    id: string;
     course: string;
     term: string;
 }
@@ -28,6 +30,8 @@ export default function CourseList() {
     
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState('email', '');
+    // const [,setCourse] = useLocalStorageState('email', '');
+    // const [,setTerm] 
     
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [sortedCourses, setSortedCourses] = useState<Course[]>([]);
@@ -38,7 +42,10 @@ export default function CourseList() {
     const [showData, setShowData] = useState<boolean>(false);
     const [showWindow, setShowWindow] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null); // State to hold the selected file
-    const [uploading, setUploading] = useState<boolean>(false)
+    const [uploading, setUploading] = useState<boolean>(false);
+
+    const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     useEffect(() => {
         if (email) {
@@ -62,8 +69,16 @@ export default function CourseList() {
                 }
                 const courseObj = await coursesResponse.json();
 
+                courseObj.courses.forEach((course: Course) => {
+                    console.log("Course Term:", course.term);
+                });
+
                 setCoursesData(courseObj.courses);
+                // console.log("courses data:", courseObj.courses);
+                
             } catch (error) {
+                setErrorMessage("Failed to fetch courses. Please try again.");
+                setShowErrorModal(true);
                 throw error
             }
         }
@@ -134,18 +149,23 @@ export default function CourseList() {
                 body: formData
             })
             if (response.ok) {
-                alert("OK! Data sent and received")
+                // alert("OK! Data sent and received")
+                // setErrorMessage("Data has been sent and received");
+                // setShowErrorModal(true);
                 const displayData = await response.json()
                 console.log(displayData)
                 setShowData(true)
                 setDisplayData(displayData)
+                handleCloseWindow();
             } else {
                 const error = await response.json()
-                alert(error)
+                setErrorMessage(error);
+                setShowErrorModal(true);
             }
         } catch (error) {
             console.log(error)
-            alert("oh no!")
+            setErrorMessage("Failed to send the CSV file. Please try again.");
+            setShowErrorModal(true);
         }
         setUploading(false)
     }
@@ -216,14 +236,16 @@ export default function CourseList() {
             )}
 
             {showData && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-gray-100 max-h-[700px] w-[90vw] rounded-lg relative flex flex-col items-center justify-center">
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                    <div className="bg-gray-100 max-h-[700px] w-[90vw] rounded-lg relative flex flex-col p-6 items-center justify-center">
+                {/* <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-gray-100 max-h-[700px] w-[90vw] rounded-lg relative flex flex-col items-center justify-center"> */}
                         <button className="absolute top-2 right-3 text-black text-3xl" onClick={handleCloseData}>
                             &times;
                         </button>
                         <div className="p-5 text-black w-full overflow-y-scroll">
-                            <p className="mb-4 text-lg font-bold text-center">
-                            Your CSV file has been successfully imported:
+                            <p className="mb-4 text-lg font-bold text-left">
+                            Your file "{selectedFile?.name}" has been successfully imported:
                             </p>
                             <table className="w-full">
                                 <thead>
@@ -259,6 +281,15 @@ export default function CourseList() {
                     </div>
                 </div>
             )}
+
+            {/* showLoginFail */}
+            {showErrorModal ? (
+                <ErrorModal
+                errorMessage={errorMessage}
+                onClose={() => setShowErrorModal(false)}
+                />
+            ) : null}
+
         {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
             <table className="min-w-full table-fixed">
@@ -275,11 +306,11 @@ export default function CourseList() {
                     filteredCourses.map((course, index) => (
                     <tr key={index} className="border-b border-gray-200">
                         <td className="w-1/3 py-3 px-4 text-black text-center">{course.course}</td>
-                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.term}</td>
+                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.term ? course.term : "No term available"}</td>
                         <td className="w-1/3 py-3 px-4 text-center">
                             <button 
                                 className="bg-black text-white py-1 px-4 rounded-lg"
-                                onClick={() => router.push(`/staffGroupList`)}
+                                onClick={() => router.push(`/staffGroupList?courseId=${course.id}`)}
                             >Select</button>
                         </td>
                     </tr>

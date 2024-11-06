@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
         console.log(`email is ${email}`)
         const admin = await Admin.findOne({email: email})
         if (!admin) {
-            return NextResponse.json("invalid email", {status: 401})
+            return NextResponse.json("Invalid Email", {status: 401})
         }
         //please note that port may change
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(sendAuthCodeResponse, {status: 500})
         }
         // object id of staff and role
-        return NextResponse.json({email: admin.email, role: admin.role}, {status: 200})
+        return NextResponse.json({email: admin.email, role: admin.role, _id: admin._id}, {status: 200})
     } catch (error) {
         if (error instanceof Error) {
             console.error('Error - Team Email:', error);

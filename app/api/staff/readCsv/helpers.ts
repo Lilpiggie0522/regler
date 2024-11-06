@@ -20,16 +20,16 @@ type DynamicResult = {
     [key: string]: string;
 };
 export function courseNameRegexCheck(filename: string): string | string[]{
-    const courseRegex = /COMP[0-9]{4}/;
+    const courseRegex = /[A-Za-z]{4}[0-9]{4}/;
     const courseMatch = filename.match(courseRegex);
     if (!courseMatch) {
-        return 'Please include course name in title'
+        return 'Please include course name in title.'
     }
 
     const courseTermRegex = /[0-9]{2}[Tt][0-3]/;
     const courseTermMatch = filename.match(courseTermRegex);
     if (!courseTermMatch) {
-        return 'Please include course term in title'
+        return 'Please include course term in title.'
     }
     return [courseMatch![0], courseTermMatch![0]]
 }
@@ -168,12 +168,14 @@ export function insertStudent(row: convertedResult, students: createStudentInput
     const newStudentName = row.name
     const newStudentEmail = row.email
     const newStudentZid = row.zid
+    //const newStudentClass = row.class
     const alreadyPushedStudent = students.find(student => student.zid === newStudentZid)
     if (!alreadyPushedStudent) {
         const newStudent: createStudentInput = {
             studentName: newStudentName,
             email: newStudentEmail,
-            zid: newStudentZid
+            zid: newStudentZid,
+            //class: newStudentClass
         }
         students.push(newStudent)
 

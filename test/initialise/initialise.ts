@@ -1,5 +1,3 @@
-import {CreateIssueInput} from "@/app/api/issueSystem/createIssue/route";
-import { UpdateIssueInput } from "@/app/api/issueSystem/updateIssue/route";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // const testSample : initialiseInput = {
@@ -96,7 +94,7 @@ import { UpdateIssueInput } from "@/app/api/issueSystem/updateIssue/route";
 // }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const createIssueSample: CreateIssueInput = {
+/*const createIssueSample: CreateIssueInput = {
     studentId: "6703551f9db9e11b3843691a",
     teamId: "6703551f9db9e11b38436924",
     courseId: "6703551f9db9e11b3843692a",
@@ -115,4 +113,4 @@ const updateIssueSample: UpdateIssueInput = {
     title: "issue 1",
     content: "string",
     issueId: "6703551f9db9e11b384"
-}
+}*/

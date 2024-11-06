@@ -1,9 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
+// import models from './models';
 
 export const issueSchema = new Schema({
     status: {
         type: 'string', 
-        enum: ['pending', 'closed'],
+        enum: ['pending', 'complete', 'Need Feedback'],
         message: '{VALUE} is not a valid role',
         required: true
       },
@@ -15,13 +16,12 @@ export const issueSchema = new Schema({
         title: {type: 'string', required: true},
         content: {type: 'string', required: true},
         filesUrl: {type: 'string'},
+        filesName: {type: 'string'},
         student: {type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true},
       }, { timestamps: true }],
     tutorComments:[{
-        title: {type: 'string', required: true},
         content: {type: 'string', required: true},
-        filesUrl: {type: 'string'},
-        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: false},
+        // filesUrl: {type: 'string'},
+        tutor: {type: mongoose.Schema.Types.ObjectId, ref: 'Admin', required: true},
     }, { timestamps: true }]
 });
-

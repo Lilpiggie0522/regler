@@ -58,8 +58,8 @@ export default function StudentLogin() {
 
     if (!emailSent.ok) {
       const res = await emailSent.json()
-      console.log(res.error)
-      setErrorMessage('Course code or zID is invalid.');
+      console.log("Error:", res.error);
+      setErrorMessage(res.error);
       setShowLoginFail(true);
     } else {
       setShowVerificationModal(true);

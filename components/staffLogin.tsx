@@ -16,6 +16,7 @@ export default function StaffLogin() {
   const { useLocalStorageState } = useStudentContext()
   const [, setStaffEmail] = useLocalStorageState('email', '')
   const [, setStaffRole] = useLocalStorageState('role', '')
+  const [, setStaffId] = useLocalStorageState('staffId', '')
   const [errorMessage, setErrorMessage] = useState('');
   const [email, setEmail] = useState('');
 
@@ -51,15 +52,16 @@ export default function StaffLogin() {
     if (!emailSent.ok) {
       const res = await emailSent.json()
       console.log(res.error)
-      setErrorMessage('Failed to send verification email.');
+      setErrorMessage("Invalid Email");
       setShowLoginFail(true);
     } else {
       setShowVerificationModal(true);
       const admin = await emailSent.json()
-      const { email, role } = admin
+      const { email, role, _id } = admin
 
       setStaffEmail(email)
       setStaffRole(role)
+      setStaffId(_id)
     }
   };
 
