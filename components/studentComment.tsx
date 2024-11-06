@@ -112,7 +112,6 @@ export default function StudentComment() {
                             >
                                 {file.name}
                             </Button>
-                                {file.name}
                         </div>
                     ))}
                 </div>
