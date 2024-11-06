@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json(sendAuthCodeResponse, {status: 500})
         }
         // object id of staff and role
-        return NextResponse.json({email: admin.email, role: admin.role}, {status: 200})
+        return NextResponse.json({email: admin.email, role: admin.role, _id: admin._id}, {status: 200})
     } catch (error) {
         if (error instanceof Error) {
             console.error('Error - Team Email:', error);

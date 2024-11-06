@@ -11,32 +11,31 @@ const ProjectModal: React.FC<ModalProps> = ({ onClose }) => {
 
     // fetch all already exist stages
     useEffect(() => {
-        const fetchStages = async () => {
-            const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
-            setProjects(dummyData);
-            // try {
-            //     const response = await fetch('/api/assignments');
-            //     if (!response.ok) throw new Error('Failed to fetch assignments');
+        const fetchProject = async () => {
+            // const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
+            // setProjects(dummyData);
+            try {
+                // get method
+                const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`);
+                if (!response.ok) throw new Error('Failed to fetch assignments');
 
-            //     // const data = await response.json();
-            //     // setStages(data);
-            // } catch (error) {
-            //     console.error(error);
-                // setErrorMessage('Failed to delete stage. Please try again.');
-            // }
+                const data = await response.json();
+                setProjects(data);
+                // assignments : [{assignmentName}]
+            } catch (error) {
+                console.error(error);
+                setErrorMessage('Failed to delete stage. Please try again.');
+            }
         };
         
-        fetchStages();
+        fetchProject();
     }, []);
-
-    
-
 
     const handleSubmit = async () => {
         if (newProject.trim()) {
             try {
-                const response = await fetch('/api/assignments', {
-                    method: 'POST',
+                const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -54,19 +53,19 @@ const ProjectModal: React.FC<ModalProps> = ({ onClose }) => {
         }
     };
 
-    const handleDelete = async (project: string) => {
-        try {
-            const response = await fetch(`/api/assignments/${project}`, {
-                method: 'DELETE',
-            });
+    // const handleDelete = async (project: string) => {
+    //     try {
+    //         const response = await fetch(`/api/assignments/${project}`, {
+    //             method: 'DELETE',
+    //         });
 
-            if (!response.ok) throw new Error('Failed to delete assignment');
-            setProjects((prev) => prev.filter(a => a !== project));
-        } catch (error) {
-            setErrorMessage('Failed to delete stage. Please try again.');
-            console.error(error);
-        }
-    };
+    //         if (!response.ok) throw new Error('Failed to delete assignment');
+    //         setProjects((prev) => prev.filter(a => a !== project));
+    //     } catch (error) {
+    //         setErrorMessage('Failed to delete stage. Please try again.');
+    //         console.error(error);
+    //     }
+    // };
 
     // Close dropdown when clicking outside
     useEffect(() => {

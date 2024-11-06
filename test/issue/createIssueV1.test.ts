@@ -37,8 +37,9 @@ afterAll(async () => {
   await terminateDatabase(mongoServer);
 });
 
-describe('Create issue API Tests', () => {
 
+
+describe('Create issue API Tests', () => {
 
 
       // attemping create new issue if there is already an exist pending issue. 409
@@ -49,6 +50,7 @@ describe('Create issue API Tests', () => {
       teamId: teamId,
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
       title: "disagreement to the babalala",
       content: "this is a very important issue!!!!"
       };
@@ -101,6 +103,7 @@ describe('Create issue API Tests', () => {
       teamId: teamId,
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
+      filesName: "anc,dasd",
       title: "disagreement to the babalala",
       content: "this is a very important issue!!!!"
       };
@@ -126,6 +129,7 @@ describe('Create issue API Tests', () => {
         teamId: teamId,
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
+        filesName: "anc,dasd",
         title: "disagreement to the babalala",
         content: "this is a very important issue!!!!"
         };
@@ -147,6 +151,7 @@ describe('Create issue API Tests', () => {
         teamId: teamId,
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
+        filesName: "anc,dasd",
         title: "",
         content: "this is a very important issue!!!!"
         };

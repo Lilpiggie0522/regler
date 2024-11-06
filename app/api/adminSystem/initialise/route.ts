@@ -21,6 +21,7 @@ export interface createStudentInput {
     studentName: string,
     email: string,
     zid: string,
+    //class: string
 }
 
 export interface createTeamInput {
@@ -76,6 +77,7 @@ export async function POST(req: NextRequest) {
             })
             courseId = newCourse._id
         } else {
+            console.log('course found!')
             courseId = courseFound._id
         }
         const currentCourse = await Course.findById(courseId)
@@ -110,7 +112,10 @@ export async function POST(req: NextRequest) {
                 })
                 currentCourse.mentors.push(newAdmin._id)
             } else {
-                const hasId = adminFound.courses.includes((id: string) => id === courseId)
+                const hasId = adminFound.courses.includes(courseId)
+                console.log(courseId)
+                console.log(adminFound.courses)
+                console.log(hasId)
                 if (!hasId) {
                     adminFound.courses.push(courseId)
                     await adminFound.save()
@@ -134,7 +139,7 @@ export async function POST(req: NextRequest) {
                 })
                 currentCourse.mentors.push(newAdmin._id)
             } else {
-                const hasId = tutorFound.courses.includes((id: string) => id === courseId)
+                const hasId = tutorFound.courses.includes(courseId)
                 if (!hasId) {
                     tutorFound.courses.push(courseId)
                     await tutorFound.save()

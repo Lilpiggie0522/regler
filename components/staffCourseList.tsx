@@ -7,6 +7,7 @@ import { useStudentContext } from '@/context/studentContext';
 import { useRouter } from 'next/navigation';
 
 interface Course {
+    id: string;
     course: string;
     term: string;
 }
@@ -279,7 +280,7 @@ export default function CourseList() {
                         <td className="w-1/3 py-3 px-4 text-center">
                             <button 
                                 className="bg-black text-white py-1 px-4 rounded-lg"
-                                onClick={() => router.push(`/staffGroupList`)}
+                                onClick={() => router.push(`/staffGroupList?courseId=${course.id}`)}
                             >Select</button>
                         </td>
                     </tr>
