@@ -87,10 +87,9 @@ export async function POST(request: NextRequest) {
                         Contribalance
                     </p>
                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-                    href="http://localhost:3000/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
+                    href="http://localhost:3000/studentLogin"><strong>Complete Here</strong></a>
                     `
                 };
-                // href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
                 await transport.sendMail(mailingParameters);       
             } else if (student && tempId.toString() === studentId.toString()) {
                 const mailingParameters = {
