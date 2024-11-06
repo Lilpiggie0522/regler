@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Student } from './unifiedInfo';
-//import { Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 interface IssueStudent extends Student {
     comment: StudentComment;
@@ -105,14 +105,14 @@ export default function StudentComment() {
                 <div className="mt-4">
                     {formData.fileLinks.map((file, index) => (
                         <div key={index} className="flex items-center justify-between border-b py-2">
-                            <a
-                                href={file.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 underline"
+                            <Button
+                                variant="link"
+                                onClick={() => window.open(file.url, '_blank')}
+                                className="text-blue-600 underline bg-transparent border-none cursor-pointer"
                             >
                                 {file.name}
-                            </a>
+                            </Button>
+                                {file.name}
                         </div>
                     ))}
                 </div>
