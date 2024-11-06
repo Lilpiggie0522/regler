@@ -72,7 +72,7 @@ export async function GET(req : NextRequest, { params } : Params) {
       const studentIssueInfo: StudentResponse = {
         studentName: studentDetails.studentName,
         email: studentDetails.email,
-        zid: studentDetails.zid,
+        zid: studentDetails.email.split('@')[0],
         isSubmitted,
         comment: isSubmitted ? {
           title: studentComment.title,
