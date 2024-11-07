@@ -7,7 +7,8 @@ export const studentSchema = new Schema({
     },
     email: { type: 'string', required: true, unique: true},
     zid: { type: 'string', required: true, select: false, unique: true},
-    course: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true}]
+    course: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true}],
+    //class: { type: 'string', required: true},
 });
 
 

@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
         console.log(`email is ${email}`)
         const admin = await Admin.findOne({email: email})
         if (!admin) {
-            return NextResponse.json("invalid email", {status: 401})
+            return NextResponse.json("Invalid Email", {status: 401})
         }
         const authCode = await createUniqueAuthCode(email)
         sendAuthCode(email, authCode, 'admin')
