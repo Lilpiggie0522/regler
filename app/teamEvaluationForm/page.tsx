@@ -18,8 +18,8 @@ export default function TeamEvaluationPage() {
     <>
       <TeamEvaluationForm
         studentId={studentId}
-        teamId={teamId}
-        courseId={courseId}
+        teamId={'672c3f0fcc28bb7d6a4db78f'}
+        courseId={'672c3f0ecc28bb7d6a4db71f'}
         issueId={''}
       />
     </>

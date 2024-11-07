@@ -23,19 +23,19 @@ export interface CreateIssueInput {
     teamId: string,
     courseId: string,
     filesUrl: string,
-    title: string,
-    content: string,
     filesName: string,
+    questions: string[],
+    answers: string[],
 }
 export interface StudentCommentInput {
-    title: string,
-    content: string,
+
     filesUrl: string,
     filesName: string,
     student: string,
+    answers: Answer[],
 }
 interface TutorCommentInput {
-    title: string,
+
     content: string,
     filesUrl: string,
     tutor: string,
@@ -43,12 +43,18 @@ interface TutorCommentInput {
 interface DeleteIssueInput {
     issueId: string,
 }
+export interface Answer{
+    answer: string,
+}
+export interface Question {
+    question: string,
+}
 
 export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const request = await req.json();
-        const { studentId, teamId, courseId, filesUrl, title, content, filesName } = request as CreateIssueInput;
+        const { studentId, teamId, courseId, filesUrl,  filesName, questions, answers } = request as CreateIssueInput;
 
         // Validate that IDs exist in their respective collections
         let response = await validateId(studentId, "Student");
@@ -76,9 +82,7 @@ export async function POST(req: NextRequest) {
         if (!course.teams.includes(team._id)) {
             return NextResponse.json({ error: "Team does not belong to this course" }, { status: 403 });
         }
-        if (!title || !content) {
-            return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
-        }
+
         // if there is a pending issue for the team
 
         // TODO: if there is additional field to 
@@ -98,13 +102,21 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        const curAnswers: Answer[] = answers.map(answer => ({ answer: answer}));
 
+        const curQuestions: Question[] = questions.map(question => ({ question: question }));
+        
+
+        console.log('Question input: ' + questions)
+        console.log('Answer input: ' + answers)
+        console.log("CurQuestions: " + curQuestions);
+        console.log("CurAnswers: " + curAnswers);
         const initialStudentComment: StudentCommentInput = {
-            title: title,
-            content: content,
+            
             filesUrl: filesUrl,
             filesName: filesName,
-            student: studentId
+            student: studentId,
+            answers: curAnswers,
         }
         const studentCommemts: StudentCommentInput[] = [];
         studentCommemts.push(initialStudentComment);
@@ -113,7 +125,8 @@ export async function POST(req: NextRequest) {
             studentComments: studentCommemts,
             tutorComments: tutorCommemts,
             status: "pending",
-            startby: studentId
+            startby: studentId,
+            questions: curQuestions
         })
         const issueId = issue._id;
         await Team.updateOne(

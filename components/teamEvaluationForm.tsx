@@ -1,15 +1,15 @@
 'use client'
 import { useRouter } from 'next/navigation';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, FormEvent } from 'react';
 import ImageKitUpload from './imageKit/ImageKitUpload';
 import ImageKitDelete from './imageKit/ImageKitDelete';
 import {deleteImage} from './services/imageKitApi';
+import {useEffect} from 'react';
 
 
 interface FormData {
-	teamMembers: string;
-	situationExplanation: string;
 	fileLinks: { url: string; name: string , id: string}[];
+	answers: string[]; // Initialize as empty array
 }
 interface TeamEvaluationFormProps{
 	teamId: string | null;
@@ -17,25 +17,55 @@ interface TeamEvaluationFormProps{
     studentId: string| null;
 	issueId: string| null;
 }
+interface Question {
+	question: string;
+}
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Define state for the form inputs
 	const router = useRouter();
-	const {teamId, courseId, studentId, issueId} = props;
-	//const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
+	const { teamId, courseId, studentId, issueId } = props;
 	const [formData, setFormData] = useState<FormData>({
-		teamMembers: '',
-		situationExplanation: '',
 		fileLinks: [],
+		answers: [], // Initialize as empty array
 	});
+	const [questions, setQuestions] = useState<string[]>([]);
+
+	const fetchQuestions = async(courseId : string | null) => {
+		// Fetch questions from your API endpoint or database based on the provided teamId, courseId, and studentId
+        // Replace the following code with your actual API call or database query
+		if (questions.length > 0) {
+			return; // Return early if questions are already fetched and available
+		}
+        const questionsData = await fetch(`/api/util/getCourseById/${courseId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((res) => res.json())
+            .then((data) => data.questions);
+		console.log('Fetched questions:', questionsData);
+		setQuestions((prevQuestions) => {
+			const newQuestions = [...prevQuestions];
+			questionsData.forEach((row : Question, index: number) => {
+				newQuestions[index] = row.question; // Set question by index
+			});
+			return newQuestions;
+		});
+	};
+    useEffect(() => {
+        
+        fetchQuestions(courseId);
+    }, [courseId]);
 
 	// Handle input changes for text areas
-	const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-		const { name, value } = e.target;
-		setFormData((prevData) => ({
-			...prevData,
-			[name]: value,
-		}));
+	const handleAnswerChange = (index: number, value: string) => {
+		setFormData(prevData => {
+			const updatedAnswers = [...prevData.answers];
+			updatedAnswers[index] = value;
+			return { ...prevData, answers: updatedAnswers };
+		});
 	};
 
 	const handleUploadSuccess = (fileUrl: string, fileName: string, fileId: string) => {
@@ -54,6 +84,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
 
 	  const handleDeleteFile = async (index: number, fileId: string) => {
+
 		try {
 		  const res = await deleteImage(fileId);
 		  if (res) {
@@ -82,12 +113,11 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 			filesUrl += `${file.url},`;
 			filesName += `${file.name},`;
 		}
+		console.log('questions:' + questions);
+		console.log('answers: ' + formData.answers);
 		console.log('File uploaded successfully:', filesUrl);
 		if (issueId) {
 			// Update issue with new data
-			const title = `${formData.teamMembers}`;
-			const content = `${formData.situationExplanation}`
-			
             try {
                 const res = await fetch(`/api/issueSystem/updateIssue/`, {
                     method: "PUT",
@@ -100,8 +130,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 						courseId: courseId,
 						filesUrl: filesUrl,
 						filesName: filesName,
-						title: title,
-						content: content,
+						questions: questions,
+						answers: formData.answers,
 						issueId: issueId,
                     }),
                 });
@@ -127,10 +157,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		// Log the collected form data
 		console.log('Form submitted:', formData);
 
-		// Reset form (optional)
-		const title = `Team members ratings: ${formData.teamMembers}.`;
-		const content = `situationExplanantions: ${formData.situationExplanation}
-		`
+
 		console.log(studentId)
 		try {
 			const res = await fetch("/api/issueSystem/createIssue", {
@@ -144,8 +171,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					courseId: courseId,
 					filesUrl: filesUrl,
 					filesName: filesName,
-					title: title,
-					content: content,
+					questions: questions,
+					answers: formData.answers,
 				}),
             });
 
@@ -168,9 +195,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	
 	finally {
 		setFormData({
-			teamMembers: '',
-			situationExplanation: '',
 			fileLinks: [],
+			answers: Array(questions.length).fill('')
 		});
 		
 	}
@@ -178,72 +204,42 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
 	return (
 		<div className="min-h-screen bg-gray-100">
-			{/* Title */}
-			<div className="bg-yellow-400 p-9">
-				<h1 className="text-black text-3xl font-bold">Team Evaluation Form</h1>
-			</div>
+		<div className="bg-yellow-400 p-9">
+			<h1 className="text-black text-3xl font-bold">Team Evaluation Form</h1>
+		</div>
+		<form className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md" onSubmit={handleSubmit}>
+			{questions.map((question, index) => (
+				<div key={index}>
+					<div className="question-row" key={index}>
+						<label className="text-lg text-black block">{`${index + 1}. ${question}`}</label>
+						<textarea
+							placeholder="Enter your answer here"
+							className="border border-gray-300 text-black p-2 rounded-md w-full h-20"
+							value={formData.answers[index]}
+							onChange={e => handleAnswerChange(index, e.target.value)}
+							required
+						/>
+					</div>
 
-			{/* Questions */}
-			<form
-				className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md"
-				onSubmit={handleSubmit}
-			>
-				<label className="text-lg text-black">
-					1. Please write members of your team and give them a mark between 1 and 10. 1 being the worst case, and 10 being the best case.
-				</label>
-				<textarea
-					name="teamMembers"
-					placeholder="Enter your answer here"
-					className="border border-gray-300 text-black p-2 rounded-md h-20"
-					value={formData.teamMembers}
-					onChange={handleChange}
-					required
-				/>
+				</div>
+			))}
 
-				<label className="text-lg text-black">
-					2. Please explain the situation.
-				</label>
-				<textarea
-					name="situationExplanation"
-					placeholder="Enter your answer here"
-					className="border border-gray-300 text-black p-2 rounded-md h-28"
-					value={formData.situationExplanation}
-					onChange={handleChange}
-					required
-				/>
+			<label className="text-lg text-black">3. You can upload your files here.</label>
+			<ImageKitUpload onUploadSuccess={handleUploadSuccess} onUploadError={error => alert(`Upload error: ${error.message}`)} />
 
-				<label className="text-lg text-black">3. You can upload your files here.</label>
-
-      			
-				<ImageKitUpload
-					
-					onUploadSuccess={handleUploadSuccess}
-					onUploadError={(error) => alert(`Upload error: ${error.message}`)}
-				/>
-
-				<div className="mt-4">
-					{formData.fileLinks.map((file, index) => (
-						<div key={index} className="flex items-center justify-between border-b py-2">
+			<div className="mt-4">
+				{formData.fileLinks.map((file, index) => (
+					<div key={index} className="flex items-center justify-between border-b py-2">
 						<a href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
 							{file.name}
 						</a>
-						<ImageKitDelete
-							fileId = {file.id}
-							index = {index}
-							handleDeleteFile={() => handleDeleteFile(index, file.id)}
-						/>
-						</div>
-					))}
-				</div>
+						<ImageKitDelete fileId={file.id} index={index} handleDeleteFile={() => handleDeleteFile(index, file.id)} />
+					</div>
+				))}
+			</div>
 
-
-
-				<button 
-					type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto"
-				>
-					Submit
-				</button>
-			</form>
-		</div>
+			<button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">Submit</button>
+		</form>
+	</div>
 	);
 }
