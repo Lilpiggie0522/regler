@@ -1,4 +1,5 @@
-import { createCourseInput, createStudentInput, createTeamInput, createAdminInput } from '@/app/api/adminSystem/initialise/route';
+
+import { createCourseInput, createStudentInput, createTeamInput, createAdminInput } from '@/app/api/adminSystem/initialise/dbInitialisation';
 import models from '@/models/models';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';

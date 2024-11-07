@@ -199,7 +199,7 @@ const config: Config = {
   preset: 'ts-jest', // Use 'ts-jest' for TypeScript support
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/$1', // Maps '@/' to the project root
+    '^@/(.*)$': "<rootDir>/$1", // Maps '@/' to the project root
   },
 };
 

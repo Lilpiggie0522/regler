@@ -1,5 +1,6 @@
 import { POST } from '@/app/api/staff/readCsv/route'
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import * as t from '@/app/api/adminSystem/initialise/dbInitialisation';
 
 describe("api tests for data processing", () => {
     let mockCsvData: string
@@ -29,14 +30,11 @@ Rocky,z5349042,jeffrey squad,T22A,Danny,z5349042,T22A_Danny,z5349042@ad.unsw.edu
 Ruiqi,z5361545,jeffrey squad,T22A,Danny,z5361545,T22A_Danny,z5361545@ad.unsw.edu.au,cowhorse3900@outlook.com,,\n\
 Waner,z5417505,jeffrey squad,T22A,Danny,z5417505,T22A_Danny,z5417505@ad.unsw.edu.au,cowhorse3900@outlook.com,,\n\
 '
-        global.fetch = jest.fn(() =>
-            Promise.resolve({
-                ok: true,
-                json: () => Promise.resolve({}),
-            })
-        ) as jest.Mock;
+        jest.spyOn(t, 'dbInitialization').mockReturnValue(Promise.resolve(NextResponse.json('ok', {status: 200})))
     })
+
     it("should return converted data with a 200 response", async () => {
+
         mockFile = new File([mockCsvData], 'COMP3900_24T3_OHYEAH.csv', { type: 'text/csv' });
         formData = new FormData()
         formData.append('csv', mockFile)
@@ -363,13 +361,7 @@ Waner,z5417505,jeffrey squad,T22A,Danny,z5417505,T22A_Danny,z5417505@ad.unsw.edu
     })
 
     it("should return http 500 error, since something is wrong from initialise api", async () => {
-        global.fetch = jest.fn(() => {
-            return Promise.resolve({
-                ok: false,
-                json: () => Promise.resolve({error: "something is wrong"}),
-            })
-        }
-        ) as jest.Mock;
+        jest.spyOn(t, 'dbInitialization').mockReturnValue(Promise.resolve(NextResponse.json('something is wrong', {status: 500})))
         mockFile = new File([mockCsvData], 'COMP3900_24T3OHYEAH.csv', { type: 'text/csv' });
         formData = new FormData()
         formData.append('csv', mockFile)

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import models from "@/models/models";
 
@@ -49,18 +49,17 @@ export interface initialiseInput {
 
 
 //TODO: get all the courses
-export async function POST(req: NextRequest) {
+export async function dbInitialization(input: initialiseInput) {
     // step 1 sign up course admins
     // step 2 sign up staff admins
     // step 3 sign up students
     // step 4 create teams and assign students and staff
     // step 5 create courses and assign teams, staff admins and courses admins
-
+    
     try {
         await dbConnect();
-        const request = await req.json();
 
-        const { courseAdmins, staffAdmins, students, teams, course } = request as initialiseInput;
+        const { courseAdmins, staffAdmins, students, teams, course } = input as initialiseInput;
         const term = course?.term
         
 
@@ -77,7 +76,6 @@ export async function POST(req: NextRequest) {
             })
             courseId = newCourse._id
         } else {
-            console.log('course found!')
             courseId = courseFound._id
         }
         const currentCourse = await Course.findById(courseId)
@@ -113,9 +111,6 @@ export async function POST(req: NextRequest) {
                 currentCourse.mentors.push(newAdmin._id)
             } else {
                 const hasId = adminFound.courses.includes(courseId)
-                console.log(courseId)
-                console.log(adminFound.courses)
-                console.log(hasId)
                 if (!hasId) {
                     adminFound.courses.push(courseId)
                     await adminFound.save()
@@ -219,7 +214,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: "Initialisation successful.", curCourses, curTeams, curStudents }, { status: 200 });
     } catch (error) {
         console.log(error)
-        return NextResponse.json({ error: error }, { status: 500 });
+        return NextResponse.json(error, { status: 500 });
     }
 
 }
