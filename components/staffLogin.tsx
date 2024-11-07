@@ -54,7 +54,7 @@ export default function StaffLogin() {
     if (!emailSent.ok) {
       const res = await emailSent.json()
       console.log(res.error)
-      setErrorMessage('Failed to send verification email.');
+      setErrorMessage("Invalid Email");
       setShowLoginFail(true);
     } else {
       setShowVerificationModal(true);

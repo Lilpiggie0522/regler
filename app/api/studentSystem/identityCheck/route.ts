@@ -20,11 +20,11 @@ export async function POST(request: NextRequest) {
         const student = await Student.findOne({ zid: zID }).exec();
         console.log("student: " + student);
         if (!student) {
-            return NextResponse.json({ error: "Invalid zid" }, { status: 404 });
+            return NextResponse.json({ error: "Invalid zID." }, { status: 404 });
         }
         const course = await Course.findOne({ courseName: courseCode }).exec();
         if (!course) {
-            return NextResponse.json({ error: "Invalid course code" }, { status: 404 });
+            return NextResponse.json({ error: "Invalid Course Code." }, { status: 404 });
         }
         
         const teams = course.teams;
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         }
         console.log("HI3")
         if (!isStudentInCourse) {
-            return NextResponse.json({ error: "Student is not in this course" }, { status: 404 });
+            return NextResponse.json({ error: "Student is not in this course." }, { status: 404 });
         }
         //please note that port may change
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
