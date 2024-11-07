@@ -1,26 +1,31 @@
 
 import {POST as createIssuePOST, DELETE} from '@/app/api/issueSystem/createIssue/route';
-import {POST as opinionPOST} from '@/app/api/staff/tutorOpinions/route';
+import {POST as opinionPOST, TutorOpinionInput} from '@/app/api/staff/tutorOpinions/route';
 import models from '@/models/models';
 import { NextRequest } from 'next/server';
 import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 
-let studentId : string, teamId : string, courseId: string;
-const { Team, Course, Student} = models;
+let studentId : string, teamId : string, courseId: string, tutorId: string;
+let teamId2: string, tutorId2: string, studentId2: string;
+const { Team, Course, Student, Admin} = models;
 let mongoServer: MongoMemoryServer;
 
 beforeAll(async () => {
 
   const input: initialiseInput = {
     courseAdmins: [{ adminName: "Admin1", email: "admin1@example.com", role: "admin", courseName: "CS101", term: "T1" }],
-    staffAdmins: [{ adminName: "Tutor1", email: "tutor1@example.com", role: "tutor", courseName: "CS101", term: "T1" }],
+    staffAdmins: [{ adminName: "Tutor1", email: "tutor1@example.com", role: "tutor", courseName: "CS101", term: "T1" },
+        { adminName: "Tutor2", email: "tutor@example.com", role: "tutor", courseName: "CS101", term: "T1" }
+    ],
     students: [{ studentName: "Alice", email: "alice@example.com", zid: "z1234567" },
       {studentName: "Bob", email: "bob@example.com",zid: "z5423255"},
       {studentName: "John", email: "Jogn@example.com", zid: "z2222222"}
     ],
-    teams: [{ teamName: "Team1", studentsZids: "z1234567,z5423255", mentorsEmails: "tutor1@example.com" }],
+    teams: [{ teamName: "Team1", studentsZids: "z1234567,z5423255", mentorsEmails: "tutor1@example.com" },
+        { teamName: "Team2", studentsZids: "z2222222", mentorsEmails: "tutor2@example.com" }
+    ],
     course: { courseName: "CS101", mentorsEmails: "tutor1@example.com", teams: "Team1", term: "T1" },
   };
 
@@ -30,6 +35,14 @@ beforeAll(async () => {
   teamId = course.teams[0];
   const team = await Team.findOne({_id: teamId}).exec();
   studentId = team.students[0];
+  const tutor = await Admin.findOne({adminName : "Tutor1"}).exec();
+  tutorId = tutor._id;
+  teamId2 = course.teams[1];
+  const tutor2 = await Admin.findOne({adminName : "Tutor2"}).exec();
+  tutorId2 = tutor2._id;
+  const student2 = await Student.findOne({studentName : "John"}).exec();
+  studentId2 = student2._id;
+
 });
 
 afterAll(async () => {
@@ -65,9 +78,10 @@ describe('Create tutor opinions API Tests', () => {
     
         // Update Tutot's opinion after issue succesfully created
         //If success it will return 200
-        const opinionBody = {
+        const opinionBody : TutorOpinionInput = {
             teamId: teamId,
-            content: "This is the opinion."
+            content: "This is the opinion.",
+            staffId: tutorId,
         };
 
         const opinionRequest = new NextRequest(
@@ -81,7 +95,10 @@ describe('Create tutor opinions API Tests', () => {
         const opinionResponse = await opinionPOST(opinionRequest);
         expect(opinionResponse.status).toBe(200);
         const opinionJson = await opinionResponse.json();
+        console.log(opinionJson);
         expect(opinionJson.message).toBe("Tutor opinion added successfully");
+        expect(opinionJson.updateIssue.tutorComments[0].tutor.toString()).toBe(tutorId.toString());
+        expect(opinionJson.updateIssue.tutorComments[0].content).toBe("This is the opinion.");
 
         // Resubmit should return error 400
         const opinionResubmit = new NextRequest(
@@ -117,9 +134,10 @@ describe('Create tutor opinions API Tests', () => {
 describe('Debug tutor opinions API Tests', () => {
     it('No Issue created or Issue is closed', async () => {
         // If no issue found, return 404
-        const opinionBody = {
-            teamId: teamId,
-            content: "This is the opinion."
+        const opinionBody : TutorOpinionInput= {
+            teamId: teamId2,
+            content: "This is the opinion.",
+            staffId: tutorId2,
         };
 
         const opinionRequest = new NextRequest(
@@ -139,8 +157,8 @@ describe('Debug tutor opinions API Tests', () => {
     it('Submit an empty comment or Team id invalid', async () => {
         // Create a issue, return 200 if successful
         const createIssueBody = {
-            studentId: studentId,
-            teamId: teamId,
+            studentId: studentId2,
+            teamId: teamId2,
             courseId: courseId,
             filesUrl: "anc.png,dasd.jpg",
             title: "disagreement to the babalala",
@@ -162,9 +180,10 @@ describe('Debug tutor opinions API Tests', () => {
         const issueId = createIssueJson.issue._id;
 
         // Submit an empty comment should fail and return 400
-        const opinionBody = {
-            teamId: teamId,
-            content: ""
+        const opinionBody : TutorOpinionInput = {
+            teamId: teamId2,
+            content: "",
+            staffId: tutorId2,
         };
 
         const opinionRequest = new NextRequest(
@@ -182,9 +201,10 @@ describe('Debug tutor opinions API Tests', () => {
 
         // Submit an invalid team ID should fail and return 400
         const falseTeamId = "falseTeamId"
-        const opinionBody2 = {
+        const opinionBody2 : TutorOpinionInput = {
             teamId: falseTeamId,
-            content: "This is the opinion."
+            content: "This is the opinion.",
+            staffId: tutorId2,
         };
 
         const opinionRequest2 = new NextRequest(

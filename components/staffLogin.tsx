@@ -16,6 +16,7 @@ export default function StaffLogin() {
   const { useLocalStorageState } = useStudentContext()
   const [, setStaffEmail] = useLocalStorageState('email', '')
   const [, setStaffRole] = useLocalStorageState('role', '')
+  const [, setStaffId] = useLocalStorageState('staffId', '')
   const [errorMessage, setErrorMessage] = useState('');
   const [email, setEmail] = useState('');
 
@@ -56,10 +57,11 @@ export default function StaffLogin() {
     } else {
       setShowVerificationModal(true);
       const admin = await emailSent.json()
-      const { email, role } = admin
+      const { email, role, _id } = admin
 
       setStaffEmail(email)
       setStaffRole(role)
+      setStaffId(_id)
     }
   };
 
