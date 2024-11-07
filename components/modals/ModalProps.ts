@@ -18,4 +18,6 @@ export interface StaffVerificationModalProps extends ModalProps {
     email: string;
 }
 
-  
+export interface QuestionModalProps extends ModalProps {
+    courseId: string | null;
+}

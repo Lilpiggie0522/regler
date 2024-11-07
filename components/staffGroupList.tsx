@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
+import QuestionModal from './modals/staffQuestionModal';
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -41,6 +42,8 @@ const GroupList: React.FC = () => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
+    const [showQuestionModal, setShowQuestionModal] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
     // Fetch groups from the API
     const fetchTeams = async (courseId: string|null) => {
@@ -143,22 +146,41 @@ const GroupList: React.FC = () => {
                     </button>
                     <h1 className="text-black text-3xl font-bold inline-block ml-2">Groups</h1>
                 </div>
+                <div className="flex items-center">
+                    <button 
+                        className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
+                        onClick={() => {
+                            setShowQuestionModal(true);
+                            setSelectedCourseId(courseId);
+                        }}
+                    >
+                        Edit Questions
+                    </button>
 
-                {/* Search bar section */}
-                <div className="relative">
-                    <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaSearch className="absolute left-2 text-gray-400" />
-                    </span>
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className="border border-gray-400 px-10 py-1 rounded-full text-gray-800"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                    {/* Search bar section */}
+                    <div className="relative flex items-center">
+                        <span className="absolute left-3 flex items-center pointer-events-none">
+                            <FaSearch className="text-gray-400" />
+                        </span>
+                        <input
+                            type="text"
+                            placeholder="Search"
+                            className="border border-gray-400 pl-10 pr-4 py-1 rounded-full text-gray-800" // Added padding left to accommodate icon
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
                 </div>
 
+
             </div>
+
+            {showQuestionModal && (
+                <QuestionModal
+                    courseId={selectedCourseId}
+                    onClose={() => setShowQuestionModal(false)} 
+                />
+            )}
 
             {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
