@@ -4,9 +4,17 @@ import models from '@/models/models';
 import { NextRequest } from 'next/server';
 //import { createMocks } from 'node-mocks-http';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { createDatabase, initialiseInput, initialiseDatabase, terminateDatabase } from '@/test/testUtils';
+import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
 
-jest.setTimeout(50000); // Set the timeout globally to 30 seconds for all tests
+
+// Mock the `cookies()` function
+
+jest.mock('next/headers', () => ({
+  cookies: jest.fn().mockReturnValue({
+      set: jest.fn(),
+  }),
+}))
+
 let studentId : string, teamId : string, courseId: string;
 let notInTeamStudentIds : string;
 const { Team, Course, Student, AuthCode } = models;
@@ -50,7 +58,7 @@ describe('student checkAuthCode API Tests', () => {
   it('auth code check was successful', async () => {
     const authCodeCheckbody = {
         zid: 'z1234567',
-        code: 'No code found for user'
+        code: 'No code found for user!'
     };
     
     
@@ -62,7 +70,7 @@ describe('student checkAuthCode API Tests', () => {
     const authCodeCheckres = await POST(authCodeCheckreq);
     expect(authCodeCheckres.status).toBe(404);
     const json = await authCodeCheckres.json();
-    expect(json.error).toBe('No code found for user');
+    expect(json.error).toBe('No code found for user!');
   });
 
     
@@ -96,7 +104,7 @@ describe('student checkAuthCode API Tests', () => {
     const authCodeCheckres = await POST(authCodeCheckreq);
     expect(authCodeCheckres.status).toBe(400);
     const json = await authCodeCheckres.json();
-    expect(json.error).toBe('Invalid auth code');
+    expect(json.error).toBe('Invalid auth code!');
     
   });
 
@@ -130,9 +138,10 @@ describe('student checkAuthCode API Tests', () => {
     const authCodeCheckres = await POST(authCodeCheckreq);
     expect(authCodeCheckres.status).toBe(400);
     const json = await authCodeCheckres.json();
-    expect(json.error).toBe('Invalid auth code');
+    expect(json.error).toBe('Invalid auth code!');
     
-  }); it('Correct auth code', async () => {
+  }); 
+  it('Correct auth code', async () => {
     const idcheckbody: studentIdentityCheckInput = {
         zID: 'z1234567',
         courseCode: 'CS101',

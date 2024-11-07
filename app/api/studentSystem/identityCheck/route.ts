@@ -13,7 +13,13 @@ export interface studentIdentityCheckInput {
 }
 export async function POST(request: NextRequest) {
     try {
-        const {zID, courseCode, term } = await request.json() as studentIdentityCheckInput;
+        let {zID, courseCode, term } = await request.json() as studentIdentityCheckInput;
+        // Convert zID to lowercase
+        // term to uppercase
+        // courseCode to uppercase
+        zID = zID.toLowerCase();
+        term = term.toUpperCase();
+        courseCode = courseCode.toUpperCase();
         await dbConnect();
         // Retrieve student and team to check their relations
         console.log("zID: " + zID);
@@ -30,7 +36,7 @@ export async function POST(request: NextRequest) {
         console.log(course);
         const studentCourses = student.course;
         if (!studentCourses.includes(course._id)) {
-            return NextResponse.json({ error: "Student is not in this course" }, { status: 404 });
+            return NextResponse.json({ error: "Student is not in this course!" }, { status: 404 });
         }
         const designatedCourse = await Course.findById(course).exec();
         const teams = designatedCourse.teams;
@@ -48,10 +54,9 @@ export async function POST(request: NextRequest) {
             }
         }
         if (!teamId) {
-            return NextResponse.json({ error: "Student is not in any team" }, { status: 404 });
+            return NextResponse.json({ error: "Student is not in any team!" }, { status: 404 });
         }
         const authCode = await createUniqueAuthCode(zID);
-        console.log(authCode)
         // temporary disable sending email for testing
         //please note that port may change
         // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';

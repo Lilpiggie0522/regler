@@ -5,13 +5,12 @@ import { NextRequest } from 'next/server';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { createDatabase, initialiseInput, initialiseDatabase, terminateDatabase } from '@/test/testUtils';
 
-
+jest.setTimeout(30000);
 let studentId : string, teamId : string, courseId: string;
 let notInTeamStudentIds : string;
 const { Team, Course, Student} = models;
 // In-memory MongoDB server instance
 let mongoServer: MongoMemoryServer;
-jest.setTimeout(30000); // Set the timeout globally to 30 seconds for all tests
 
 beforeAll(async () => {
   // Start a new MongoDB server and connect Mongoose
@@ -154,7 +153,7 @@ describe('student identityCheck API Tests', () => {
         // Verify response status and content
       expect(idcheckres!.status).toBe(404);
       const json = await idcheckres!.json(); // Parse the JSON response
-      expect(json.error).toBe("Student is not in any team")
+      expect(json.error).toBe("Student is not in any team!")
    
   });
   it('student is not in the course exception', async () => {
@@ -175,7 +174,7 @@ describe('student identityCheck API Tests', () => {
         // Verify response status and content
       expect(idcheckres!.status).toBe(404);
       const json = await idcheckres!.json(); // Parse the JSON response
-      expect(json.error).toBe("Student is not in this course")
+      expect(json.error).toBe("Student is not in this course!")
    
   });
 });
