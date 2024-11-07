@@ -13,6 +13,7 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
   const [errorMessage, setErrorMessage] = useState('');
   const [countdown, setCountdown] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -48,6 +49,7 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
 
 
   const handleVerificationSubmit = async () => {
+    setLoading(true);
     try {
       const response = await fetch('/api/authcodeSystem/checkAuthcode', {
         method: 'POST',
@@ -69,6 +71,8 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
       console.error('Error during checking verification code:', error);
       setErrorMessage('Verification failed.');
       setShowErrorModal(true);
+    } finally {
+      setLoading(false); // Stop loading regardless of success or failure
     }
   };
 
@@ -102,11 +106,23 @@ export default function StaffVerificationModal({ onClose, onVerificationSuccess,
             </button>
 
             {/* Sign in button */}
-            <button 
-              className="w-1/2 bg-black text-white py-2 rounded-full"
+            <button
+              type="button"
+              className={`w-1/2 bg-black text-white py-2 rounded-full flex items-center justify-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
               onClick={handleVerificationSubmit}
+              disabled={loading}
             >
-              Sign in
+                {loading ? (
+                    <>
+                        <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 000 8v4a8 8 0 01-8-8z"></path>
+                        </svg>
+                        Processing...
+                    </>
+                ) : (
+                    'Sign in'
+                )}
             </button>
           </div>
 

@@ -1,7 +1,6 @@
 import nodemailer from 'nodemailer';
-import { POST } from '@/app/api/mailingSystem/sendTeam/route';
 import models from '@/models/models';
-import { NextRequest } from 'next/server';
+import { sendTeamEmail } from '@/lib/sendTeamEmail';
 
 
 jest.mock('nodemailer');
@@ -15,7 +14,6 @@ const Reminder = models.Reminder;
 const Admin = models.Admin;
 
 describe('POST sendTeam Test', () => {
-    let request: any;
     let response: any;
     
     beforeEach(() => {
@@ -36,15 +34,6 @@ describe('POST sendTeam Test', () => {
     });
   
     it('should send notifications to rest of the team and tutors successfully', async () => {
-        request = {
-            json: jest.fn().mockResolvedValue({
-                teamId: 'team1',
-                courseId: 'course1',
-                studentId: 'student1',
-                issueId: 'issue1',
-            }),
-        } as unknown as NextRequest;
-    
         (Team.findById as jest.Mock).mockResolvedValue({
             _id: 'team1',
             teamName: 'Test Team',
@@ -102,41 +91,21 @@ describe('POST sendTeam Test', () => {
         });
 
         (Reminder.create as jest.Mock).mockResolvedValue({});
-
-        response = await POST(request);
-    
+        response = await sendTeamEmail('team1', 'course1', 'student1', 'issue1');
         // Send 4 emails to students and send emails to tutors at once (4+1).
         expect(nodemailer.createTransport).toHaveBeenCalledTimes(1);
         expect(nodemailer.createTransport().sendMail).toHaveBeenCalledTimes(5);
-        expect(response.status).toBe(200);
+        expect(response).toEqual({ message: 'Notification sent to the team and tutors successfully' });
     });
   
-    it('should return 404 if team not exists', async () => {
-        request = {
-            json: jest.fn().mockResolvedValue({
-                teamId: 'Invalid team',
-                courseId: 'course1',
-                studentId: 'student1',
-                issueId: 'issue1',
-            }),
-        } as unknown as NextRequest;
-    
+    it('should return "Team not found" if team not exists', async () => {
         (Team.findById as jest.Mock).mockResolvedValue(null);
     
-        response = await POST(request);
-        expect(response.status).toBe(404);
+        response = await sendTeamEmail('Invalid team', 'course1', 'student1', 'issue1');
+        expect(response.message).toBe('Team not found');
     });
   
-    it('should return 404 if course not exists', async () => {
-        request = {
-            json: jest.fn().mockResolvedValue({
-                teamId: 'team1',
-                courseId: 'Invalid course',
-                studentId: 'student1',
-                issueId: 'issue1',
-            }),
-        } as unknown as NextRequest;
-    
+    it('should return "Course not found" if course not exists', async () => {
         // Mock Team to exist, but Course to return null
         (Team.findById as jest.Mock).mockResolvedValue({
             _id: 'team1',
@@ -145,9 +114,9 @@ describe('POST sendTeam Test', () => {
             teamName: 'Test Team',
         });
         (Course.findById as jest.Mock).mockResolvedValue(null);
-    
-        response = await POST(request);
-        expect(response.status).toBe(404);
+
+        response = await sendTeamEmail('team1', 'Invalid course', 'student1', 'issue1');
+        expect(response.message).toBe('Course not found');
     });
 });
 
