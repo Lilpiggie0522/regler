@@ -18,4 +18,7 @@ export interface StaffVerificationModalProps extends ModalProps {
     email: string;
 }
 
+export interface ProjectModalProps extends ModalProps {
+    courseId: string | null;
+}
   

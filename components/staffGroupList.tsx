@@ -41,6 +41,7 @@ const GroupList: React.FC = () => {
 
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
     const [showProjectModal, setShowProjectModal] = useState(false);
+    const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
     // Fetch groups from the API
     const fetchTeams = async (courseId: string|null) => {
@@ -146,7 +147,10 @@ const GroupList: React.FC = () => {
                 <div className="flex items-center">
                     <button 
                         className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                        onClick={() => setShowProjectModal(true)}
+                        onClick={() => {
+                            setShowProjectModal(true);
+                            setSelectedCourseId(courseId);
+                        }}
                     >
                         Edit Project
                     </button>
@@ -170,7 +174,8 @@ const GroupList: React.FC = () => {
             </div>
 
             {showProjectModal && (
-                <ProjectModal 
+                <ProjectModal
+                    courseId={selectedCourseId}
                     onClose={() => setShowProjectModal(false)} 
                 />
             )}

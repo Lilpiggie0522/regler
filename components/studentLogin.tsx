@@ -126,7 +126,6 @@ export default function StudentLogin() {
           </div>
 
           {/* Verify button */}
-          
           <button 
             onClick={ handleSendVerificationEmail } // check whether Input invalid
             className="w-full bg-black text-white py-2 rounded-full mb-6">
