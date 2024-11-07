@@ -21,10 +21,10 @@ async function InitialiseReminder() {
 
     try {
         const res = await fetch('http://localhost:3000/api/mailingSystem/setReminder', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
         });
         console.log('Successful:', await res.json());
     } catch (error) {

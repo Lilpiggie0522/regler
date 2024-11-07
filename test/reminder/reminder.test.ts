@@ -1,8 +1,7 @@
-import { POST, DELETE } from '@/app/api/mailingSystem/setReminder/route';
+import { POST } from '@/app/api/mailingSystem/setReminder/route';
 import models from '@/models/models';
 import cron from 'node-cron';
-import { NextRequest } from 'next/server';
-// import reminderMod from '@/lib/reminderMod';
+import { deleteReminder } from '@/lib/deleteReminder'
 
 jest.mock('@/lib/dbConnect');
 jest.mock('node-cron');
@@ -10,9 +9,6 @@ jest.mock('@/models/models');
 jest.mock('@/lib/reminderMod');
 
 const Reminder = models.Reminder;
-// const Team = models.Team;
-// const Course = models.Course;
-// const Issue = models.Issue;
 const Student = models.Student;
 const Admin = models.Admin;
 
@@ -37,7 +33,6 @@ describe('setReminder POST', () => {
     it('should successfully go through set reminder and send reminders', async () => {
 
         cron.schedule = jest.fn();
-        // reminderMod = jest.fn();
 
         response = await POST();
         expect(cron.schedule).toHaveBeenCalledTimes(1);
@@ -47,8 +42,6 @@ describe('setReminder POST', () => {
 });
 
 describe('setReminder DELETE', () => {
-    let request: any;
-    let response: any;
     beforeEach(() => {
         jest.clearAllMocks();
     });
@@ -75,16 +68,9 @@ describe('setReminder DELETE', () => {
         });
         Reminder.updateOne = jest.fn();
 
-        request = {
-            json: jest.fn().mockResolvedValue({
-                personId: 'student2',
-                issueId: 'issue1',
-                type: 'student',
-            }),
-        } as unknown as NextRequest;
 
-        response = await DELETE(request);
-        expect(response.status).toBe(200);
+        const response = await deleteReminder('student2', 'issue1', 'student');
+        expect(response).toEqual('Successfully remove person from reminder');
     });
 
     it('should delete tutor who submits opinion from reminder', async () => {
@@ -106,30 +92,15 @@ describe('setReminder DELETE', () => {
         });
         Reminder.updateOne = jest.fn();
 
-        request = {
-            json: jest.fn().mockResolvedValue({
-                personId: 'mentor1',
-                issueId: 'issue1',
-                type: 'mentor',
-            }),
-        } as unknown as NextRequest;
-
-        response = await DELETE(request);
-        expect(response.status).toBe(200);
+        const response = await deleteReminder('mentor1', 'issue1', 'mentor');
+        expect(response).toEqual('Successfully remove person from reminder');
     });
 
     it('should raise error when reminder not found', async () => {
         (Reminder.findOne as jest.Mock).mockResolvedValue(null);
-        request = {
-            json: jest.fn().mockResolvedValue({
-                personId: 'mentor1',
-                issueId: 'issue1',
-                type: 'mentor',
-            }),
-        } as unknown as NextRequest;
 
-        response = await DELETE(request);
-        expect(response.status).toBe(400);
+        const response = await deleteReminder('mentor1', 'issue1', 'mentor');
+        expect(response).toEqual('reminder not found or issue closed');
     });
 
     it('should raise error when student not found', async () => {
@@ -145,16 +116,8 @@ describe('setReminder DELETE', () => {
         (Student.findById as jest.Mock).mockResolvedValue(null);
         Reminder.updateOne = jest.fn();
 
-        request = {
-            json: jest.fn().mockResolvedValue({
-                personId: 'student1',
-                issueId: 'issue1',
-                type: 'student',
-            }),
-        } as unknown as NextRequest;
-
-        response = await DELETE(request);
-        expect(response.status).toBe(400);
+        const response = await deleteReminder('student1', 'issue1', 'student');
+        expect(response).toEqual('student not in the team/ already submitted');
     });
 
     it('should raise error when tutor not found', async () => {
@@ -170,16 +133,8 @@ describe('setReminder DELETE', () => {
         (Admin.findById as jest.Mock).mockResolvedValue(null);
         Reminder.updateOne = jest.fn();
 
-        request = {
-            json: jest.fn().mockResolvedValue({
-                personId: 'mentor2',
-                issueId: 'issue1',
-                type: 'mentor',
-            }),
-        } as unknown as NextRequest;
-
-        response = await DELETE(request);
-        expect(response.status).toBe(400);
+        const response = await deleteReminder('mentor2', 'issue1', 'mentor');
+        expect(response).toEqual('tutor not in the team/ already submitted');
     });
 
 });
