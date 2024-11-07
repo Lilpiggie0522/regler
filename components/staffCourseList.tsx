@@ -86,6 +86,10 @@ export default function CourseList() {
 
     useEffect(() => {
         const sorted = [...coursesData].sort((a, b) => {
+        
+        // same term, course code 
+        if (a.term < b.term) return 1;
+        if (a.term > b.term) return -1;
 
         // same term, course code 
         if (a.course < b.course) return -1;
@@ -306,7 +310,7 @@ export default function CourseList() {
                     filteredCourses.map((course, index) => (
                     <tr key={index} className="border-b border-gray-200">
                         <td className="w-1/3 py-3 px-4 text-black text-center">{course.course}</td>
-                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.term ? course.term : "No term available"}</td>
+                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.term}</td>
                         <td className="w-1/3 py-3 px-4 text-center">
                             <button 
                                 className="bg-black text-white py-1 px-4 rounded-lg"
