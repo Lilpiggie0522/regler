@@ -3,7 +3,6 @@ import dbConnect from '@/lib/dbConnect';
 import crypto from 'crypto';
 import models from "@/models/models";
 import sendAuthCode from '@/lib/sendAuthCode';
-import { send } from 'process';
 const AuthCode = models.AuthCode;
 const Student = models.Student;
 const Team = models.Team;
