@@ -26,3 +26,4 @@ jobs:
           context: .
           push: true
           tags: zpt0001/capstone-nextjs:latest
+          file: ./Dockerfile
