@@ -106,13 +106,13 @@ const GroupList: React.FC = () => {
     const getStatusClass = (status: GroupStatus): string => {
         switch (status) {
             case GroupStatus.Complete:
-                return 'bg-green-500 text-white border border-green-700';
+                return 'bg-green-400 text-white border-xl border-green-700';
             case GroupStatus.Pending:
-                return 'bg-orange-500 text-white border border-orange-700';
+                return 'bg-orange-400 text-white border-xl border-orange-700';
             case GroupStatus.NotStarted:
-                return 'bg-gray-500 text-white border border-gray-700';
+                return 'bg-gray-400 text-white border-xl border-gray-700';
             case GroupStatus.NeedFeedback:
-                return 'bg-blue-500 text-white border border-blue-700';
+                return 'bg-blue-400 text-white border-xl border-blue-700';
             default:
                 return '';
         }
@@ -205,7 +205,7 @@ const GroupList: React.FC = () => {
                                         {Object.values(GroupStatus).map((status) => (
                                             <div
                                                 key={status}
-                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedStatus === status ? 'bg-gray-200' : ''}`}
+                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded ${getStatusClass(status)} ${selectedStatus === status ? 'bg-gray-200' : ''}`}
                                                 onClick={() => {
                                                     setSelectedStatus(status);
                                                     setIsDropdownOpen(false);
