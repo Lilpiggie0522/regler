@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Generate a code with a given length
-export function generateAuthCode(length: number = 6): string {
+function generateAuthCode(length: number = 6): string {
     const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let authCode = '';
     const bytes = crypto.randomBytes(length);
