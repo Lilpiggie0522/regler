@@ -26,6 +26,6 @@ jobs:
         name: Build and push to docker hub
         uses: docker/build-push-action@v6
         with:
-          context: ./
+          context: .
           push: true
           tags: zpt0001/capstone-nextjs:latest
