@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
 import crypto from 'crypto';
 import models from "@/models/models";
+import sendAuthCode from '@/lib/sendAuthCode';
+import { send } from 'process';
 const AuthCode = models.AuthCode;
 const Student = models.Student;
 const Team = models.Team;
@@ -57,14 +59,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Student is not in any team!" }, { status: 404 });
         }
         const authCode = await createUniqueAuthCode(zID);
-        // temporary disable sending email for testing
-        //please note that port may change
-        // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-        // const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode, role: 'student'})})
-        // if (!sendAuthCodeResponse.ok) {
-        //     return sendAuthCodeResponse
-        // }
-        // objectId of student, team and course
+        sendAuthCode(student.email, authCode, 'student');
         return NextResponse.json({studentId: student._id, teamId: teamId, courseId: designatedCourse._id}, {status: 200 })
     } catch (error) {
         if (error instanceof Error) {
