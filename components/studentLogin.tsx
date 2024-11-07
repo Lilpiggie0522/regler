@@ -21,11 +21,11 @@ export default function StudentLogin() {
   const [errorMessage, setErrorMessage] = useState('');
   const [zID, setZid] = useState('');
   const [courseCode, setCourseCode] = useState('');
+  const [term, setTerm] = useState('');
 
   const [showLoginFail, setShowLoginFail] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const handleVerificationSuccess = () => {
     setShowVerificationModal(false);
@@ -37,6 +37,7 @@ export default function StudentLogin() {
 
     const zidRegex = /^z[0-9]{7}$/;
     const courseCodeRegex = /^[A-Za-z]{4}[0-9]{4}$/;
+    const termRegex = /^[0-9]{2}[Tt]{1}[0-3]{1}$/;
 
     if (!zidRegex.test(zID)) {
       setErrorMessage('Invalid zID format.');
@@ -44,6 +45,10 @@ export default function StudentLogin() {
     }
     if (!courseCodeRegex.test(courseCode)) {
       setErrorMessage('Invalid Course Code format.');
+      return false;
+    }
+    if (!termRegex.test(term)) {
+      setErrorMessage('Invalid Term format.');
       return false;
     }
     return true;
@@ -54,8 +59,8 @@ export default function StudentLogin() {
       setShowLoginFail(true);
       return;
     }
-    setLoading(true);
-    const emailSent = await sendVerificationEmail(zID, courseCode);
+
+    const emailSent = await sendVerificationEmail(zID, courseCode, term);
 
     if (!emailSent.ok) {
       const res = await emailSent.json()
@@ -74,7 +79,6 @@ export default function StudentLogin() {
       // setCourseId(courseId)
 
     }
-    setLoading(false);
   };
 
   return (
@@ -97,7 +101,7 @@ export default function StudentLogin() {
       <div className="w-2/5 bg-yellow-400 flex flex-col justify-center items-center p-8">
         <div className="max-w-sm w-full text-left">
           <h1 className="text-4xl font-bold text-black text-left mb-8">Log in</h1>
-          <p className="text-black mb-6 text-left">Enter your zID and Course code below to login:</p>
+          <p className="text-black mb-6 text-left">Enter your zID, Course code and Term below to login:</p>
 
           {/* zID Input */}
           <div className="mb-6">
@@ -127,31 +131,25 @@ export default function StudentLogin() {
             />
           </div>
 
+          {/* Term Input */}
+          <div className="mb-6">
+          <label htmlFor="courseCode" className="sr-only">Term:</label>
+            <input
+              id="term"
+              name="term"
+              value={term}
+              type="text"
+              className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
+              placeholder="Term(T0:Summer Term): 24T0"
+              onChange={(input) => setTerm(input.target.value)}
+            />
+          </div>
+
           {/* Verify button */}
-          
-          {/* <button 
+          <button 
             onClick={ handleSendVerificationEmail } // check whether Input invalid
             className="w-full bg-black text-white py-2 rounded-full mb-6">
             Verify with email
-          </button> */}
-
-          <button
-            type="button"
-            className={`w-full bg-black text-white py-2 rounded-full flex items-center justify-center ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            onClick={handleSendVerificationEmail}
-            disabled={loading}
-          >
-              {loading ? (
-                  <>
-                      <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 000 8v4a8 8 0 01-8-8z"></path>
-                      </svg>
-                      Processing...
-                  </>
-              ) : (
-                  'Verify with email'
-              )}
           </button>
 
           {/* showLoginFail */}
@@ -169,6 +167,7 @@ export default function StudentLogin() {
               onVerificationSuccess={handleVerificationSuccess}
               zID={zID}
               courseCode={courseCode}
+              term={term}
             />
           ) : null}
 
@@ -193,5 +192,3 @@ export default function StudentLogin() {
     </div>
   );
 }
-
-

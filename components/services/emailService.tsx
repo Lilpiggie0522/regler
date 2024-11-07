@@ -1,12 +1,12 @@
 
-export const sendVerificationEmail = async (zID: string, courseCode: string): Promise<Response> => {
+export const sendVerificationEmail = async (zID: string, courseCode: string, term: string): Promise<Response> => {
   // try {
   const response = await fetch('/api/studentSystem/identityCheck', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ zID: zID, courseCode: courseCode }),
+    body: JSON.stringify({ zID: zID, courseCode: courseCode, term: term }),
   });
   return response
 };
