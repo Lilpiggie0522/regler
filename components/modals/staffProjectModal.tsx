@@ -11,26 +11,52 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ onClose, courseId }) => {
 
     // fetch all already exist stages
     useEffect(() => {
-        const fetchProject = async () => {
-            // const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
-            // setProjects(dummyData);
-            try {
-                // get method
-                // const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`);
-                const response = await fetch(`/api/test/${courseId}`);
-                if (!response.ok) throw new Error('Failed to fetch projects');
+        // const fetchProject = async () => {
+        //     // const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
+        //     // setProjects(dummyData);
+        //     try {
+        //         // get method
+        //         // const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`);
+        //         console.log("Frontend!!!! courseID:", courseId)
+        //         const response = await fetch(`/api/test/${courseId}`);
+        //         if (!response.ok) throw new Error('Failed to fetch projects');
 
-                const data = await response.json();
+        //         const data = await response.json();
+        //         const assignmentNames = data.assignments.map((assignment: { assignmentName: string }) => assignment.assignmentName);
+        //         setProjects(assignmentNames);
+        //         // assignments : [{assignmentName}]
+        //     } catch (error) {
+        //         console.error(error);
+        //         setErrorMessage('Failed to fetch projects. Please try again.');
+        //     }
+        // };
+        const fetchProjects = async (courseId: string|null) => {
+            try {
+                // should return a list of teams in this course
+                // const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`);
+                const res = await fetch(`/api/test/${courseId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+        
+                if (!res.ok) {
+                    const errObj = await res.json();
+        
+                    throw Error(errObj.error);
+                }
+    
+                const data = await res.json();
                 const assignmentNames = data.assignments.map((assignment: { assignmentName: string }) => assignment.assignmentName);
                 setProjects(assignmentNames);
-                // assignments : [{assignmentName}]
             } catch (error) {
                 console.error(error);
                 setErrorMessage('Failed to fetch projects. Please try again.');
             }
-        };
+        }
         
-        fetchProject();
+        fetchProjects(courseId);
     }, [courseId]);
 
     const handleSubmit = async () => {
