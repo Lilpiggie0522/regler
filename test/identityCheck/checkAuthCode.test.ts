@@ -1,4 +1,4 @@
-import {studentIdentityCheckInput,POST as idCheckPost, createUniqueAuthCode } from '@/app/api/studentSystem/identityCheck/route';
+import {studentIdentityCheckInput,POST as idCheckPost} from '@/app/api/studentSystem/identityCheck/route';
 import { POST } from '@/app/api/authcodeSystem/checkAuthcode/route';
 import models from '@/models/models';
 import { NextRequest } from 'next/server';
