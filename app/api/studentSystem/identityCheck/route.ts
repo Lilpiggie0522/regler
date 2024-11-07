@@ -6,46 +6,43 @@ const AuthCode = models.AuthCode;
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
+export interface studentIdentityCheckInput {
+    zID: string;
+    courseCode: string;
+    term: string;
+}
 export async function POST(request: NextRequest) {
     try {
-        const {zID, courseCode, term }: {zID: string ; courseCode: string, term: string }  = await request.json();
+        const {zID, courseCode, term } = await request.json() as studentIdentityCheckInput;
         await dbConnect();
         // Retrieve student and team to check their relations
         console.log("zID: " + zID);
-        const student = await Student.findOne({ zid: zID });
+        const student = await Student.findOne({ zid: zID }).exec();
         console.log("student: " + student);
         if (!student) {
-            return NextResponse.json({ error: "Invalid zid" }, { status: 404 });
+            return NextResponse.json({ error: "Invalid zid!" }, { status: 404 });
         }
-        const courses = await Course.find({ courseName: courseCode });
-        if (courses.length === 0) {
-            return NextResponse.json({ error: "Invalid course code" }, { status: 404 });
+        // assume the combination of courseCode and term is unique
+        const course = await Course.findOne({ courseName: courseCode, term: term }).exec();
+        if (!course) {
+            return NextResponse.json({ error: "course code or term is invalid!" }, { status: 404 });
         }
-        console.log(courses);
-        let designatedCourse = null;
-        for (const course of courses) {
-            let currentCourse = await Course.findById(course._id);
-            if (currentCourse.term === term) {
-                designatedCourse = currentCourse;
-                break;
-            }
+        console.log(course);
+        const studentCourses = student.course;
+        if (!studentCourses.includes(course._id)) {
+            return NextResponse.json({ error: "Student is not in this course" }, { status: 404 });
         }
-        if (!designatedCourse) {
-            return NextResponse.json({ error: "Invalid term" }, { status: 404 });
-        }
-
+        const designatedCourse = await Course.findById(course).exec();
         const teams = designatedCourse.teams;
         let teamId = null;
-        let isStudentInCourse = false;
         for (const team of teams) {
             //console.log ("team: " + team);
-            const currentTeam = await Team.findById(team);
+            const currentTeam = await Team.findById(team).exec();
             //console.log("team: " + currentTeam)
             if (!currentTeam) {
                 continue;
             }
             if (currentTeam.students.includes(student._id)) {
-                isStudentInCourse = true;
                 teamId = team._id;
                 break;
             }
@@ -53,31 +50,26 @@ export async function POST(request: NextRequest) {
         if (!teamId) {
             return NextResponse.json({ error: "Student is not in any team" }, { status: 404 });
         }
-
-        if (!isStudentInCourse) {
-            return NextResponse.json({ error: "Student is not in this course" }, { status: 404 });
-        }
-
         const authCode = await createUniqueAuthCode(zID);
         console.log(authCode)
+        // temporary disable sending email for testing
         //please note that port may change
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-        const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode, role: 'student'})})
-        if (!sendAuthCodeResponse.ok) {
-            return sendAuthCodeResponse
-        }
+        // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        // const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode, role: 'student'})})
+        // if (!sendAuthCodeResponse.ok) {
+        //     return sendAuthCodeResponse
+        // }
         // objectId of student, team and course
         return NextResponse.json({studentId: student._id, teamId: teamId, courseId: designatedCourse._id}, {status: 200 })
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - Team Email:', error);
             return NextResponse.json({error: error.message}, {status: 502})
         }
     }
 }
 
 // Generate a code with a given length
-function generateAuthCode(length: number = 6): string {
+export function generateAuthCode(length: number = 6): string {
     const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let authCode = '';
     const bytes = crypto.randomBytes(length);
@@ -89,7 +81,7 @@ function generateAuthCode(length: number = 6): string {
 }
 
 // Function to create a unique auth code
-async function createUniqueAuthCode(zid: string): Promise<string> {
+export async function createUniqueAuthCode(zid: string): Promise<string> {
     await dbConnect();
     let isUnique = false;
     let authCode = '';

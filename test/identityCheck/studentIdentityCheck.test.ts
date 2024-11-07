@@ -1,107 +1,181 @@
-import { POST } from '@/app/api/studentSystem/identityCheck/route';
-import { NextRequest } from 'next/server';
+import {POST, studentIdentityCheckInput } from '@/app/api/studentSystem/identityCheck/route';
 import models from '@/models/models';
-import nodemailer from 'nodemailer';
+import { NextRequest } from 'next/server';
+//import { createMocks } from 'node-mocks-http';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { createDatabase, initialiseInput, initialiseDatabase, terminateDatabase } from '@/test/testUtils';
 
-jest.mock('nodemailer');
-jest.mock('@/lib/dbConnect');
-jest.mock('@/models/models');
 
+let studentId : string, teamId : string, courseId: string;
+let notInTeamStudentIds : string;
+const { Team, Course, Student} = models;
+// In-memory MongoDB server instance
+let mongoServer: MongoMemoryServer;
+jest.setTimeout(30000); // Set the timeout globally to 30 seconds for all tests
 
-const Student = models.Student;
-const Team = models.Team;
-const Course = models.Course;
-const AuthCode = models.AuthCode;
-const Admin = models.Admin;
+beforeAll(async () => {
+  // Start a new MongoDB server and connect Mongoose
 
-describe('POST sendTeam Test', () => {
-    let request: any;
-    let response: any;
-    
-    beforeEach(() => {
-        jest.clearAllMocks();
-        (nodemailer.createTransport as jest.Mock).mockReturnValue({
-            sendMail: jest.fn(),
-        });
-        Team.findById = jest.fn();
-        Course.findById = jest.fn();
-        Course.findOne = jest.fn();
-        Student.findById = jest.fn();
-        Student.findOne = jest.fn();
-        Admin.findById = jest.fn();
-        AuthCode.findById = jest.fn();
-    });
-    afterAll(async () => {
-        jest.clearAllMocks();
-    });
-  
-    it('Auth code was sent successfully.', async () => {
-        request = {
-            json: jest.fn().mockResolvedValue({
-                zID: 'z5349042',
-                courseCode: 'COMP3900',
-                term: '24T3',
-            }),
-        } as unknown as NextRequest;
-    
-        (Team.findById as jest.Mock).mockResolvedValue({
-            _id: 'sweetteam3900',
-            teamName: 'cowhorse',
-            course: 'comp390024t3',
-            students: ['rockyliu1', 'student1', 'student2', 'student3'],
-            mentors: ['mentor1', 'mentor2'],
-            issues: ['issue1'],
-        });
-        (Course.findById as jest.Mock).mockResolvedValue({
-            _id: 'comp390024t3',
-            courseName: 'COMP3900',
-            teams: ['sweetteam3900'],
-            mentors: ['mentor1', 'mentor2'],
-            term: '24T3',
-        });
+  // Mock input data to initialize the database
+  const input: initialiseInput = {
+    courseAdmins: [{ adminName: "Admin1", email: "admin1@example.com", role: "admin", courseName: "CS101", term: "T1" }],
+    staffAdmins: [{ adminName: "Tutor1", email: "tutor1@example.com", role: "tutor", courseName: "CS101", term: "T1" }],
+    students: [
+        { studentName: "Alice", email: "alice@example.com", zid: "z1234567" },
+      {studentName: "Bob", email: "bob@example.com",zid: "z5423255"},
+      {studentName: "John", email: "Jogn@example.com", zid: "z2222222"}
+    ],
+    teams: [{ teamName: "Team1", studentsZids: "z1234567,z5423255", mentorsEmails: "tutor1@example.com" }],
+    course: { courseName: "CS101", mentorsEmails: "tutor1@example.com", teams: "Team1", term: "T1" },
+  };
 
-        (Student.findById as jest.Mock).mockResolvedValueOnce({
-            _id: 'rockyliu1',
-            studentName: 'Rocky Liu',
-            email: 'z5349042@ad.unsw.edu.au',
-            zid: 'z5349042',
-            course: ['comp390024t3'],
-        }).mockResolvedValueOnce({
-            _id: 'student1',
-            studentName: 'Mary White',
-            email: 'z2222222@ad.unsw.edu.au',
-            zid: 'z2222222',
-            course: ['comp390024t3'],
-        }).mockResolvedValueOnce({
-            _id: 'student2',
-            studentName: 'Ben Thompson',
-            email: 'z3333333@ad.unsw.edu.au',
-            zid: 'z3333333',
-            course: ['comp390024t3'],
-        }).mockResolvedValueOnce({
-            _id: 'student3',
-            studentName: 'Jerry Griffen',
-            email: 'z4444444@ad.unsw.edu.au',
-            zid: 'z4444444',
-            course: ['comp390024t3'],
-        });
-    
-        (Admin.findById as jest.Mock).mockResolvedValueOnce({
-            _id: 'mentor1',
-            adminName: 'Spongebob Superman',
-            email: 'tutor1@unsw.edu.au',
-            role: 'tutor',
-            courses: ['comp390024t3']
-        }).mockResolvedValueOnce({
-            _id: 'mentor2',
-            adminName: 'Patrick Superman',
-            email: 'tutor2@unsw.edu.au',
-            role: 'tutor',
-            courses: ['comp390024t3']
-        });
-
-        response = await POST(request);
-        expect(response.status).toBe(200);
-    });
+  mongoServer = await createDatabase(input, mongoServer);
+  const input1: initialiseInput = { 
+    courseAdmins: [],
+    staffAdmins: [],
+    students: [],
+    teams: [],
+    course: { courseName: "CS888", mentorsEmails: "", teams: "", term: "T1" },
+  };
+  initialiseDatabase(input1);
+  const course = await Course.findOne({}).exec();
+  courseId = course._id;
+  teamId = course.teams[0];
+  const team = await Team.findOne({_id: teamId}).exec();
+  studentId = team.students[0];
+  const notInTeamStudent = await Student.findOne({studentName: "John"}).exec();
+  notInTeamStudentIds = notInTeamStudent._id;
 });
 
+afterAll(async () => {
+  // Drop the database and close the server after each test
+  await terminateDatabase(mongoServer);
+  
+});
+
+describe('student identityCheck API Tests', () => {
+  
+  it('successfully send auth code', async () => {
+    const idcheckbody: studentIdentityCheckInput = {
+        zID: 'z1234567',
+        courseCode: 'CS101',
+        term: 'T1'
+      };
+      // Mock a NextRequest with JSON body
+      const idcheckreq = new NextRequest(new URL('http://localhost/api/studentSystem/identityCheck'), {
+        method: 'POST',
+        body: JSON.stringify(idcheckbody),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    
+      // Call the POST handler
+      const idcheckres = await POST(idcheckreq);
+        // Verify response status and content
+        expect(idcheckres!.status).toBe(200);
+    
+  });
+  
+   
+  it('invalid student zid exception', async () => {
+    const idcheckbody: studentIdentityCheckInput = {
+        zID: 'z12345678',
+        courseCode: 'CS101',
+        term: 'T1'
+    };
+      // Mock a NextRequest with JSON body
+    const idcheckreq = new NextRequest(new URL('http://localhost/api/studentSystem/identityCheck'), {
+        method: 'POST',
+        body: JSON.stringify(idcheckbody),
+        headers: { 'Content-Type': 'application/json' },
+      });
+    
+      // Call the POST handler
+    const idcheckres = await POST(idcheckreq);
+        // Verify response status and content
+        expect(idcheckres!.status).toBe(404);
+        const json = await idcheckres!.json(); // Parse the JSON response
+        expect(json.error).toBe("Invalid zid!")
+    
+  });
+   
+  it('invalid course code or term exception', async () => {
+    const idcheckbody: studentIdentityCheckInput = {
+        zID: 'z1234567',
+        courseCode: 'CS233',
+        term: 'T1'
+      };
+      // Mock a NextRequest with JSON body
+      const idcheckreq = new NextRequest(new URL('http://localhost/api/studentSystem/identityCheck'), {
+        method: 'POST',
+        body: JSON.stringify(idcheckbody),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      // Call the POST handler
+      const idcheckres = await POST(idcheckreq);
+        // Verify response status and content
+      expect(idcheckres!.status).toBe(404);
+      const json = await idcheckres!.json(); // Parse the JSON response
+      expect(json.error).toBe("course code or term is invalid!")
+    const idcheckbody1: studentIdentityCheckInput = {
+            zID: 'z1234567',
+            courseCode: 'CS101',
+            term: 'T3'
+          };
+          // Mock a NextRequest with JSON body
+          const idcheckreq1 = new NextRequest(new URL('http://localhost/api/studentSystem/identityCheck'), {
+            method: 'POST',
+            body: JSON.stringify(idcheckbody1),
+            headers: { 'Content-Type': 'application/json' },
+          });
+    
+          // Call the POST handler
+          const idcheckres1 = await POST(idcheckreq1);
+          // Verify response status and content
+          expect(idcheckres1!.status).toBe(404);
+          const json1 = await idcheckres1!.json(); // Parse the JSON response
+        expect(json1.error).toBe("course code or term is invalid!")
+  });
+  it('student is not in a team exception', async () => {
+    const idcheckbody: studentIdentityCheckInput = {
+        zID: 'z2222222',
+        courseCode: 'CS101',
+        term: 'T1'
+      };
+      // Mock a NextRequest with JSON body
+      const idcheckreq = new NextRequest(new URL('http://localhost/api/studentSystem/identityCheck'), {
+        method: 'POST',
+        body: JSON.stringify(idcheckbody),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      // Call the POST handler
+      const idcheckres = await POST(idcheckreq);
+        // Verify response status and content
+      expect(idcheckres!.status).toBe(404);
+      const json = await idcheckres!.json(); // Parse the JSON response
+      expect(json.error).toBe("Student is not in any team")
+   
+  });
+  it('student is not in the course exception', async () => {
+    const idcheckbody: studentIdentityCheckInput = {
+        zID: 'z1234567',
+        courseCode: 'CS888',
+        term: 'T1'
+      };
+      // Mock a NextRequest with JSON body
+      const idcheckreq = new NextRequest(new URL('http://localhost/api/studentSystem/identityCheck'), {
+        method: 'POST',
+        body: JSON.stringify(idcheckbody),
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      // Call the POST handler
+      const idcheckres = await POST(idcheckreq);
+        // Verify response status and content
+      expect(idcheckres!.status).toBe(404);
+      const json = await idcheckres!.json(); // Parse the JSON response
+      expect(json.error).toBe("Student is not in this course")
+   
+  });
+});
