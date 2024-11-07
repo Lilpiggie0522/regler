@@ -6,7 +6,7 @@ import { StudentVerificationModalProps } from "@/components/modals/ModalProps";
 import ErrorModal from './errorModal';
 import { sendVerificationEmail } from '@/components/services/emailService';
 
-export default function StudentVerificationModal({ onClose, onVerificationSuccess, zID, courseCode }: StudentVerificationModalProps) {
+export default function StudentVerificationModal({ onClose, onVerificationSuccess, zID, courseCode, term }: StudentVerificationModalProps) {
 
   const [verificationCode, setVerificationCode] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
@@ -14,6 +14,7 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
   const [countdown, setCountdown] = useState(60);
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
+
 
   useEffect(() => {
     let timer: NodeJS.Timeout | null = null;
@@ -43,7 +44,7 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
   const handleResend = async () => {
     setIsResendDisabled(true);
     setCountdown(60);
-    await sendVerificationEmail(zID, courseCode); // resend email
+    await sendVerificationEmail(zID, courseCode, term); // resend email
   };
 
 
@@ -60,6 +61,8 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
 
       if (!response.ok) {
         const resObj = await response.json()
+        setErrorMessage('Verification failed.');
+        setShowErrorModal(true);
         throw new Error('Verification failed.' + resObj.error);
       }
       // successful verification, jump to team evaluation form
@@ -123,7 +126,6 @@ export default function StudentVerificationModal({ onClose, onVerificationSucces
                 )}
             </button>
           </div>
-
 
           {/* ErrorModal */}
           {showErrorModal && (

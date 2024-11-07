@@ -21,6 +21,7 @@ export default function StudentLogin() {
   const [errorMessage, setErrorMessage] = useState('');
   const [zID, setZid] = useState('');
   const [courseCode, setCourseCode] = useState('');
+  const [term, setTerm] = useState('');
 
   const [showLoginFail, setShowLoginFail] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
@@ -37,6 +38,7 @@ export default function StudentLogin() {
 
     const zidRegex = /^z[0-9]{7}$/;
     const courseCodeRegex = /^[A-Za-z]{4}[0-9]{4}$/;
+    const termRegex = /^[0-9]{2}[Tt]{1}[0-3]{1}$/;
 
     if (!zidRegex.test(zID)) {
       setErrorMessage('Invalid zID format.');
@@ -44,6 +46,11 @@ export default function StudentLogin() {
     }
     if (!courseCodeRegex.test(courseCode)) {
       setErrorMessage('Invalid Course Code format.');
+      return false;
+    }
+
+    if (!termRegex.test(term)) {
+      setErrorMessage('Invalid Term format.');
       return false;
     }
     return true;
@@ -55,7 +62,7 @@ export default function StudentLogin() {
       return;
     }
     setLoading(true);
-    const emailSent = await sendVerificationEmail(zID, courseCode);
+    const emailSent = await sendVerificationEmail(zID, courseCode, term);
 
     if (!emailSent.ok) {
       const res = await emailSent.json()
@@ -127,6 +134,21 @@ export default function StudentLogin() {
             />
           </div>
 
+          {/* Term Input */}
+          <div className="mb-6">
+          <label htmlFor="courseCode" className="sr-only">Term:</label>
+            <input
+              id="term"
+              name="term"
+              value={term}
+              type="text"
+              className="w-full p-2 border border-gray-300 rounded-md text-black placeholder-gray-500"
+              placeholder="Term(T0:Summer Term): 24T0"
+              onChange={(input) => setTerm(input.target.value)}
+            />
+          </div>
+、
+
           {/* Verify button */}
           
           {/* <button 
@@ -169,6 +191,7 @@ export default function StudentLogin() {
               onVerificationSuccess={handleVerificationSuccess}
               zID={zID}
               courseCode={courseCode}
+              term={term}
             />
           ) : null}
 
@@ -193,5 +216,3 @@ export default function StudentLogin() {
     </div>
   );
 }
-
-
