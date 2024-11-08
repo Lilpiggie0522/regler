@@ -91,7 +91,7 @@ export async function GET(req : NextRequest, { params } : Params) {
       studentIssueInfos.push(studentIssueInfo);
 
     }
-
+    
     return NextResponse.json({ studentIssueInfos }, { status: 200 });
 
     } catch (err) { 
