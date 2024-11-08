@@ -94,6 +94,9 @@ export default function UnifiedInfo() {
                         }
                     }
                     setStudents(studentInfos);
+                    const {message} = students
+                    console.log(`ksdjfakdjfksajfklszzzz`)
+                    console.log(message)
                 }
             } catch (error) {
                 console.error(error);

@@ -56,14 +56,14 @@ export async function GET(req : NextRequest, { params } : Params) {
             break;
         }
     }
-    if (!existingIssue) {
-      return NextResponse.json({ message: "No pending issue for this team, no information to be returned" }, { status: 200 });
-    }
+    // if (!existingIssue) {
+    //   return NextResponse.json({ message: "No pending issue for this team, no information to be returned" }, { status: 200 });
+    // }
 
     const studentIssueInfos : StudentResponse[] = [];
     for (const studentId of existingTeam.students) {
       const studentDetails = await models.Student.findById(studentId).exec();
-      const studentComment = existingIssue.studentComments.find(
+      const studentComment = existingIssue?.studentComments.find(
         (comment: StudentComment) => comment.student.toString() === studentId.toString()
       );
     

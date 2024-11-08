@@ -24,7 +24,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
         const issueId = team.issues?.[0]?.toString();
         if (!issueId) {
-            return NextResponse.json({ message: "This team does not have a pending issue, no tutor opinion needed yet" }, { status: 401 });
+            return NextResponse.json({ message: "This team does not have a pending issue, no tutor opinion needed yet" }, { status: 400 });
         }
 
         const issue = await Issue.findById(issueId).exec();
