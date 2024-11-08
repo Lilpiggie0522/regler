@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
         const token = await signJWT(data.id, data.role)
         const twoHoursFromNow = new Date(Date.now() + 60 * 60 * 1000 * 2)
         cookies().set("token", token, { expires: twoHoursFromNow, httpOnly: true, path: "/"})
+        await AuthCode.deleteMany({ zid: zid }).exec()
         return NextResponse.json(token, { status: 200 });
     } catch (error) {
         console.error("Error validating auth code:", error);
