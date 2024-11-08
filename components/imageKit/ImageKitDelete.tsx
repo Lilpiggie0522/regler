@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 
 
 interface ImageKitDeleteProps {
@@ -12,7 +12,7 @@ interface ImageKitDeleteProps {
 const ImageKitDelete= (props : ImageKitDeleteProps) => {
     const id = props.fileId;
     const index = props.index;
-  return (
+    return (
     
         <button
             type="button"
@@ -26,6 +26,6 @@ const ImageKitDelete= (props : ImageKitDeleteProps) => {
 
 
     
-  )
+    )
 }
 export default ImageKitDelete;

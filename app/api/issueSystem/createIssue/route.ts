@@ -23,19 +23,20 @@ export interface CreateIssueInput {
     teamId: string,
     courseId: string,
     filesUrl: string,
-    title: string,
-    content: string,
     filesName: string,
+    assignment: string,
+    questions: string[],
+    answers: string[],
 }
 export interface StudentCommentInput {
-    title: string,
-    content: string,
+
     filesUrl: string,
     filesName: string,
     student: string,
+    answers: Answer[],
 }
 interface TutorCommentInput {
-    title: string,
+
     content: string,
     filesUrl: string,
     tutor: string,
@@ -43,12 +44,20 @@ interface TutorCommentInput {
 interface DeleteIssueInput {
     issueId: string,
 }
-
+export interface Answer{
+    answer: string,
+}
+export interface Question {
+    question: string,
+}
+interface Assignment{
+    assignmentName: string,
+}
 export async function POST(req: NextRequest) {
     try {
         await dbConnect();
         const request = await req.json();
-        const { studentId, teamId, courseId, filesUrl, title, content, filesName } = request as CreateIssueInput;
+        const { studentId, teamId, courseId, filesUrl, assignment, filesName, questions, answers } = request as CreateIssueInput;
 
         // Validate that IDs exist in their respective collections
         let response = await validateId(studentId, "Student");
@@ -76,9 +85,15 @@ export async function POST(req: NextRequest) {
         if (!course.teams.includes(team._id)) {
             return NextResponse.json({ error: "Team does not belong to this course" }, { status: 403 });
         }
-        if (!title || !content) {
-            return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
+        // TODO: Check if the assignemnt in the team
+        if (!assignment) {
+            return NextResponse.json({ error: "Assignment is required" }, { status: 400 });
         }
+        const hasAssignment = course.assignments.some((row : Assignment) => row.assignmentName);
+        if (!hasAssignment) {
+            return NextResponse.json({ error: "Assignment does not exist for this course" }, { status: 404 });
+        }
+
         // if there is a pending issue for the team
 
         // TODO: if there is additional field to 
@@ -87,24 +102,37 @@ export async function POST(req: NextRequest) {
             { _id: teamId,
             }
         )
-        .exec();
-        const issuesIds = existingTeam.issues;
-       // console.log(existingTeam)
-        for (const issueId of issuesIds) {
-            const existingIssue = await Issue.findById(issueId).exec();
-           // console.log(existingIssue);
-            if (existingIssue && ((existingIssue.status === 'pending' || existingIssue.status === 'Need Feedback'))) {
-                return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
-            }
+            .exec();
+        // TODO, try to find a issue with that assignment
+
+        // console.log(existingTeam)
+        
+        const existingIssue = await Issue.find({
+            assignment: assignment
+        }).exec();
+        console.log(existingIssue);
+        if (existingIssue.length > 0) {
+            return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
+
         }
+        
 
+        const curAnswers: Answer[] = answers.map(answer => ({ answer: answer}));
 
+        const curQuestions: Question[] = questions.map(question => ({ question: question }));
+        
+
+        console.log("Question input: " + questions)
+        console.log("Answer input: " + answers)
+        console.log("CurQuestions: " + curQuestions);
+        console.log("CurAnswers: " + curAnswers);
+        console.log("Assignment:" + assignment);
         const initialStudentComment: StudentCommentInput = {
-            title: title,
-            content: content,
+            
             filesUrl: filesUrl,
             filesName: filesName,
-            student: studentId
+            student: studentId,
+            answers: curAnswers,
         }
         const studentCommemts: StudentCommentInput[] = [];
         studentCommemts.push(initialStudentComment);
@@ -112,8 +140,10 @@ export async function POST(req: NextRequest) {
         const issue = await Issue.create({
             studentComments: studentCommemts,
             tutorComments: tutorCommemts,
+            assignment: assignment,
             status: "pending",
-            startby: studentId
+            startby: studentId,
+            questions: curQuestions
         })
         const issueId = issue._id;
         await Team.updateOne(
@@ -122,9 +152,9 @@ export async function POST(req: NextRequest) {
         );
         // calling mailing function send teams
         // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
         
-        if (!(process.env.NODE_ENV === 'test')) {
+        if (!(process.env.NODE_ENV === "test")) {
             const mailResponse = await fetch(`${baseUrl}/api/mailingSystem/sendTeam`, {
                 method: "POST",
                 headers: {
@@ -148,7 +178,7 @@ export async function POST(req: NextRequest) {
             studentId: studentId,
             courseId: courseId,
             issueId: issueId,
-          }, { status: 200 });
+        }, { status: 200 });
 
         // Additional checks if necessary
 

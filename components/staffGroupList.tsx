@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useStudentContext } from '@/context/studentContext';
 import React, { useState, useEffect, useRef } from 'react';
@@ -9,10 +9,10 @@ import AssessmentModal from './modals/staffAssessmentModal';
 
 // Define an enum for the group statuses
 enum GroupStatus {
-    NeedFeedback = 'Need Feedback',
-    Pending = 'Pending',
-    Complete = 'Complete',
-    NotStarted = 'Not Started',
+    NeedFeedback = "Need Feedback",
+    Pending = "Pending",
+    Complete = "Complete",
+    NotStarted = "Not Started",
 }
 
 // Define a type for the group
@@ -22,20 +22,26 @@ interface Group {
     status: GroupStatus;
     tutors: string;
     teamId: string;
+    issueId: string;
 }
 
 const GroupList: React.FC = () => {
     const router = useRouter();
     const params = useSearchParams();
     
-    const courseId = params.get('courseId');
 
+    const courseId = params.get("courseId");
     const { useLocalStorageState } = useStudentContext();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [email,] = useLocalStorageState('email', '');
+    const [, setIssueId] = useLocalStorageState("issueId", "")
 
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [selectedStatus, setSelectedStatus] = useState<GroupStatus | ''>('');
+
+
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [email,] = useLocalStorageState("email", "");
+
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [selectedStatus, setSelectedStatus] = useState<GroupStatus | "">("");
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -48,9 +54,9 @@ const GroupList: React.FC = () => {
         try {
             // should return a list of teams in this course
             const res = await fetch(`/api/util/getTeamsByCourseId/${courseId}`, {
-                method: 'GET',
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
             });
     
@@ -64,7 +70,7 @@ const GroupList: React.FC = () => {
             console.log(groupObj.teams);
             setGroups(groupObj.teams);
         } catch (error) {
-            console.error('Error fetching groups:', error);
+            console.error("Error fetching groups:", error);
         }
     }
 
@@ -78,7 +84,7 @@ const GroupList: React.FC = () => {
     // Filter groups based on the search term and status filter
     const filteredGroups = groups.filter(group => {
         const matchesTeam = group.groupName.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesMentors = group.tutors.split(',').map(tutor => tutor.toLowerCase()).includes(searchTerm.toLowerCase())
+        const matchesMentors = group.tutors.split(",").map(tutor => tutor.toLowerCase()).includes(searchTerm.toLowerCase())
         const matchesLecturer = group.lecturer.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesSearchTerm = matchesTeam || matchesMentors || matchesLecturer;
 
@@ -106,15 +112,15 @@ const GroupList: React.FC = () => {
     const getStatusClass = (status: GroupStatus): string => {
         switch (status) {
             case GroupStatus.Complete:
-                return 'bg-green-400 text-white border-xl border-green-700';
+                return "bg-green-400 text-white border-xl border-green-700";
             case GroupStatus.Pending:
-                return 'bg-orange-400 text-white border-xl border-orange-700';
+                return "bg-orange-400 text-white border-xl border-orange-700";
             case GroupStatus.NotStarted:
-                return 'bg-gray-400 text-white border-xl border-gray-700';
+                return "bg-gray-400 text-white border-xl border-gray-700";
             case GroupStatus.NeedFeedback:
-                return 'bg-blue-400 text-white border-xl border-blue-700';
+                return "bg-blue-400 text-white border-xl border-blue-700";
             default:
-                return '';
+                return "";
         }
     };
 
@@ -126,11 +132,17 @@ const GroupList: React.FC = () => {
             }
         };
 
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [dropdownRef]);
+
+    const handleSelectGroup = (group : Group) => {
+        setIssueId(group.issueId);
+        router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`);
+        
+    }
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -138,11 +150,11 @@ const GroupList: React.FC = () => {
             <div className="bg-yellow-400 p-6 flex items-center justify-between">
                 <div>
                     {/* Back arrow icon */}
-                    <button onClick={() => window.history.back()} className="text-black mb-1 flex items-center ">
+                    <button onClick={() => window.history.back()} className="text-black mb-2 flex items-center ">
                         <FaArrowLeft className="mr-2" />
-                        {'Back'}
+                        {"Back"}
                     </button>
-                    <h1 className="text-black text-3xl font-bold inline-block ml-2">Groups</h1>
+                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Groups</h1>
                 </div>
                 <div className="flex items-center">
                     <button 
@@ -198,14 +210,14 @@ const GroupList: React.FC = () => {
                                     <div
                                         ref={dropdownRef}
                                         className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
-                                        style={{ marginTop: '100px' }}
+                                        style={{ marginTop: "100px" }}
                                     >
 
                                         {/* Status options */}
                                         {Object.values(GroupStatus).map((status) => (
                                             <div
                                                 key={status}
-                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded ${getStatusClass(status)} ${selectedStatus === status ? 'bg-gray-200' : ''}`}
+                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedStatus === status ? "bg-gray-200" : ""}`}
                                                 onClick={() => {
                                                     setSelectedStatus(status);
                                                     setIsDropdownOpen(false);
@@ -219,7 +231,7 @@ const GroupList: React.FC = () => {
                                         <div
                                             className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                                             onClick={() => {
-                                                setSelectedStatus(''); // Clear the selected status
+                                                setSelectedStatus(""); // Clear the selected status
                                                 setIsDropdownOpen(false);
                                             }}
                                         >
@@ -243,14 +255,14 @@ const GroupList: React.FC = () => {
                                         {group.tutors}
                                     </td>
                                     <td className="py-3 px-4 flex justify-center items-center">
-                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: '140px', height: '35px', borderRadius: '8px' }}>
+                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: "140px", height: "35px", borderRadius: "8px" }}>
                                             {group.status}
                                         </div>
                                     </td>
                                     <td className="py-3 px-4 text-center">
                                         <button
                                             className="bg-black text-white py-1 px-3 rounded-lg"
-                                            onClick={() => router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`)}
+                                            onClick={() => handleSelectGroup(group)}
                                         >Select</button>
                                     </td>
                                 </tr>

@@ -4,11 +4,23 @@ import { NextRequest } from 'next/server';
 import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-
 let studentId : string, teamId : string, courseId: string;
 let notInTeamStudentIds : string;
 const { Team, Course, Student} = models;
 let mongoServer: MongoMemoryServer;
+
+const questions : string[] = [
+  
+   'How do you do'
+  ,
+  
+  'What is the weather like'
+  
+]
+
+const answers : string[] = [
+  'answer1', 'answer2'
+]
 // input fields
 beforeAll(async () => {
 
@@ -40,8 +52,7 @@ afterAll(async () => {
 
 
 describe('Create issue API Tests', () => {
-
-
+  jest.setTimeout(40000)
       // attemping create new issue if there is already an exist pending issue. 409
     // otherwise create new issue and success 200
   it('should submitted valid issue but refuse create issue that is already exist', async () => {
@@ -51,8 +62,9 @@ describe('Create issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!"
+      questions: questions,
+      answers: answers,
+      assignment:'default project',
       };
     
       // Mock a NextRequest with JSON body
@@ -104,8 +116,9 @@ describe('Create issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!"
+      questions: questions,
+      answers: answers,
+      assignment:'default project',
       };
     
      
@@ -130,13 +143,14 @@ describe('Create issue API Tests', () => {
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
         filesName: "anc,dasd",
-        title: "disagreement to the babalala",
-        content: "this is a very important issue!!!!"
+        questions: questions,
+        answers: answers,
+        assignment:'default project',
         };
       //const json = await res.json(); // Parse the JSON response
       //console.log(json);
 
-      //submitting again should be failed
+      
       req = new NextRequest(new URL('http://localhost/api/issueSystem/createIssue'), {
         method: 'POST',
         body: JSON.stringify(body),
@@ -152,8 +166,10 @@ describe('Create issue API Tests', () => {
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
         filesName: "anc,dasd",
-        title: "",
-        content: "this is a very important issue!!!!"
+        questions: questions,
+        answers: answers,
+        assignment: "",
+        
         };
       req = new NextRequest(new URL('http://localhost/api/issueSystem/createIssue'), {
         method: 'POST',

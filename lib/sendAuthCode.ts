@@ -1,6 +1,6 @@
-import nodemailer from 'nodemailer';
-import dbConnect from '@/lib/dbConnect'
-import models from '@/models/models'
+import nodemailer from "nodemailer";
+import dbConnect from "@/lib/dbConnect"
+import models from "@/models/models"
 
 /*
     Input: 
@@ -16,7 +16,7 @@ import models from '@/models/models'
 export async function sendAuthCode(email: string, authCode: string, role: string) {
     try {
         const transport = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
@@ -27,7 +27,7 @@ export async function sendAuthCode(email: string, authCode: string, role: string
         await dbConnect();
         const Student = models.Student;
         const Admin = models.Admin;
-        if (role === 'student') {
+        if (role === "student") {
             const student = await Student.findOne({ email: email });
             if (!student) {
                 // console.error("Invalid Email Address");
@@ -45,7 +45,7 @@ export async function sendAuthCode(email: string, authCode: string, role: string
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
             to: email,
-            subject: 'Contribalance Verification Code (Do not reply)',
+            subject: "Contribalance Verification Code (Do not reply)",
             html: `
             <p>
                 Hi!
@@ -65,11 +65,11 @@ export async function sendAuthCode(email: string, authCode: string, role: string
         };
         await transport.sendMail(mailingParameters);
         // console.error(`Failed to send email: ${info}`)
-        return 'Send verification code successfully.'
+        return "Send verification code successfully."
 
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Unexpected error', error);
+            console.error("Unexpected error", error);
             return `Unexpected error ${error}`
         }
     }

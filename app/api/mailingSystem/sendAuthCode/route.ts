@@ -1,7 +1,7 @@
-import nodemailer from 'nodemailer';
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect'
-import models from '@/models/models'
+import nodemailer from "nodemailer";
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect"
+import models from "@/models/models"
 
 /*
     Input: 
@@ -17,7 +17,7 @@ import models from '@/models/models'
 export async function POST(request: NextRequest) {
     try {
         const transport = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
         await dbConnect();
         const Student = models.Student;
         const Admin = models.Admin;
-        if (role === 'student') {
+        if (role === "student") {
             const student = await Student.findOne({ email: email });
             if (!student) {
                 return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
             if (student.email !== email) {
                 return NextResponse.json({ error: "Given email does not match student's email" }, { status: 400 });
             }
-        } else if (role === 'admin') {
+        } else if (role === "admin") {
             const admin = await Admin.findOne({ email: email });
             if (!admin) {
                 return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
             to: email,
-            subject: 'Contribalance Verification Code (Do not reply)',
+            subject: "Contribalance Verification Code (Do not reply)",
             html: `
             <p>
                 Hi!
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - Team Email:', error);
+            console.error("Error - Team Email:", error);
             return NextResponse.json({ error: error.message }, { status: 502 })
         }
     }

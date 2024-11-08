@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
         const request = await req.json();
         
         const { courseName, teams, mentors } = request as CourseInput;
-        console.log("request body: " + request.body);
         
         if (!courseName) {
             return NextResponse.json({ error: "course name not provided" }, {status: 400});

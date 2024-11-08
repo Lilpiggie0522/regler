@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { validateId } from "@/lib/validateId";
 import models from "@/models/models";
-import { StudentCommentInput } from "../createIssue/route";
+import { Answer, StudentCommentInput } from "../createIssue/route";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import StudentComment from '../../../../components/studentComment';
+import StudentComment from "../../../../components/studentComment";
 
 
 const Issue = models.Issue;
@@ -21,9 +21,8 @@ export interface UpdateIssueInput {
     courseId: string,
     filesUrl: string,
     filesName: string,
-    title: string,
-    content: string,
     issueId: string,
+    answers: string[],
 }
 
 
@@ -31,7 +30,7 @@ export async function PUT(req: NextRequest) {
     try {
         await dbConnect();
         const request = await req.json();
-        const { studentId, teamId, courseId, filesUrl, title, content, issueId, filesName } = request as UpdateIssueInput;
+        const { studentId, teamId, courseId, filesUrl, issueId, filesName, answers} = request as UpdateIssueInput;
         let response = await validateId(studentId, "Student");
         if (response) return response; // Return error response if validation fails
 
@@ -58,16 +57,12 @@ export async function PUT(req: NextRequest) {
             return NextResponse.json({ error: "Team does not belong to this course" }, { status: 403 });
         }
 
-        
-        if (!title || !content) {
-            return NextResponse.json({ error: "Title and content are required" }, { status: 400 });
-        }
         // if there is a pending issue for the team
         const existingIssue = await Issue.findById(issueId).exec();
         if (!existingIssue) {
             return NextResponse.json({ error: "Issue not found" }, { status: 404 });
         }
-        if (existingIssue.status === 'complete') {
+        if (existingIssue.status === "complete") {
             return NextResponse.json({ error: "Issue has already been closed" }, { status: 405 });
         }
         // Check if the issue exists in the team 
@@ -76,29 +71,30 @@ export async function PUT(req: NextRequest) {
         }
         // can student submit multiple times?
         
+        const curAnswers: Answer[] = answers.map(answer => ({ answer }));
         const issues = existingIssue.studentComments.filter((comment: { student: string; }) => comment.student.toString() === studentId);
         if(issues.length > 0) {
             return NextResponse.json({ error: "Student has already submitted an issue for this team" }, { status: 401 });
         }
         const newStudentComment : StudentCommentInput = {
-            title: title,
-            content: content,
+
             filesUrl: filesUrl,
             filesName: filesName,
-            student: studentId
+            student: studentId,
+            answers: curAnswers
         } 
         // update issue
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const updateIssue = await Issue.updateOne(
+        await Issue.updateOne(
             {
                 _id: existingIssue._id,
                 
-             }, // filter by the issue ID
+            }, // filter by the issue ID
             { 
-            $push: { studentComments: newStudentComment },
-            $set: { status: existingIssue.studentComments.length + 1 === team.students.length ? 'Need Feedback' : 'pending' } 
+                $push: { studentComments: newStudentComment },
+                $set: { status: existingIssue.studentComments.length + 1 === team.students.length ? "Need Feedback" : "pending" } 
         
-        } 
+            } 
             
         );
 

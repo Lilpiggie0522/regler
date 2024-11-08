@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function POST() {
     // Sample input
@@ -10,10 +10,10 @@ export async function POST() {
     // }
     // 67187e130571bd5e45bca266
     const input = {
-        teamId: '6721b7b36f957635b8f01964',
-        courseId: '6719b68d2dc4deb099b5a99a',
-        studentId: '67187e120571bd5e45bca225',
-        issueId: '6721b89e6f957635b8f1caf5',
+        teamId: "6721b7b36f957635b8f01964",
+        courseId: "6719b68d2dc4deb099b5a99a",
+        studentId: "67187e120571bd5e45bca225",
+        issueId: "6721b89e6f957635b8f1caf5",
     }
 
     // sample input - general
@@ -25,9 +25,9 @@ export async function POST() {
     // }
 
     try {  
-        const response = await fetch('http://localhost:3000/api/mailingSystem/sendTeam', {
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json', }, 
+        const response = await fetch("http://localhost:3000/api/mailingSystem/sendTeam", {
+            method: "POST", 
+            headers: { "Content-Type": "application/json", }, 
             body: JSON.stringify(input)})
         const result = await response.json();
         if (!response.ok) {
