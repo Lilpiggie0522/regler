@@ -11,6 +11,19 @@ import StudentComment from '@/components/studentComment';
 let studentId : string, teamId : string, courseId: string;
 let sentTeamId: string, BobId: string, sentCourseId: string, issueId: string;
 
+const questions : string[] = [
+  
+  'How do you do'
+ ,
+ 
+ 'What is the weather like'
+ 
+]
+
+const answers : string[] = [
+ 'answer1', 'answer2'
+]
+
 let notInTeamStudentIds : string;
 const { Team, Course, Student} = models;
 let mongoServer: MongoMemoryServer;
@@ -51,8 +64,9 @@ beforeAll(async () => {
     courseId: courseId,
     filesUrl: "anc.png,dasd.jpg",
     filesName: "anc,dasd",
-    title: "disagreement to the babalala",
-    content: "this is a very important issue!!!!"
+    assignment: "default project",
+    questions: questions,
+    answers: answers,
     };
   
     // create a request
@@ -91,8 +105,7 @@ describe('update issue API Tests', () => {
       courseId: sentCourseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!",
+      answers: answers,
       issueId: issueId
       };
     
@@ -128,8 +141,7 @@ describe('update issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!",
+      answers: answers,
       issueId: issueId
       };
     
@@ -155,8 +167,7 @@ describe('update issue API Tests', () => {
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
         filesName: "anc,dasd",
-        title: "disagreement to the babalala",
-        content: "this is a very important issue!!!!",
+        answers: answers,
         issueId: issueId
         };
       //const json = await res.json(); // Parse the JSON response
@@ -172,24 +183,7 @@ describe('update issue API Tests', () => {
       res = await PUT(req);
       expect(res.status).toBe(404);
 
-      body  = {
-        studentId: studentId,
-        teamId: sentTeamId,
-        courseId: sentCourseId,
-        filesUrl: "anc.png,dasd.jpg",
-        filesName: "anc,dasd",
-        title: "",
-        content: "this is a very important issue!!!!",
-        issueId: issueId
-        };
-      req = new NextRequest(new URL('http://localhost/api/issueSystem/updateIssue'), {
-        method: 'PUT',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      res = await PUT(req);
-      
-      expect(res.status).toBe(400);
+
 
   });
       // TODO if the issue id is not found return 404
@@ -205,8 +199,7 @@ describe('update issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!",
+      answers: answers,
       issueId: issueId
       };
     
@@ -232,8 +225,7 @@ describe('update issue API Tests', () => {
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
         filesName: "anc,dasd",
-        title: "disagreement to the babalala",
-        content: "this is a very important issue!!!!",
+        answers: answers,
         issueId: "671b4dbbd1ab3e8a13457157"
         };
       //const json = await res.json(); // Parse the JSON response
@@ -263,8 +255,7 @@ describe('update issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!",
+      answers: answers,
       issueId: issueId
       };
     

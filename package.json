@@ -12,6 +12,7 @@
   "dependencies": {
     "@babel/preset-typescript": "^7.25.7",
     "@mongodb-js/saslprep": "^1.1.9",
+    "@octokit/core": "^6.1.2",
     "csv-parser": "^3.0.0",
     "framer-motion": "^11.11.11",
     "imagekit": "^5.2.0",

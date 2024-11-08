@@ -21,17 +21,21 @@ interface Group {
     status: GroupStatus;
     tutors: string;
     teamId: string;
+    issueId: string;
 }
 
 const GroupList: React.FC = () => {
     const router = useRouter();
     const params = useSearchParams();
     
+
     const courseId = params.get("courseId");
-    
-
-
     const { useLocalStorageState } = useStudentContext();
+    const [, setIssueId] = useLocalStorageState("issueId", "")
+
+
+
+    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [email,] = useLocalStorageState("email", "");
 
@@ -130,6 +134,12 @@ const GroupList: React.FC = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [dropdownRef]);
+
+    const handleSelectGroup = (group : Group) => {
+        setIssueId(group.issueId);
+        router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`);
+        
+    }
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -230,7 +240,7 @@ const GroupList: React.FC = () => {
                                     <td className="py-3 px-4 text-center">
                                         <button
                                             className="bg-black text-white py-1 px-3 rounded-lg"
-                                            onClick={() => router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`)}
+                                            onClick={() => handleSelectGroup(group)}
                                         >Select</button>
                                     </td>
                                 </tr>

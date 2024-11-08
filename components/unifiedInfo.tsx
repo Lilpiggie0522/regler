@@ -30,13 +30,15 @@ export default function UnifiedInfo() {
     const router = useRouter();
     
     const params = useSearchParams()
+
     const teamId = params.get("teamId")
     const group = params.get("group");
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [content, setContent] = useState<string>("")
     const [tutorComment, setTutorComment] = useState<string>("")
-    //const [lecturerComment, setLecturerComment] = useState<string>('')
     const [staffId,] = useLocalStorageState("staffId", "");
+    const [issueId,] = useLocalStorageState("issueId", "");
+
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
     const [isAdmin] = useState<boolean>(true);
@@ -199,7 +201,7 @@ export default function UnifiedInfo() {
                                     
                                     <Button
                                         className="bg-blue-500 text-white py-1 px-3 rounded"
-                                        onClick={() => router.push(`/studentComment?studentId=${student.id}&teamId=${teamId}&studentName=${student.name}`)}
+                                        onClick={() => router.push(`/studentComment?studentId=${student.id}&issueId=${issueId}&studentName=${student.name}`)}
                                     >
                                         Details
                                     </Button>
