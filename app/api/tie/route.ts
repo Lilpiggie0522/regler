@@ -3,7 +3,7 @@ import models from "@/models/models";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-    const c_name = req.nextUrl.searchParams.get('name')
+    const c_name = req.nextUrl.searchParams.get("name")
     console.log(c_name)
     await dbConnect()
 
@@ -12,10 +12,10 @@ export async function GET(req: NextRequest) {
         const admins = await Admin.aggregate([
             {
                 $lookup: {
-                    from: 'courses',
-                    localField: 'courses',
-                    foreignField: '_id',
-                    as: 'courseDetails'
+                    from: "courses",
+                    localField: "courses",
+                    foreignField: "_id",
+                    as: "courseDetails"
                 }
             },
             // {
@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
             // },
             {
                 $match: {
-                    'courseDetails.courseName': c_name
+                    "courseDetails.courseName": c_name
                 }
             },
             // {
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
             {
                 $project: {
                     adminName: 1,
-                    'courseDetails.teams': 1
+                    "courseDetails.teams": 1
                 }
             }
         ])

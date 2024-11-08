@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI : string = process.env.MONGODB_URI || 'some_strings';
+const MONGODB_URI : string = process.env.MONGODB_URI || "some_strings";
 //console.log("MONGODB_URI: ", process.env.MONGODB_URI);
 
 if (!MONGODB_URI && process.env.NODE_ENV !== "test") {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createStudentInput, createTeamInput, createCourseInput, createAdminInput, initialiseInput, dbInitialization } from '@/app/api/adminSystem/initialise/dbInitialisation'
+import { createStudentInput, createTeamInput, createCourseInput, createAdminInput, initialiseInput, dbInitialization } from "@/app/api/adminSystem/initialise/dbInitialisation"
 import { convertFileData, courseNameRegexCheck, insertAdmin, insertStudent, insertTeam, insertTutor, validateConvertedData } from "./helpers";
 
 export async function POST(req: NextRequest) {
