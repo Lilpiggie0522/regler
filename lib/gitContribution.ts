@@ -29,6 +29,11 @@ export async function gitContribution(owner: string, repo: string) {
         const tempRecord = new Map();
         // const Student = models.Student;
         // Total contribution: commits and merge branch
+        // Check if contributors is a student in the team
+        // Need token, can create by developer
+        // Need parameter: owner(not necessary contributor), repo
+        // Student: add unique github username
+        // Issue/Team add owner or repo 
         for (const commit of response.data) {
             if (commit.author) {
                 // unique username
@@ -57,14 +62,14 @@ export async function gitContribution(owner: string, repo: string) {
 }
 
 
-export async function getContribution(issueId: string) {
-    try {
-        await dbConnect();
+// export async function getContribution(issueId: string) {
+//     try {
+//         await dbConnect();
      
-        return;
-    } catch (error) {
-        if (error instanceof Error) {
-            console.log(error)
-        }
-    }
-}
+//         return;
+//     } catch (error) {
+//         if (error instanceof Error) {
+//             console.log(error)
+//         }
+//     }
+// }
