@@ -2,8 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Answer, Question } from '@/app/api/issueSystem/createIssue/route';
-import { Student } from "./unifiedInfo";
+import { Answer } from "@/app/api/issueSystem/createIssue/route";
+
 import { Button } from "react-bootstrap";
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -38,9 +38,9 @@ export default function StudentComment() {
     // Define state for the form inputs
     const params = useSearchParams();
 
-    const issueId = params.get('issueId');
-    const studentId = params.get('studentId');
-    const studentName = params.get('studentName');
+    const issueId = params.get("issueId");
+    const studentId = params.get("studentId");
+    const studentName = params.get("studentName");
 
     const [formData, setFormData] = useState<FormData>({
         answers: [],
@@ -69,8 +69,8 @@ export default function StudentComment() {
                     console.log(studentComment.filesUrl);
                     console.log(studentComment.filesName);
                     console.log(studentComment.answers);
-                    let filesUrls = studentComment.filesUrl.split(',');
-                    const filesNames = studentComment.filesName.split(',');
+                    let filesUrls = studentComment.filesUrl.split(",");
+                    const filesNames = studentComment.filesName.split(",");
                     filesUrls = filesUrls.slice(0, -1);
                     const newFormData = {
                         answers: studentComment.answers,

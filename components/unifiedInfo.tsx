@@ -31,13 +31,13 @@ export default function UnifiedInfo() {
     
     const params = useSearchParams()
 
-    const teamId = params.get('teamId')
-    const group = params.get('group');
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [content, setContent] = useState<string>('')
-    const [tutorComment, setTutorComment] = useState<string>('')
-    const [staffId,] = useLocalStorageState('staffId', '');
-    const [issueId,] = useLocalStorageState('issueId', '');
+    const teamId = params.get("teamId")
+    const group = params.get("group");
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [content, setContent] = useState<string>("")
+    const [tutorComment, setTutorComment] = useState<string>("")
+    const [staffId,] = useLocalStorageState("staffId", "");
+    const [issueId,] = useLocalStorageState("issueId", "");
 
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);

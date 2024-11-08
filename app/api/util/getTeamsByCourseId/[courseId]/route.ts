@@ -80,10 +80,10 @@ export async function GET(req : NextRequest, { params } : Params) {
                     teamName: 1,
                     _id: 1,
 
-                    'mentorDetails.adminName': 1,  // Only keep mentor names
-                    'issueDetails.status': 1,
-                    'issueDetails.assignment': 1,
-                    'issueDetails._id': 1,       // Only keep issue status
+                    "mentorDetails.adminName": 1,  // Only keep mentor names
+                    "issueDetails.status": 1,
+                    "issueDetails.assignment": 1,
+                    "issueDetails._id": 1,       // Only keep issue status
 
                 }
             }
@@ -92,15 +92,15 @@ export async function GET(req : NextRequest, { params } : Params) {
         console.log(teamData)
         teams = teamData.map(team => (
             {
-            groupName: team.teamName,
-            lecturer: lecturerName,
-            teamId: team._id,
-            tutors: team.mentorDetails.map((mentor: Mentor) => mentor.adminName).join(", "),
-            // if there is no any issues, in the team.
-            status: team.issueDetails ? getStatus(team.issueDetails.status) : 'Not Started',  // Handle null case for issue
-            issueId: team.issueDetails? team.issueDetails._id : null,
-            assignment: team.issueDetails? team.issueDetails.assignment : null,  // Handle null case for assignment
-        }));
+                groupName: team.teamName,
+                lecturer: lecturerName,
+                teamId: team._id,
+                tutors: team.mentorDetails.map((mentor: Mentor) => mentor.adminName).join(", "),
+                // if there is no any issues, in the team.
+                status: team.issueDetails ? getStatus(team.issueDetails.status) : "Not Started",  // Handle null case for issue
+                issueId: team.issueDetails? team.issueDetails._id : null,
+                assignment: team.issueDetails? team.issueDetails.assignment : null,  // Handle null case for assignment
+            }));
         
 
         console.log(teams);

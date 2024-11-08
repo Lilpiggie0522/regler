@@ -29,9 +29,9 @@ const GroupList: React.FC = () => {
     const params = useSearchParams();
     
 
-    const courseId = params.get('courseId');
+    const courseId = params.get("courseId");
     const { useLocalStorageState } = useStudentContext();
-    const [, setIssueId] = useLocalStorageState('issueId', '')
+    const [, setIssueId] = useLocalStorageState("issueId", "")
 
 
 

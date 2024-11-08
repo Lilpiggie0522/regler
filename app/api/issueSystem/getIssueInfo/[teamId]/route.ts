@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import models from '@/models/models';
+import models from "@/models/models";
 
 //import { Answer, Question } from "../../createIssue/route";
 

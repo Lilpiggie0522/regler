@@ -102,15 +102,15 @@ export async function POST(req: NextRequest) {
             { _id: teamId,
             }
         )
-        .exec();
+            .exec();
         // TODO, try to find a issue with that assignment
 
-       // console.log(existingTeam)
+        // console.log(existingTeam)
         
         const existingIssue = await Issue.find({
             assignment: assignment
         }).exec();
-            console.log(existingIssue);
+        console.log(existingIssue);
         if (existingIssue.length > 0) {
             return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
 
@@ -122,11 +122,11 @@ export async function POST(req: NextRequest) {
         const curQuestions: Question[] = questions.map(question => ({ question: question }));
         
 
-        console.log('Question input: ' + questions)
-        console.log('Answer input: ' + answers)
+        console.log("Question input: " + questions)
+        console.log("Answer input: " + answers)
         console.log("CurQuestions: " + curQuestions);
         console.log("CurAnswers: " + curAnswers);
-        console.log('Assignment:' + assignment);
+        console.log("Assignment:" + assignment);
         const initialStudentComment: StudentCommentInput = {
             
             filesUrl: filesUrl,
