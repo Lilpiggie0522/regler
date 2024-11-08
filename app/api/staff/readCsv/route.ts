@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createStudentInput, createTeamInput, createCourseInput, createAdminInput, initialiseInput } from '../../adminSystem/initialise/route';
+import { createStudentInput, createTeamInput, createCourseInput, createAdminInput, initialiseInput } from "../../adminSystem/initialise/route";
 import { convertFileData, courseNameRegexCheck, insertAdmin, insertStudent, insertTeam, insertTutor, validateConvertedData } from "./helpers";
 
 export async function POST(req: NextRequest) {
     // console.log("request received")
     const formData = await req.formData()
-    const file = formData.get('csv') as File
+    const file = formData.get("csv") as File
     if (!file) {
-        return NextResponse.json('Incorrect file type or no file attached', { status: 400 })
+        return NextResponse.json("Incorrect file type or no file attached", { status: 400 })
     }
     const filename: string = file.name
     // console.log(`name is ${filename}`)
     const regexResult = courseNameRegexCheck(filename)
-    if (typeof regexResult === 'string') {
+    if (typeof regexResult === "string") {
         return NextResponse.json(regexResult, { status: 400 })
     }
     const [courseName, courseTerm] = regexResult
@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
     const newCourse: createCourseInput = {
         courseName: courseName,
         term: courseTerm,
-        mentorsEmails: '',
-        teams: ''
+        mentorsEmails: "",
+        teams: ""
     }
 
     const courseInfo = [courseName, courseTerm]
@@ -51,11 +51,11 @@ export async function POST(req: NextRequest) {
         course: newCourse
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const response = await fetch(`${baseUrl}/api/adminSystem/initialise`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(result)
     })

@@ -1,6 +1,6 @@
-import React from 'react'
-import {IKUpload } from 'imagekitio-react';
-import { ImageKitContext } from './ImageKitContext';
+import React from "react"
+import {IKUpload } from "imagekitio-react";
+import { ImageKitContext } from "./ImageKitContext";
 
 interface ImageKitProps {
     path?: string;
@@ -11,20 +11,20 @@ interface ImageKitProps {
 
 const ImageKitUpload = (props : ImageKitProps) => {
     
-  return (
-    <ImageKitContext>
-        <p>Upload an image</p>
-        <IKUpload
+    return (
+        <ImageKitContext>
+            <p>Upload an image</p>
+            <IKUpload
          
-          onError={(err) => props.onUploadError && props.onUploadError(err)}
-          onSuccess={(res) => props.onUploadSuccess && props.onUploadSuccess(res.url, res.name, res.fileId)}
-          useUniqueFileName={true}
-          validateFile={file => file.size < 2000000}
-        />
+                onError={(err) => props.onUploadError && props.onUploadError(err)}
+                onSuccess={(res) => props.onUploadSuccess && props.onUploadSuccess(res.url, res.name, res.fileId)}
+                useUniqueFileName={true}
+                validateFile={file => file.size < 2000000}
+            />
 
 
 
-    </ImageKitContext>
-  )
+        </ImageKitContext>
+    )
 }
 export default ImageKitUpload;

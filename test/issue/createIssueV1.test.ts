@@ -4,7 +4,6 @@ import { NextRequest } from 'next/server';
 import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-
 let studentId : string, teamId : string, courseId: string;
 let notInTeamStudentIds : string;
 const { Team, Course, Student} = models;
@@ -53,8 +52,7 @@ afterAll(async () => {
 
 
 describe('Create issue API Tests', () => {
-
-
+  jest.setTimeout(40000)
       // attemping create new issue if there is already an exist pending issue. 409
     // otherwise create new issue and success 200
   it('should submitted valid issue but refuse create issue that is already exist', async () => {

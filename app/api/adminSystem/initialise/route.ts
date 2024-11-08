@@ -91,7 +91,6 @@ export async function POST(req: NextRequest) {
             })
             courseId = newCourse._id
         } else {
-            console.log('course found!')
             courseId = courseFound._id
         }
         const currentCourse = await Course.findById(courseId)
@@ -127,9 +126,6 @@ export async function POST(req: NextRequest) {
                 currentCourse.mentors.push(newAdmin._id)
             } else {
                 const hasId = adminFound.courses.includes(courseId)
-                console.log(courseId)
-                console.log(adminFound.courses)
-                console.log(hasId)
                 if (!hasId) {
                     adminFound.courses.push(courseId)
                     await adminFound.save()
@@ -168,8 +164,8 @@ export async function POST(req: NextRequest) {
         // create teams
         for (const team of teams) {
             const teamFound = await Team.findOne({teamName: team.teamName, course: courseId})
-            const passedMentorsEmails = team.mentorsEmails.split(',')
-            const passedStudentIds = team.studentsZids.split(',')
+            const passedMentorsEmails = team.mentorsEmails.split(",")
+            const passedStudentIds = team.studentsZids.split(",")
             if (!teamFound) {
                 const mentorIds = []
                 for (const email of passedMentorsEmails) {
@@ -226,7 +222,7 @@ export async function POST(req: NextRequest) {
             }
             await currentCourse.save()
         }
-        const curCourses = await Course.find({}).select('+courseName +teams +mentors').exec();
+        const curCourses = await Course.find({}).select("+courseName +teams +mentors").exec();
         const curTeams = await Team.find({}).exec();
         const curStudents = await Student.find({}).exec();
         

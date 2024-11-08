@@ -1,19 +1,19 @@
-import dbConnect from '@/lib/dbConnect';
+import dbConnect from "@/lib/dbConnect";
 import models from "@/models/models";
-import mongoose from 'mongoose';
-import nodemailer from 'nodemailer';
+import mongoose from "mongoose";
+import nodemailer from "nodemailer";
 
 export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId, 
-                                courseId: mongoose.Schema.Types.ObjectId, 
-                                issueId: mongoose.Schema.Types.ObjectId, 
-                                restIds: mongoose.Schema.Types.ObjectId[],
-                                mentorIds: mongoose.Schema.Types.ObjectId[]) {
+    courseId: mongoose.Schema.Types.ObjectId, 
+    issueId: mongoose.Schema.Types.ObjectId, 
+    restIds: mongoose.Schema.Types.ObjectId[],
+    mentorIds: mongoose.Schema.Types.ObjectId[]) {
     await dbConnect();
     const transport = nodemailer.createTransport({
-        service: 'gmail',
+        service: "gmail",
         auth: {
-        user: process.env.SMTP_EMAIL,
-        pass: process.env.SMTP_PASSWORD,
+            user: process.env.SMTP_EMAIL,
+            pass: process.env.SMTP_PASSWORD,
         },
     });
 
@@ -31,7 +31,7 @@ export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId,
             const mailingParameters = {
                 from: process.env.SMTP_EMAIL,
                 to: student.email,
-                subject: 'Reminder for Form Completion',
+                subject: "Reminder for Form Completion",
                 html: 
                 `
                 <p>
@@ -71,8 +71,8 @@ export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId,
     }
     const mailingParameters = {
         from: process.env.SMTP_EMAIL,
-        to: emailList.join(','),
-        subject: 'Reminder for Providing Opinion',
+        to: emailList.join(","),
+        subject: "Reminder for Providing Opinion",
         html: 
         `
         <p>

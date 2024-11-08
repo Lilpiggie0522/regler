@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';;
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";;
 import models from "@/models/models";
 
 const Admin = models.Admin;
@@ -23,6 +23,7 @@ export async function POST(request : NextRequest) {
             course: course.courseName,
             term: course.term
         }));
+        // console.log('Fetched courses:', courseList);
         return NextResponse.json({courses: courseList}, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});

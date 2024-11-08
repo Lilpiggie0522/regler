@@ -1,6 +1,6 @@
-import nodemailer from 'nodemailer';
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
+import nodemailer from "nodemailer";
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";
 
 import models from "@/models/models";
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         //     return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
         // }
         const transport = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
                 const mailingParameters = {
                     from: process.env.SMTP_EMAIL,
                     to: student.email,
-                    subject: 'Group Project Contribution Dispute',
+                    subject: "Group Project Contribution Dispute",
                     html: 
                     `
                     <p>
@@ -87,16 +87,15 @@ export async function POST(request: NextRequest) {
                         Contribalance
                     </p>
                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-                    href="http://localhost:3000/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
+                    href="http://localhost:3000/studentLogin"><strong>Complete Here</strong></a>
                     `
                 };
-                // href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
                 await transport.sendMail(mailingParameters);       
             } else if (student && tempId.toString() === studentId.toString()) {
                 const mailingParameters = {
                     from: process.env.SMTP_EMAIL,
                     to: student.email,
-                    subject: 'Submission Confirmed (Do not reply)',
+                    subject: "Submission Confirmed (Do not reply)",
                     html: 
                     `
                     <p>
@@ -122,7 +121,7 @@ export async function POST(request: NextRequest) {
                 };
                 await transport.sendMail(mailingParameters);  
             } else {
-                console.log('Error: Partial notification failed due to student not exists');
+                console.log("Error: Partial notification failed due to student not exists");
             }
         }
 
@@ -137,8 +136,8 @@ export async function POST(request: NextRequest) {
         }
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
-            to: emailList.join(','),
-            subject: 'New Contribution Dispute',
+            to: emailList.join(","),
+            subject: "New Contribution Dispute",
             html: 
             `
             <p>
@@ -179,12 +178,12 @@ export async function POST(request: NextRequest) {
             mentors: team.mentors,
         });
         
-        return NextResponse.json({ message: 'Notification sent to the team and tutors successfully' }, { status: 200 })
+        return NextResponse.json({ message: "Notification sent to the team and tutors successfully" }, { status: 200 })
 
 
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - sendTeam', error);
+            console.error("Error - sendTeam", error);
             return NextResponse.json({ error: error.message }, { status: 502 })
         }
     }

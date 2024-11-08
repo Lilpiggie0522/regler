@@ -1,3 +1,4 @@
+
 'use client'
 import { useRouter } from 'next/navigation';
 import { useState, FormEvent } from 'react';
@@ -6,6 +7,7 @@ import ImageKitDelete from './imageKit/ImageKitDelete';
 import {deleteImage} from './services/imageKitApi';
 import {useEffect} from 'react';
 import { Question } from '@/app/api/issueSystem/createIssue/route';
+
 
 
 interface FormData {
@@ -24,6 +26,7 @@ interface Assignment{
 
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
+
 	// Define state for the form inputs
 	const router = useRouter();
 	const { teamId, courseId, studentId, issueId } = props;
@@ -87,10 +90,11 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		console.log('File Id:', fileId);
 		setFormData((prevData) => ({
 			...prevData,
+
             fileLinks: [...prevData.fileLinks, { url: fileUrl, name: fileName, id: fileId }],
-		})
-		);
-		console.log('File uploaded successfully:', fileUrl);
+        })
+        );
+        console.log("File uploaded successfully:", fileUrl);
 		
 		
 	  };
@@ -98,25 +102,28 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
 	  const handleDeleteFile = async (index: number, fileId: string) => {
 
+
 		try {
+
 		  const res = await deleteImage(fileId);
 		  if (res) {
-			console.log('File deleted successfully:', res);
-			alert('File deleted successfully!');
-			setFormData((prevData) => ({
-				...prevData,
-				fileLinks: prevData.fileLinks.filter((file) => file.id !== fileId),
+                console.log("File deleted successfully:", res);
+                alert("File deleted successfully!");
+                setFormData((prevData) => ({
+                    ...prevData,
+                    fileLinks: prevData.fileLinks.filter((file) => file.id !== fileId),
 			  }));
-			// Perform any additional state updates or UI changes here
+                // Perform any additional state updates or UI changes here
 		  }
 		  else {
-			console.error('Failed to delete file:', res);
+                console.error("Failed to delete file:", res);
 		  }
-		} catch (error) {
-		  console.error('Error deleting file:', error);
-		  alert('An unexpected error occurred.');
-		}
+        } catch (error) {
+		  console.error("Error deleting file:", error);
+		  alert("An unexpected error occurred.");
+        }
 	  };
+
 	  
 	const handleDropdownChange = (event : React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedOption(event.target.value);
@@ -136,43 +143,44 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		if (issueId) {
 			// Update issue with new data
             try {
-                const res = await fetch(`/api/issueSystem/updateIssue/`, {
+                const res = await fetch("/api/issueSystem/updateIssue/", {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-						studentId: studentId,
-						teamId: teamId,
-						courseId: courseId,
-						filesUrl: filesUrl,
-						filesName: filesName,
-						questions: questions,
-						answers: formData.answers,
-						issueId: issueId,
+                        studentId: studentId,
+                        teamId: teamId,
+                        courseId: courseId,
+                        filesUrl: filesUrl,
+                        filesName: filesName,
+                        questions: questions,
+                        answers: formData.answers,
+                        issueId: issueId,
                     }),
                 });
-				if (res.ok) {
-					const result = await res.json();
-					console.log("Form submitted successfully:", result);
-					alert('Success!');
+                if (res.ok) {
+                    const result = await res.json();
+                    console.log("Form submitted successfully:", result);
+                    alert("Success!");
 			
-				}
-				if (!res.ok) {
-					//const result = await res.json();
-					alert('Error sending the form data. Please try again later.');
-				}
-				return;
-
-			} catch (error) {
-				console.error(error);
-                alert('Error updating the issue. Please try again later.');
+                }
+                if (!res.ok) {
+                    //const result = await res.json();
+                    alert("Error sending the form data. Please try again later.");
+                }
                 return;
-			}
-		}
 
-		// Log the collected form data
-		console.log('Form submitted:', formData);
+            } catch (error) {
+                console.error(error);
+                alert("Error updating the issue. Please try again later.");
+                return;
+            }
+        }
+
+        // Log the collected form data
+        console.log("Form submitted:", formData);
+
 
 
 		console.log(studentId)
@@ -191,24 +199,25 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 					questions: questions,
 					answers: formData.answers,
 				}),
+
             });
 
             if (res.ok) {
                 const result = await res.json();
                 console.log("Form submitted successfully:", result);
-				alert('Success!');
-				router.push('/studentLogout'); 
-			}
-			if (!res.ok) {
+                alert("Success!");
+                router.push("/studentLogout"); 
+            }
+            if (!res.ok) {
                 const errObj = await res.json();
-				console.log(errObj.error)
-                alert('Error sending the form data. Please try again later.');
-			}
-		} 
-		catch (error) {
-			console.error(error);
-			alert('Error sending the form data. Please try again later.');
-		}
+                console.log(errObj.error)
+                alert("Error sending the form data. Please try again later.");
+            }
+        } 
+        catch (error) {
+            console.error(error);
+            alert("Error sending the form data. Please try again later.");
+        }
 	
 	finally {
 		setFormData({
@@ -278,4 +287,5 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		</form>
 	</div>
 	);
+
 }
