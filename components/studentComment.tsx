@@ -2,25 +2,30 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Student } from "./unifiedInfo";
+import { Answer } from "@/app/api/issueSystem/createIssue/route";
+
 import { Button } from "react-bootstrap";
 import { FaArrowLeft } from "react-icons/fa";
 
-interface IssueStudent extends Student {
+
+interface IssueStudent {
+    studentName: string;
+    email: string;
     comment: StudentComment;
+    questions: Question[]
 }
 
 interface StudentComment {
-    title: string;
-    content: string;
+    
     filesUrl: string;
     student: string;
     filesName: string;
+    answers: Answer[];
 }
 
 interface FormData {
-	teamMembers: string;
-	situationExplanation: string;
+    answers: Answer[],
+    questions: Question[],
 	fileLinks: { url: string; name: string }[];
 }
 
@@ -32,13 +37,14 @@ interface Question {
 export default function StudentComment() {
     // Define state for the form inputs
     const params = useSearchParams();
-    const teamId = params.get("teamId");
+
+    const issueId = params.get("issueId");
     const studentId = params.get("studentId");
     const studentName = params.get("studentName");
 
     const [formData, setFormData] = useState<FormData>({
-        teamMembers: "",
-        situationExplanation: "",
+        answers: [],
+        questions: [],
         fileLinks: [],
     });
 
@@ -50,26 +56,25 @@ export default function StudentComment() {
     useEffect(() => {
         async function getIssueInfo() {
             try {
-                const response = await fetch(`/api/issueSystem/getIssueInfo/${teamId}`);
+                const response = await fetch(`/api/issueSystem/getIssueInfo/studentComment/${issueId}/${studentId}`);
                 if (!response.ok) {
                     alert("Error: " + response.statusText);
                 } else {
-                    const students = await response.json();
-                    // console.log(students.studentIssueInfos);
-                    const student : IssueStudent = students.studentIssueInfos.find((student: IssueStudent) =>
-                        student.comment.student === studentId
-                    );
+
+                    const studentData = await response.json();
+                    console.log(studentData.studentResponse);
+                    const student : IssueStudent = studentData.studentResponse
                     const studentComment : StudentComment = student.comment;
-                    // console.log("studentComment:" + studentComment);
-                    // console.log(studentComment.filesUrl);
-                    // console.log(studentComment.filesName);
-                    // console.log(studentComment.content);
+                    console.log("studentComment:" + studentComment);
+                    console.log(studentComment.filesUrl);
+                    console.log(studentComment.filesName);
+                    console.log(studentComment.answers);
                     let filesUrls = studentComment.filesUrl.split(",");
                     const filesNames = studentComment.filesName.split(",");
                     filesUrls = filesUrls.slice(0, -1);
                     const newFormData = {
-                        teamMembers: studentComment.title,
-                        situationExplanation: studentComment.content,
+                        answers: studentComment.answers,
+                        questions: student.questions,
                         fileLinks: filesUrls.map((url: string, index: number) => ({
                             url,
                             name: filesNames[index] || "Unnamed File", // Providing a default name if filesNames has fewer entries
@@ -83,7 +88,7 @@ export default function StudentComment() {
             }
         }
         getIssueInfo();
-    }, [teamId, studentId]);
+    }, [issueId, studentId]);
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -97,25 +102,6 @@ export default function StudentComment() {
             </div>
             
             <div className="max-w-7xl w-full p-8 mt-6 bg-white rounded-lg shadow-md">
-                <label className="text-lg text-black block mb-2">
-                    1. Please write members of your team and give them a mark between 1 and 10. 1 being the worst case, and 10 being the best case.
-                </label>
-                <textarea
-                    name="teamMembers"
-                    className="border border-gray-300 text-black p-2 rounded-md h-20 w-full mb-4"
-                    value={formData.teamMembers}
-                    readOnly
-                />
-    
-                <label className="text-lg text-black block mb-2">
-                    2. Please explain the situation.
-                </label>
-                <textarea
-                    name="situationExplanation"
-                    className="border border-gray-300 text-black p-2 rounded-md h-28 w-full mb-4"
-                    value={formData.situationExplanation}
-                    readOnly
-                />
     
                 <label className="text-lg text-black block mb-2">3. You can view your files here.</label>
                 <div className="mt-4">

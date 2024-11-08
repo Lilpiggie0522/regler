@@ -72,7 +72,21 @@ export async function POST(req: NextRequest) {
                 courseName: course?.courseName,
                 teams: [],
                 mentors: [],
-                term: term
+                term: term,
+                assignments: [{
+                    assignmentName: "default project"
+                },
+                {
+                    assignmentName: "default project2"
+                }],
+                questionBanks: [
+                    {
+                        question: "How do you do"
+                    },
+                    {
+                        question: "What is the weather like"
+                    }
+                ]
 
             })
             courseId = newCourse._id

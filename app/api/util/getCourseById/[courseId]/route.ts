@@ -9,6 +9,8 @@ const Course = models.Course;
 
 interface CourseResponse {
     courseName: string;
+    questions: string[];
+    assignments: string[] // replace with actual question bank schema
 }
 
 export async function GET( req: NextRequest) {
@@ -25,6 +27,8 @@ export async function GET( req: NextRequest) {
         }
         const courseResponse: CourseResponse = {
             courseName: course.courseName,
+            questions: course.questionBanks,
+            assignments: course.assignments
         }
         return NextResponse.json(courseResponse, {status: 200});
     } catch (error) {

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+
 import models from "@/models/models";
-import StudentComment from "../../../../../components/studentComment";
+
+//import { Answer, Question } from "../../createIssue/route";
+
 
 const Team = models.Team;
 const Issue = models.Issue;
@@ -13,11 +16,11 @@ interface StudentResponse {
   comment : StudentComment;
 }
 interface StudentComment {
-  title: string;
-  content: string;
+
   filesUrl: string;
   filesName: string;
   student: string;
+
 }
 
 
@@ -69,26 +72,27 @@ export async function GET(req : NextRequest, { params } : Params) {
     
             const isSubmitted = Boolean(studentComment);
       
+
+
             const studentIssueInfo: StudentResponse = {
                 studentName: studentDetails.studentName,
                 email: studentDetails.email,
                 zid: studentDetails.email.split("@")[0],
                 isSubmitted,
                 comment: isSubmitted ? {
-                    title: studentComment.title,
-                    content: studentComment.content,
+
                     filesUrl: studentComment.filesUrl,
                     filesName: studentComment.filesName,
                     student: studentId
                 } : {
-                    title:"not submitted", 
-                    content: "not submitted", 
+
                     filesUrl: "not submitted",
                     filesName: "not submitted",
                     student: studentId
                 }
             };
             studentIssueInfos.push(studentIssueInfo);
+
 
         }
 
