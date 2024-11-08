@@ -238,12 +238,12 @@ describe("Tests for csv", () => {
 
     test('regex invalid name', () => {
         const courseName = 'COMPd3kls_24T3GOODTEAMS'
-        expect(func.courseNameRegexCheck(courseName)).toBe('Please include course name in title')
+        expect(func.courseNameRegexCheck(courseName)).toBe('Please include course name in title.')
     })
 
     test('regex invalid term', () => {
         const courseName = 'COMP3822_24glstgGOODTEAMS'
-        expect(func.courseNameRegexCheck(courseName)).toBe('Please include course term in title')
+        expect(func.courseNameRegexCheck(courseName)).toBe('Please include course term in title.')
     })
 
     test('validate data test -> valid data', () => {

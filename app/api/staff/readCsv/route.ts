@@ -5,14 +5,14 @@ import { convertFileData, courseNameRegexCheck, insertAdmin, insertStudent, inse
 export async function POST(req: NextRequest) {
     // console.log("request received")
     const formData = await req.formData()
-    const file = formData.get('csv') as File
+    const file = formData.get("csv") as File
     if (!file) {
-        return NextResponse.json('Incorrect file type or no file attached', { status: 400 })
+        return NextResponse.json("Incorrect file type or no file attached", { status: 400 })
     }
     const filename: string = file.name
     // console.log(`name is ${filename}`)
     const regexResult = courseNameRegexCheck(filename)
-    if (typeof regexResult === 'string') {
+    if (typeof regexResult === "string") {
         return NextResponse.json(regexResult, { status: 400 })
     }
     const [courseName, courseTerm] = regexResult
@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
     const newCourse: createCourseInput = {
         courseName: courseName,
         term: courseTerm,
-        mentorsEmails: '',
-        teams: ''
+        mentorsEmails: "",
+        teams: ""
     }
 
     const courseInfo = [courseName, courseTerm]

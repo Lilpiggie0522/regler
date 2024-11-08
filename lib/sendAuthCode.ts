@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect"
 import models from "@/models/models"
 
@@ -12,9 +11,9 @@ import models from "@/models/models"
         Send email contains authentication code to student
     Error:
         - Check if student exists
-        - Check if email given matches student's email
+        - Check if admin exists
 */
-export async function POST(request: NextRequest) {
+export async function sendAuthCode(email: string, authCode: string, role: string) {
     try {
         const transport = nodemailer.createTransport({
             service: "gmail",
@@ -23,7 +22,6 @@ export async function POST(request: NextRequest) {
                 pass: process.env.SMTP_PASSWORD,
             },
         });
-        const { email, authCode, role } = await request.json();
 
         // Check if email exists and student name is correct
         await dbConnect();
@@ -32,18 +30,14 @@ export async function POST(request: NextRequest) {
         if (role === "student") {
             const student = await Student.findOne({ email: email });
             if (!student) {
-                return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
+                // console.error("Invalid Email Address");
+                return "Invalid Email Address";
             }
-            if (student.email !== email) {
-                return NextResponse.json({ error: "Given email does not match student's email" }, { status: 400 });
-            }
-        } else if (role === "admin") {
+        } else {
             const admin = await Admin.findOne({ email: email });
             if (!admin) {
-                return NextResponse.json({ error: "Invalid Email Address" }, { status: 400 });
-            }
-            if (admin.email !== email) {
-                return NextResponse.json({ error: "Given email does not match admin's email" }, { status: 400 });
+                // console.error("Invalid Email Address");
+                return "Invalid Email Address";
             }
         }
 
@@ -69,13 +63,16 @@ export async function POST(request: NextRequest) {
             </p>
             `,
         };
-        const info = await transport.sendMail(mailingParameters);
-        return NextResponse.json({ data: info }, { status: 200 })
+        await transport.sendMail(mailingParameters);
+        // console.error(`Failed to send email: ${info}`)
+        return "Send verification code successfully."
 
     } catch (error) {
         if (error instanceof Error) {
-            console.error("Error - Team Email:", error);
-            return NextResponse.json({ error: error.message }, { status: 502 })
+            console.error("Unexpected error", error);
+            return `Unexpected error ${error}`
         }
     }
 }
+
+export default sendAuthCode;

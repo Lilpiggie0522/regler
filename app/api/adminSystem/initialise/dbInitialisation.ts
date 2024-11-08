@@ -149,8 +149,8 @@ export async function dbInitialization(input: initialiseInput) {
         // create teams
         for (const team of teams) {
             const teamFound = await Team.findOne({teamName: team.teamName, course: courseId})
-            const passedMentorsEmails = team.mentorsEmails.split(',')
-            const passedStudentIds = team.studentsZids.split(',')
+            const passedMentorsEmails = team.mentorsEmails.split(",")
+            const passedStudentIds = team.studentsZids.split(",")
             if (!teamFound) {
                 const mentorIds = []
                 for (const email of passedMentorsEmails) {
@@ -207,7 +207,7 @@ export async function dbInitialization(input: initialiseInput) {
             }
             await currentCourse.save()
         }
-        const curCourses = await Course.find({}).select('+courseName +teams +mentors').exec();
+        const curCourses = await Course.find({}).select("+courseName +teams +mentors").exec();
         const curTeams = await Team.find({}).exec();
         const curStudents = await Student.find({}).exec();
         

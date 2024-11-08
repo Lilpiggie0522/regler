@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
-import { IKContext } from 'imagekitio-react';
-import { urlEndpoint, publicKey, authenticator } from '../services/imageKitApi';
+import React, { ReactNode } from "react";
+import { IKContext } from "imagekitio-react";
+import { urlEndpoint, publicKey, authenticator } from "../services/imageKitApi";
 
 // Define the props type including `children`
 interface ImageKitContextProps {
@@ -8,13 +8,13 @@ interface ImageKitContextProps {
 }
 
 export const ImageKitContext: React.FC<ImageKitContextProps> = ({ children }) => {
-  return (
-    <IKContext
-      urlEndpoint={urlEndpoint}
-      publicKey={publicKey}
-      authenticator={authenticator}
-    >
-      {children}
-    </IKContext>
-  );
+    return (
+        <IKContext
+            urlEndpoint={urlEndpoint}
+            publicKey={publicKey}
+            authenticator={authenticator}
+        >
+            {children}
+        </IKContext>
+    );
 };

@@ -308,7 +308,7 @@ Waner,z5417505,jeffrey squad,T22A,Danny,z5417505,T22A_Danny,z5417505@ad.unsw.edu
         const res = await POST(req)
         const result = await res.json()
         expect(res.status).toBe(400)
-        expect(result).toEqual("Please include course name in title")
+        expect(result).toEqual("Please include course name in title.")
     })
 
     it("should return a 400 error since no coursecode provided", async () => {
@@ -322,7 +322,7 @@ Waner,z5417505,jeffrey squad,T22A,Danny,z5417505,T22A_Danny,z5417505@ad.unsw.edu
         const res = await POST(req)
         const result = await res.json()
         expect(res.status).toBe(400)
-        expect(result).toEqual("Please include course term in title")
+        expect(result).toEqual("Please include course term in title.")
     })
 
     it("should return http error 400 since zid is missing for one row, piggie 1 zid missing", async () => {

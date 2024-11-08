@@ -1,5 +1,4 @@
 import nodemailer from "nodemailer";
-import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 
 import models from "@/models/models";
@@ -24,28 +23,20 @@ const Admin = models.Admin;
     Error:
         - Check if team exists
         - Check if course exists
-        // - Check if team is contained in courses
-        // - Check if student given in team or not
 */
-export async function POST(request: NextRequest) {
+export async function sendTeamEmail(teamId: string, courseId: string, studentId:string, issueId: string) {
     try {
-        const { teamId, courseId, studentId, issueId } = await request.json()
-
         await dbConnect();
         const team = await Team.findById(teamId);
         const course = await Course.findById(courseId);
         if (!team) {
-            return NextResponse.json({ error: "Team not found"}, { status: 404 })
+            // console.error({ message: "Error - sendTeam: Team not found"});
+            return { message: "Team not found" }
         }
         if (!course) {
-            return NextResponse.json({ error: "Course not found"}, { status: 404 })
-        } 
-        // if (!course.teams.includes(teamId)) {
-        //     return NextResponse.json({ error: "Team not found from course"}, { status: 404 })
-        // }
-        // if (!team.students.includes(studentId)) {
-        //     return NextResponse.json({ error: "Student not in the team"}, { status: 404 })
-        // }
+            // console.error({ message: "Error - sendTeam: Course not found"});
+            return { message: "Course not found" }
+        }
         const transport = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -120,8 +111,6 @@ export async function POST(request: NextRequest) {
                     `
                 };
                 await transport.sendMail(mailingParameters);  
-            } else {
-                console.log("Error: Partial notification failed due to student not exists");
             }
         }
 
@@ -130,7 +119,8 @@ export async function POST(request: NextRequest) {
         for (const mentorId of team.mentors) {
             const temp = await Admin.findById(mentorId);
             if (!temp) {
-                return NextResponse.json({ error: "Tutor not found"}, { status: 404 })
+                // console.error(`Error - sendTeam: ${temp} can not be found as a tutor`);
+                continue
             }
             emailList.push(temp.email);
         }
@@ -172,19 +162,20 @@ export async function POST(request: NextRequest) {
             team: teamId,
             course: courseId,
             issue: issueId,
-            // timestamp: timestamp,
             schedule: weeklySchedule,
             students: restId,
             mentors: team.mentors,
         });
         
-        return NextResponse.json({ message: "Notification sent to the team and tutors successfully" }, { status: 200 })
-
+        // console.log('Notification sent to the team and tutors successfully');
+        return { message: "Notification sent to the team and tutors successfully" };
 
     } catch (error) {
         if (error instanceof Error) {
-            console.error("Error - sendTeam", error);
-            return NextResponse.json({ error: error.message }, { status: 502 })
+            // console.error('Error - sendTeam', error);
+            return { message: `Error - sendTeam ${error}` }
         }
     }
 }
+
+export default sendTeamEmail;
