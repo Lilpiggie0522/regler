@@ -1,11 +1,11 @@
-'use client'
-import { useLocalStorageState } from '@/context/studentContext';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
-import { FaSearch } from 'react-icons/fa';
-import ErrorModal from './modals/errorModal';
-import { FaArrowLeft } from 'react-icons/fa';
+"use client"
+import { useLocalStorageState } from "@/context/studentContext";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Button } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
+import ErrorModal from "./modals/errorModal";
+import { FaArrowLeft } from "react-icons/fa";
 
 export interface Student {
     id: string;
@@ -13,34 +13,34 @@ export interface Student {
     class: string;
     zid: string;
     email: string;
-    status: 'Submitted' | 'No Submission';
+    status: "Submitted" | "No Submission";
 }
 
 const dummyTutorOpinions = [
-    { name: 'Tutor A', content: 'Great job on the project!' },
-    { name: 'Tutor B', content: 'Needs improvement in teamwork.' },
+    { name: "Tutor A", content: "Great job on the project!" },
+    { name: "Tutor B", content: "Needs improvement in teamwork." },
 ];
 
 const dummyLecturerOpinions = [
-    { name: 'Lecturer X', content: 'Excellent presentation skills.' },
-    { name: 'Lecturer Y', content: 'Could use more analytical depth.' },
+    { name: "Lecturer X", content: "Excellent presentation skills." },
+    { name: "Lecturer Y", content: "Could use more analytical depth." },
 ];
 
 export default function UnifiedInfo() {
     const router = useRouter();
     
     const params = useSearchParams()
-    const teamId = params.get('teamId')
-    const group = params.get('group');
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [content, setContent] = useState<string>('')
-    const [tutorComment, setTutorComment] = useState<string>('')
+    const teamId = params.get("teamId")
+    const group = params.get("group");
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [content, setContent] = useState<string>("")
+    const [tutorComment, setTutorComment] = useState<string>("")
     //const [lecturerComment, setLecturerComment] = useState<string>('')
-    const [staffId,] = useLocalStorageState('staffId', '');
+    const [staffId,] = useLocalStorageState("staffId", "");
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
     const [isAdmin] = useState<boolean>(true);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState("");
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export default function UnifiedInfo() {
                 if (!response.ok) {
                     const error = await response.json();
                     const message = error.message;
-                   // alert("Error: " + message);
+                    // alert("Error: " + message);
                     setTutorComment(JSON.stringify(message).slice(1,).slice(0,-1));
                 } else {
                     const comment = await response.json()
@@ -85,17 +85,17 @@ export default function UnifiedInfo() {
                             const studentInfo : Student = {
                                 id : student.comment.student,
                                 name: student.studentName,
-                                class: group || 'null',
+                                class: group || "null",
                                 zid: student.zid,
                                 email: student.email,
-                                status: student.isSubmitted === true? 'Submitted' : 'No Submission'
+                                status: student.isSubmitted === true? "Submitted" : "No Submission"
                             }
                             studentInfos.push(studentInfo);
                         }
                     }
                     setStudents(studentInfos);
                     const {message} = students
-                    console.log(`ksdjfakdjfksajfklszzzz`)
+                    console.log("ksdjfakdjfksajfklszzzz")
                     console.log(message)
                 }
             } catch (error) {
@@ -117,10 +117,10 @@ export default function UnifiedInfo() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const response = await fetch('api/staff/tutorOpinions', {
-                method: 'POST',
+            const response = await fetch("api/staff/tutorOpinions", {
+                method: "POST",
                 headers: {
-                    'Content-type': 'application/json'
+                    "Content-type": "application/json"
                 },
                 body: JSON.stringify({content: content, teamId: teamId, staffId: staffId})
                 
@@ -152,7 +152,7 @@ export default function UnifiedInfo() {
                     {/* Back arrow icon */}
                     <button onClick={() => window.history.back()} className="text-black mb-2 flex items-center ">
                         <FaArrowLeft className="mr-2" />
-                        {'Back'}
+                        {"Back"}
                     </button>
                     <h1 className="text-black text-3xl font-bold inline-block ml-6">{group}</h1>
                 </div>
@@ -192,7 +192,7 @@ export default function UnifiedInfo() {
                                 <td className="py-2">{student.class}</td>
                                 <td className="py-2">{student.zid}</td>
                                 <td className="py-2">{student.email}</td>
-                                <td className={`py-2 ${student.status === 'Submitted' ? 'text-green-500' : 'text-red-500'}`}>
+                                <td className={`py-2 ${student.status === "Submitted" ? "text-green-500" : "text-red-500"}`}>
                                     {student.status}
                                 </td>
                                 <td>
@@ -263,8 +263,8 @@ export default function UnifiedInfo() {
 
                 {showError ? (
                     <ErrorModal
-                    errorMessage={errorMessage}
-                    onClose={() => setShowError(false)}
+                        errorMessage={errorMessage}
+                        onClose={() => setShowError(false)}
                     />
                 ) : null}
 

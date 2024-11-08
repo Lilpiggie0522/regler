@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import models from "@/models/models";
 
 export async function POST(request: NextRequest) {
     try {
         // Destructure email, course, and term from the request body
         const { email, course, term }: { email: string; course: string; term: string } = await request.json();
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
         // Fetch individual submissions
         const response = await fetch(`${baseUrl}/api/staff/returnIndividualIssueStatus`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
         });
 
@@ -18,12 +18,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Failed to fetch individual submissions" }, { status: response.status });
         }
         const { submissionsRecord: individualSubList } = await response.json();
-        console.log("Fetched individualSubList:", individualSubList);
 
         // Fetch the group list
         const groupListResponse = await fetch(`${baseUrl}/api/staff/groupList`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email })
         });
         if (!groupListResponse.ok) {

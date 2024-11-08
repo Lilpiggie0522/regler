@@ -5,7 +5,7 @@ import { validateId } from "@/lib/validateId";
 import models from "@/models/models";
 import { StudentCommentInput } from "../createIssue/route";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import StudentComment from '../../../../components/studentComment';
+import StudentComment from "../../../../components/studentComment";
 
 
 const Issue = models.Issue;
@@ -67,7 +67,7 @@ export async function PUT(req: NextRequest) {
         if (!existingIssue) {
             return NextResponse.json({ error: "Issue not found" }, { status: 404 });
         }
-        if (existingIssue.status === 'complete') {
+        if (existingIssue.status === "complete") {
             return NextResponse.json({ error: "Issue has already been closed" }, { status: 405 });
         }
         // Check if the issue exists in the team 
@@ -93,12 +93,12 @@ export async function PUT(req: NextRequest) {
             {
                 _id: existingIssue._id,
                 
-             }, // filter by the issue ID
+            }, // filter by the issue ID
             { 
-            $push: { studentComments: newStudentComment },
-            $set: { status: existingIssue.studentComments.length + 1 === team.students.length ? 'Need Feedback' : 'pending' } 
+                $push: { studentComments: newStudentComment },
+                $set: { status: existingIssue.studentComments.length + 1 === team.students.length ? "Need Feedback" : "pending" } 
         
-        } 
+            } 
             
         );
 

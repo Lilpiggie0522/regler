@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import dbConnect from '@/lib/dbConnect';
+import nodemailer from "nodemailer";
+import dbConnect from "@/lib/dbConnect";
 
 import models from "@/models/models";
 
@@ -31,14 +31,14 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
         const course = await Course.findById(courseId);
         if (!team) {
             // console.error({ message: "Error - sendTeam: Team not found"});
-            return { message: 'Team not found' }
+            return { message: "Team not found" }
         }
         if (!course) {
             // console.error({ message: "Error - sendTeam: Course not found"});
-            return { message: 'Course not found' }
+            return { message: "Course not found" }
         }
         const transport = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
@@ -53,7 +53,7 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
                 const mailingParameters = {
                     from: process.env.SMTP_EMAIL,
                     to: student.email,
-                    subject: 'Group Project Contribution Dispute',
+                    subject: "Group Project Contribution Dispute",
                     html: 
                     `
                     <p>
@@ -86,7 +86,7 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
                 const mailingParameters = {
                     from: process.env.SMTP_EMAIL,
                     to: student.email,
-                    subject: 'Submission Confirmed (Do not reply)',
+                    subject: "Submission Confirmed (Do not reply)",
                     html: 
                     `
                     <p>
@@ -126,8 +126,8 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
         }
         const mailingParameters = {
             from: process.env.SMTP_EMAIL,
-            to: emailList.join(','),
-            subject: 'New Contribution Dispute',
+            to: emailList.join(","),
+            subject: "New Contribution Dispute",
             html: 
             `
             <p>
@@ -168,7 +168,7 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
         });
         
         // console.log('Notification sent to the team and tutors successfully');
-        return { message: 'Notification sent to the team and tutors successfully' };
+        return { message: "Notification sent to the team and tutors successfully" };
 
     } catch (error) {
         if (error instanceof Error) {

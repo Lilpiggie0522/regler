@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import { useStudentContext } from '@/context/studentContext';
-import React, { useState, useEffect, useRef } from 'react';
-import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
+import { useStudentContext } from "@/context/studentContext";
+import React, { useState, useEffect, useRef } from "react";
+import { FaSearch, FaArrowLeft, FaFilter } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 // Define an enum for the group statuses
 enum GroupStatus {
-    NeedFeedback = 'Need Feedback',
-    Pending = 'Pending',
-    Complete = 'Complete',
-    NotStarted = 'Not Started',
+    NeedFeedback = "Need Feedback",
+    Pending = "Pending",
+    Complete = "Complete",
+    NotStarted = "Not Started",
 }
 
 // Define a type for the group
@@ -27,16 +27,16 @@ const GroupList: React.FC = () => {
     const router = useRouter();
     const params = useSearchParams();
     
-    const courseId = params.get('courseId');
+    const courseId = params.get("courseId");
     
 
 
     const { useLocalStorageState } = useStudentContext();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [email,] = useLocalStorageState('email', '');
+    const [email,] = useLocalStorageState("email", "");
 
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [selectedStatus, setSelectedStatus] = useState<GroupStatus | ''>('');
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [selectedStatus, setSelectedStatus] = useState<GroupStatus | "">("");
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -47,9 +47,9 @@ const GroupList: React.FC = () => {
         try {
             // should return a list of teams in this course
             const res = await fetch(`/api/util/getTeamsByCourseId/${courseId}`, {
-                method: 'GET',
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
             });
     
@@ -63,7 +63,7 @@ const GroupList: React.FC = () => {
             console.log(groupObj.teams);
             setGroups(groupObj.teams);
         } catch (error) {
-            console.error('Error fetching groups:', error);
+            console.error("Error fetching groups:", error);
         }
     }
 
@@ -77,7 +77,7 @@ const GroupList: React.FC = () => {
     // Filter groups based on the search term and status filter
     const filteredGroups = groups.filter(group => {
         const matchesTeam = group.groupName.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesMentors = group.tutors.split(',').map(tutor => tutor.toLowerCase()).includes(searchTerm.toLowerCase())
+        const matchesMentors = group.tutors.split(",").map(tutor => tutor.toLowerCase()).includes(searchTerm.toLowerCase())
         const matchesLecturer = group.lecturer.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesSearchTerm = matchesTeam || matchesMentors || matchesLecturer;
 
@@ -104,16 +104,16 @@ const GroupList: React.FC = () => {
     // Get the corresponding class for the status
     const getStatusClass = (status: GroupStatus): string => {
         switch (status) {
-            case GroupStatus.Complete:
-                return 'bg-green-500 text-white border border-green-700';
-            case GroupStatus.Pending:
-                return 'bg-orange-500 text-white border border-orange-700';
-            case GroupStatus.NotStarted:
-                return 'bg-gray-500 text-white border border-gray-700';
-            case GroupStatus.NeedFeedback:
-                return 'bg-blue-500 text-white border border-blue-700';
-            default:
-                return '';
+        case GroupStatus.Complete:
+            return "bg-green-500 text-white border border-green-700";
+        case GroupStatus.Pending:
+            return "bg-orange-500 text-white border border-orange-700";
+        case GroupStatus.NotStarted:
+            return "bg-gray-500 text-white border border-gray-700";
+        case GroupStatus.NeedFeedback:
+            return "bg-blue-500 text-white border border-blue-700";
+        default:
+            return "";
         }
     };
 
@@ -125,9 +125,9 @@ const GroupList: React.FC = () => {
             }
         };
 
-        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener("mousedown", handleClickOutside);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [dropdownRef]);
 
@@ -139,7 +139,7 @@ const GroupList: React.FC = () => {
                     {/* Back arrow icon */}
                     <button onClick={() => window.history.back()} className="text-black mb-2 flex items-center ">
                         <FaArrowLeft className="mr-2" />
-                        {'Back'}
+                        {"Back"}
                     </button>
                     <h1 className="text-black text-3xl font-bold inline-block ml-6">Groups</h1>
                 </div>
@@ -178,14 +178,14 @@ const GroupList: React.FC = () => {
                                     <div
                                         ref={dropdownRef}
                                         className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
-                                        style={{ marginTop: '100px' }}
+                                        style={{ marginTop: "100px" }}
                                     >
 
                                         {/* Status options */}
                                         {Object.values(GroupStatus).map((status) => (
                                             <div
                                                 key={status}
-                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedStatus === status ? 'bg-gray-200' : ''}`}
+                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedStatus === status ? "bg-gray-200" : ""}`}
                                                 onClick={() => {
                                                     setSelectedStatus(status);
                                                     setIsDropdownOpen(false);
@@ -199,7 +199,7 @@ const GroupList: React.FC = () => {
                                         <div
                                             className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                                             onClick={() => {
-                                                setSelectedStatus(''); // Clear the selected status
+                                                setSelectedStatus(""); // Clear the selected status
                                                 setIsDropdownOpen(false);
                                             }}
                                         >
@@ -223,7 +223,7 @@ const GroupList: React.FC = () => {
                                         {group.tutors}
                                     </td>
                                     <td className="py-3 px-4 flex justify-center items-center">
-                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: '140px', height: '35px', borderRadius: '8px' }}>
+                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: "140px", height: "35px", borderRadius: "8px" }}>
                                             {group.status}
                                         </div>
                                     </td>
