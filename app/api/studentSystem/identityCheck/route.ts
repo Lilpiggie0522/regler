@@ -1,35 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/dbConnect';
-
+import { createUniqueAuthCode } from '@/lib/authCodeCreation';
 import models from "@/models/models";
-
+import sendAuthCode from '@/lib/sendAuthCode';
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
+export interface studentIdentityCheckInput {
+    zID: string;
+    courseCode: string;
+    term: string;
+}
 export async function POST(request: NextRequest) {
     try {
-        const {zID, courseCode }: {zID: string ; courseCode: string }  = await request.json();
-        // * convert inputs to lowercase
-        //todo
-        //1. find email from zid
-        //2.  add check for student in this course
-        // Check if email exists and student name is correct
-        console.log()
+        let {zID, courseCode, term } = await request.json() as studentIdentityCheckInput;
+        // Convert zID to lowercase
+        // term to uppercase
+        // courseCode to uppercase
+        zID = zID.toLowerCase();
+        term = term.toUpperCase();
+        courseCode = courseCode.toUpperCase();
         await dbConnect();
         // Retrieve student and team to check their relations
+        console.log("zID: " + zID);
         const student = await Student.findOne({ zid: zID }).exec();
         console.log("student: " + student);
         if (!student) {
-            return NextResponse.json({ error: "Invalid zID." }, { status: 404 });
+            return NextResponse.json({ error: "Invalid zid!" }, { status: 404 });
         }
-        const course = await Course.findOne({ courseName: courseCode }).exec();
+        // assume the combination of courseCode and term is unique
+        const course = await Course.findOne({ courseName: courseCode, term: term }).exec();
         if (!course) {
-            return NextResponse.json({ error: "Invalid Course Code." }, { status: 404 });
+            return NextResponse.json({ error: "course code or term is invalid!" }, { status: 404 });
         }
-        
-        const teams = course.teams;
+        console.log(course);
+        const studentCourses = student.course;
+        if (!studentCourses.includes(course._id)) {
+            return NextResponse.json({ error: "Student is not in this course!" }, { status: 404 });
+        }
+        const designatedCourse = await Course.findById(course).exec();
+        const teams = designatedCourse.teams;
         let teamId = null;
-        let isStudentInCourse = false;
         for (const team of teams) {
             //console.log ("team: " + team);
             const currentTeam = await Team.findById(team).exec();
@@ -38,33 +49,20 @@ export async function POST(request: NextRequest) {
                 continue;
             }
             if (currentTeam.students.includes(student._id)) {
-                isStudentInCourse = true;
                 teamId = team._id;
                 break;
             }
         }
-        console.log("HI3")
-        if (!isStudentInCourse) {
-            return NextResponse.json({ error: "Student is not in this course." }, { status: 404 });
+        if (!teamId) {
+            return NextResponse.json({ error: "Student is not in any team!" }, { status: 404 });
         }
-        //please note that port may change
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-        const authcodeCreationResponse = await fetch(`${baseUrl}/api/authcodeSystem/createAuthcode`, {method: 'POST', body: JSON.stringify({zid: zID})})
-        if (!authcodeCreationResponse.ok) {
-            return authcodeCreationResponse;
-        }
-        console.log("HI")
-        const authCode = await authcodeCreationResponse.json();
-        const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode.authCode, role: 'student'})})
-        if (!sendAuthCodeResponse.ok) {
-            return sendAuthCodeResponse
-        }
-        // objectId of student, team and course
-        return NextResponse.json({studentId: student._id, teamId: teamId, courseId: course._id}, {status: authcodeCreationResponse.status})
+        const authCode = await createUniqueAuthCode(zID);
+        sendAuthCode(student.email, authCode, 'student');
+        return NextResponse.json({studentId: student._id, teamId: teamId, courseId: designatedCourse._id}, {status: 200 })
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - Team Email:', error);
             return NextResponse.json({error: error.message}, {status: 502})
         }
     }
 }
+
