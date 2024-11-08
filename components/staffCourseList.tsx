@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState, ChangeEvent } from 'react';
-import { FaSearch, FaTrash } from 'react-icons/fa';
+import React, { useEffect, useState, ChangeEvent } from "react";
+import { FaSearch, FaTrash } from "react-icons/fa";
 
-import { useStudentContext } from '@/context/studentContext';
-import { useRouter } from 'next/navigation';
+import { useStudentContext } from "@/context/studentContext";
+import { useRouter } from "next/navigation";
 import ErrorModal from "@/components/modals/errorModal";
 
 interface Course {
@@ -29,11 +29,11 @@ export default function CourseList() {
     const router = useRouter();
     
     const { useLocalStorageState } = useStudentContext();
-    const [email,] = useLocalStorageState('email', '');
+    const [email,] = useLocalStorageState("email", "");
     // const [,setCourse] = useLocalStorageState('email', '');
     // const [,setTerm] 
     
-    const [searchTerm, setSearchTerm] = useState<string>('');
+    const [searchTerm, setSearchTerm] = useState<string>("");
     const [sortedCourses, setSortedCourses] = useState<Course[]>([]);
     const [coursesData, setCoursesData] = useState<Course[]>([]);
 
@@ -45,57 +45,57 @@ export default function CourseList() {
     const [uploading, setUploading] = useState<boolean>(false);
 
     const [showErrorModal, setShowErrorModal] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string>('');
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     useEffect(() => {
         if (email) {
             fetchCourses(email);
-            }
-        }, [email]);  // Run effect when these values change
-        
-        const fetchCourses = async (email: string) => {
-            try {
-                const coursesResponse = await fetch('/api/staff/courseList', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email }),
-                });
-
-                if (!coursesResponse.ok) {
-                    const errObj = await coursesResponse.json();
-                    throw Error(errObj.error);
-                }
-                const courseObj = await coursesResponse.json();
-
-                courseObj.courses.forEach((course: Course) => {
-                    console.log("Course Term:", course.term);
-                });
-
-                setCoursesData(courseObj.courses);
-                // console.log("courses data:", courseObj.courses);
-                
-            } catch (error) {
-                setErrorMessage("Failed to fetch courses. Please try again.");
-                setShowErrorModal(true);
-                throw error
-            }
         }
+    }, [email]);  // Run effect when these values change
+        
+    const fetchCourses = async (email: string) => {
+        try {
+            const coursesResponse = await fetch("/api/staff/courseList", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+            });
+
+            if (!coursesResponse.ok) {
+                const errObj = await coursesResponse.json();
+                throw Error(errObj.error);
+            }
+            const courseObj = await coursesResponse.json();
+
+            courseObj.courses.forEach((course: Course) => {
+                console.log("Course Term:", course.term);
+            });
+
+            setCoursesData(courseObj.courses);
+            // console.log("courses data:", courseObj.courses);
+                
+        } catch (error) {
+            setErrorMessage("Failed to fetch courses. Please try again.");
+            setShowErrorModal(true);
+            throw error
+        }
+    }
 
 
     useEffect(() => {
         const sorted = [...coursesData].sort((a, b) => {
         
-        // same term, course code 
-        if (a.term < b.term) return 1;
-        if (a.term > b.term) return -1;
+            // same term, course code 
+            if (a.term < b.term) return 1;
+            if (a.term > b.term) return -1;
 
-        // same term, course code 
-        if (a.course < b.course) return -1;
-        if (a.course > b.course) return 1;
+            // same term, course code 
+            if (a.course < b.course) return -1;
+            if (a.course > b.course) return 1;
 
-        return 0;
+            return 0;
         });
 
         setSortedCourses(sorted);
@@ -132,7 +132,7 @@ export default function CourseList() {
         if (selectedFile) {
             setUploading(true)
             const formData: FormData = new FormData()
-            formData.append('csv', selectedFile)
+            formData.append("csv", selectedFile)
             sendData(formData)
         }
     }
@@ -148,8 +148,8 @@ export default function CourseList() {
     async function sendData(formData: FormData) {
         // console.log(results.data)
         try {
-            const response = await fetch('api/staff/readCsv', {
-                method: 'POST',
+            const response = await fetch("api/staff/readCsv", {
+                method: "POST",
                 body: formData
             })
             if (response.ok) {
@@ -242,7 +242,7 @@ export default function CourseList() {
             {showData && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
                     <div className="bg-gray-100 max-h-[700px] w-[90vw] rounded-lg relative flex flex-col p-6 items-center justify-center">
-                {/* <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        {/* <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-gray-100 max-h-[700px] w-[90vw] rounded-lg relative flex flex-col items-center justify-center"> */}
                         <button className="absolute top-2 right-3 text-black text-3xl" onClick={handleCloseData}>
                             &times;
@@ -289,43 +289,43 @@ export default function CourseList() {
             {/* showLoginFail */}
             {showErrorModal ? (
                 <ErrorModal
-                errorMessage={errorMessage}
-                onClose={() => setShowErrorModal(false)}
+                    errorMessage={errorMessage}
+                    onClose={() => setShowErrorModal(false)}
                 />
             ) : null}
 
-        {/* Table */}
+            {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
-            <table className="min-w-full table-fixed">
-            <thead className="bg-gray-200 sticky">
-                <tr className="text-left">
-                    <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Course Code</th>
-                    <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Term</th>
-                    <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Action</th>
-                </tr>
-                </thead>
+                <table className="min-w-full table-fixed">
+                    <thead className="bg-gray-200 sticky">
+                        <tr className="text-left">
+                            <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Course Code</th>
+                            <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Term</th>
+                            <th className="w-1/3 py-2 px-4 font-bold text-black text-center">Action</th>
+                        </tr>
+                    </thead>
 
-                <tbody>
-                {filteredCourses.length > 0 ? (
-                    filteredCourses.map((course, index) => (
-                    <tr key={index} className="border-b border-gray-200">
-                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.course}</td>
-                        <td className="w-1/3 py-3 px-4 text-black text-center">{course.term}</td>
-                        <td className="w-1/3 py-3 px-4 text-center">
-                            <button 
-                                className="bg-black text-white py-1 px-4 rounded-lg"
-                                onClick={() => router.push(`/staffGroupList?courseId=${course.id}`)}
-                            >Select</button>
-                        </td>
-                    </tr>
-                    ))
-                ) : (
-                    <tr>
-                    <td colSpan={4} className="text-center py-4 text-gray-500">No results found</td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
+                    <tbody>
+                        {filteredCourses.length > 0 ? (
+                            filteredCourses.map((course, index) => (
+                                <tr key={index} className="border-b border-gray-200">
+                                    <td className="w-1/3 py-3 px-4 text-black text-center">{course.course}</td>
+                                    <td className="w-1/3 py-3 px-4 text-black text-center">{course.term}</td>
+                                    <td className="w-1/3 py-3 px-4 text-center">
+                                        <button 
+                                            className="bg-black text-white py-1 px-4 rounded-lg"
+                                            onClick={() => router.push(`/staffGroupList?courseId=${course.id}`)}
+                                        >Select</button>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={4} className="text-center py-4 text-gray-500">No results found</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

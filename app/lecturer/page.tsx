@@ -47,7 +47,7 @@ export default function LecturerPage() {
         if (selectedFile) {
             setUploading(true)
             const formData: FormData = new FormData()
-            formData.append('csv', selectedFile)
+            formData.append("csv", selectedFile)
             sendData(formData)
         }
     }
@@ -63,8 +63,8 @@ export default function LecturerPage() {
     async function sendData(formData: FormData) {
         // console.log(results.data)
         try {
-            const response = await fetch('api/staff/readCsv', {
-                method: 'POST',
+            const response = await fetch("api/staff/readCsv", {
+                method: "POST",
                 body: formData
             })
             if (response.ok) {

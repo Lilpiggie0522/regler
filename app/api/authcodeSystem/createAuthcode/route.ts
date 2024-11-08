@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";
 import models from "@/models/models";
-import crypto from 'crypto';
+import crypto from "crypto";
 const AuthCode = models.AuthCode;
 // Generate a code with a given length
 function generateAuthCode(length: number = 6): string {
-    const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let authCode = '';
+    const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let authCode = "";
     const bytes = crypto.randomBytes(length);
 
     for (let i = 0; i < length; i++) {
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
         await dbConnect();
         const { zid } = await request.json();
         let isUnique = false;
-        let authCode = '';
+        let authCode = "";
         await AuthCode.deleteMany({zid: zid})
         // ensure code is unique
         while (!isUnique) {
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({ authCode }, { status: 200 });
     } catch (error) {
-        console.error('Error generating auth code:', error);
+        console.error("Error generating auth code:", error);
         return NextResponse.json({ error: (error as Error).message }, { status: 500 });
     }
 }

@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";
 
 // import models from "@/models/models";
 
@@ -34,21 +34,21 @@ export async function DELETE() {
 
 
         const input = {
-            issueId: '670799fbb7b79c4588c8177d',
-            personId: '67020f6fb7b79c4588398bf6',
-            type: 'student',
+            issueId: "670799fbb7b79c4588c8177d",
+            personId: "67020f6fb7b79c4588398bf6",
+            type: "student",
         }
 
-        const response = await fetch('http://localhost:3000/api/mailingSystem/setReminder', {
-            method: 'DELETE', 
-            headers: { 'Content-Type': 'application/json', }, 
+        const response = await fetch("http://localhost:3000/api/mailingSystem/setReminder", {
+            method: "DELETE", 
+            headers: { "Content-Type": "application/json", }, 
             body: JSON.stringify(input)})
         const result = await response.json();
 
         return NextResponse.json({message: `deleted ${result}`}, {status: 200})
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - notifyTutor:', error);
+            console.error("Error - notifyTutor:", error);
             return NextResponse.json({error: error.message}, {status: 502})
         }
     }

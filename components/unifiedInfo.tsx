@@ -1,9 +1,9 @@
-'use client'
-import { useLocalStorageState } from '@/context/studentContext';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
-import { FaSearch } from 'react-icons/fa';
+"use client"
+import { useLocalStorageState } from "@/context/studentContext";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Button } from "react-bootstrap";
+import { FaSearch } from "react-icons/fa";
 
 export interface Student {
     id: string;
@@ -11,19 +11,19 @@ export interface Student {
     class: string;
     zid: string;
     email: string;
-    status: 'Submitted' | 'No Submission';
+    status: "Submitted" | "No Submission";
 }
 
 export default function UnifiedInfo() {
     const router = useRouter();
     
     const params = useSearchParams()
-    const teamId = params.get('teamId')
-    const group = params.get('group');
-    const [searchTerm, setSearchTerm] = useState<string>('');
-    const [content, setContent] = useState<string>('')
-    const [tutorComment, setTutorComment] = useState<string>('')
-    const [staffId,] = useLocalStorageState('staffId', '');
+    const teamId = params.get("teamId")
+    const group = params.get("group");
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const [content, setContent] = useState<string>("")
+    const [tutorComment, setTutorComment] = useState<string>("")
+    const [staffId,] = useLocalStorageState("staffId", "");
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
 
@@ -34,7 +34,7 @@ export default function UnifiedInfo() {
                 if (!response.ok) {
                     const error = await response.json();
                     const message = error.message;
-                   // alert("Error: " + message);
+                    // alert("Error: " + message);
                     setTutorComment(JSON.stringify(message).slice(1,).slice(0,-1));
                 } else {
                     const comment = await response.json()
@@ -67,10 +67,10 @@ export default function UnifiedInfo() {
                             const studentInfo : Student = {
                                 id : student.comment.student,
                                 name: student.studentName,
-                                class: group || 'null',
+                                class: group || "null",
                                 zid: student.zid,
                                 email: student.email,
-                                status: student.isSubmitted === true? 'Submitted' : 'No Submission'
+                                status: student.isSubmitted === true? "Submitted" : "No Submission"
                             }
                             studentInfos.push(studentInfo);
                         }
@@ -96,10 +96,10 @@ export default function UnifiedInfo() {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         try {
-            const response = await fetch('api/staff/tutorOpinions', {
-                method: 'POST',
+            const response = await fetch("api/staff/tutorOpinions", {
+                method: "POST",
                 headers: {
-                    'Content-type': 'application/json'
+                    "Content-type": "application/json"
                 },
                 body: JSON.stringify({content: content, teamId: teamId, staffId: staffId})
                 
@@ -158,7 +158,7 @@ export default function UnifiedInfo() {
                                 <td className="py-2">{student.class}</td>
                                 <td className="py-2">{student.zid}</td>
                                 <td className="py-2">{student.email}</td>
-                                <td className={`py-2 ${student.status === 'Submitted' ? 'text-green-500' : 'text-red-500'}`}>
+                                <td className={`py-2 ${student.status === "Submitted" ? "text-green-500" : "text-red-500"}`}>
                                     {student.status}
                                 </td>
                                 <td>

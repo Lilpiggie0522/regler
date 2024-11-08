@@ -1,9 +1,9 @@
 "use client";
 
-import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Student } from './unifiedInfo';
-import { Button } from 'react-bootstrap';
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Student } from "./unifiedInfo";
+import { Button } from "react-bootstrap";
 
 interface IssueStudent extends Student {
     comment: StudentComment;
@@ -26,13 +26,13 @@ interface FormData {
 export default function StudentComment() {
     // Define state for the form inputs
     const params = useSearchParams();
-    const teamId = params.get('teamId');
-    const studentId = params.get('studentId');
-    const studentName = params.get('studentName');
+    const teamId = params.get("teamId");
+    const studentId = params.get("studentId");
+    const studentName = params.get("studentName");
 
     const [formData, setFormData] = useState<FormData>({
-        teamMembers: '',
-        situationExplanation: '',
+        teamMembers: "",
+        situationExplanation: "",
         fileLinks: [],
     });
 
@@ -53,15 +53,15 @@ export default function StudentComment() {
                     console.log(studentComment.filesUrl);
                     console.log(studentComment.filesName);
                     console.log(studentComment.content);
-                    let filesUrls = studentComment.filesUrl.split(',');
-                    const filesNames = studentComment.filesName.split(',');
+                    let filesUrls = studentComment.filesUrl.split(",");
+                    const filesNames = studentComment.filesName.split(",");
                     filesUrls = filesUrls.slice(0, -1);
                     const newFormData = {
                         teamMembers: studentComment.title,
                         situationExplanation: studentComment.content,
                         fileLinks: filesUrls.map((url: string, index: number) => ({
                             url,
-                            name: filesNames[index] || 'Unnamed File', // Providing a default name if filesNames has fewer entries
+                            name: filesNames[index] || "Unnamed File", // Providing a default name if filesNames has fewer entries
                         })),
                     };
                     console.log("newFormData:" + newFormData);
@@ -107,7 +107,7 @@ export default function StudentComment() {
                         <div key={index} className="flex items-center justify-between border-b py-2">
                             <Button
                                 variant="link"
-                                onClick={() => window.open(file.url, '_blank')}
+                                onClick={() => window.open(file.url, "_blank")}
                                 className="text-blue-600 underline bg-transparent border-none cursor-pointer"
                             >
                                 {file.name}

@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/dbConnect';
+import { NextRequest, NextResponse } from "next/server";
+import dbConnect from "@/lib/dbConnect";
 
 import models from "@/models/models";
 
@@ -48,14 +48,14 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Student is not in this course." }, { status: 404 });
         }
         //please note that port may change
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-        const authcodeCreationResponse = await fetch(`${baseUrl}/api/authcodeSystem/createAuthcode`, {method: 'POST', body: JSON.stringify({zid: zID})})
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+        const authcodeCreationResponse = await fetch(`${baseUrl}/api/authcodeSystem/createAuthcode`, {method: "POST", body: JSON.stringify({zid: zID})})
         if (!authcodeCreationResponse.ok) {
             return authcodeCreationResponse;
         }
         console.log("HI")
         const authCode = await authcodeCreationResponse.json();
-        const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: 'POST', body: JSON.stringify({email: student.email, authCode: authCode.authCode, role: 'student'})})
+        const sendAuthCodeResponse = await fetch(`${baseUrl}/api/mailingSystem/sendAuthCode`, {method: "POST", body: JSON.stringify({email: student.email, authCode: authCode.authCode, role: "student"})})
         if (!sendAuthCodeResponse.ok) {
             return sendAuthCodeResponse
         }
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({studentId: student._id, teamId: teamId, courseId: course._id}, {status: authcodeCreationResponse.status})
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - Team Email:', error);
+            console.error("Error - Team Email:", error);
             return NextResponse.json({error: error.message}, {status: 502})
         }
     }
