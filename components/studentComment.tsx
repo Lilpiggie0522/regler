@@ -55,15 +55,15 @@ export default function StudentComment() {
                     alert("Error: " + response.statusText);
                 } else {
                     const students = await response.json();
-                    console.log(students.studentIssueInfos);
+                    // console.log(students.studentIssueInfos);
                     const student : IssueStudent = students.studentIssueInfos.find((student: IssueStudent) =>
                         student.comment.student === studentId
                     );
                     const studentComment : StudentComment = student.comment;
-                    console.log("studentComment:" + studentComment);
-                    console.log(studentComment.filesUrl);
-                    console.log(studentComment.filesName);
-                    console.log(studentComment.content);
+                    // console.log("studentComment:" + studentComment);
+                    // console.log(studentComment.filesUrl);
+                    // console.log(studentComment.filesName);
+                    // console.log(studentComment.content);
                     let filesUrls = studentComment.filesUrl.split(",");
                     const filesNames = studentComment.filesName.split(",");
                     filesUrls = filesUrls.slice(0, -1);

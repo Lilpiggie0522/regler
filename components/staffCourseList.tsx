@@ -69,9 +69,9 @@ export default function CourseList() {
             }
             const courseObj = await coursesResponse.json();
 
-            courseObj.courses.forEach((course: Course) => {
-                console.log("Course Term:", course.term);
-            });
+            // courseObj.courses.forEach((course: Course) => {
+            //     console.log("Course Term:", course.term);
+            // });
 
             setCoursesData(courseObj.courses);
             // console.log("courses data:", courseObj.courses);

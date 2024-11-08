@@ -1,12 +1,12 @@
-import crypto from 'crypto';
-import dbConnect from './dbConnect';
+import crypto from "crypto";
+import dbConnect from "./dbConnect";
 import models from "@/models/models";
 const AuthCode = models.AuthCode;
 
 // Generate a code with a given length
 function generateAuthCode(length: number = 6): string {
-    const characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let authCode = '';
+    const characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let authCode = "";
     const bytes = crypto.randomBytes(length);
 
     for (let i = 0; i < length; i++) {
@@ -19,7 +19,7 @@ function generateAuthCode(length: number = 6): string {
 export async function createUniqueAuthCode(zid: string): Promise<string> {
     await dbConnect();
     let isUnique = false;
-    let authCode = '';
+    let authCode = "";
     await AuthCode.deleteMany({ zid });
     // ensure code is unique
     while (!isUnique) {

@@ -70,7 +70,6 @@ export default function LecturerPage() {
             if (response.ok) {
                 alert("OK! Data sent and received")
                 const displayData = await response.json()
-                console.log(displayData)
                 setShowData(true)
                 setDisplayData(displayData)
             } else {

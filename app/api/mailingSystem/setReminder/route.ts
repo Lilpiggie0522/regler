@@ -54,7 +54,6 @@ async function InitialReminderCron() {
     await reminderRequest();
     // cron.schedule('25 4 * * *', async () => {
     cron.schedule("*/5 * * * *", async () => {
-        console.log("Check every 5 minutes");
         await reminderRequest();
     });
 }

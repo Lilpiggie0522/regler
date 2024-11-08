@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Failed to fetch individual submissions" }, { status: response.status });
         }
         const { submissionsRecord: individualSubList } = await response.json();
-        console.log("Fetched individualSubList:", individualSubList);
 
         // Fetch the group list
         const groupListResponse = await fetch(`${baseUrl}/api/staff/groupList`, {
