@@ -23,31 +23,26 @@ export async function deleteReminder(issueId: string, personId: string, type: st
         // check if mentor or student exists
         const reminder = await models.Reminder.findOne({ issue: issueId });
         if (!reminder) {
-            // console.error('reminder not found or issue closed');
             return "reminder not found or issue closed"
         }
         if (type === "student") {
             const student = await models.Student.findById(personId);
             if (!student) {
-                // console.error('student not in the team/ already submitted');
                 return "student not in the team/ already submitted"
             }
             await models.Reminder.updateOne({ issue: issueId }, { $pull: { students: personId } });
         } else if (type === "mentor") {
             const mentor = await models.Admin.findById({ _id: personId });
             if (!mentor) {
-                // console.error('tutor not in the team/ already submitted');
                 return "tutor not in the team/ already submitted";
             }
             await models.Reminder.updateOne({ issue: issueId }, { $pull: { mentors: personId } });
         } else {
             return "Incorrect type";
         }
-        // console.log('Successfully remove person from reminder')
         return "Successfully remove person from reminder";
     } catch (error) {
         if (error instanceof Error) {
-            // console.error('Error - deleteReminders', error);
             return `Unexpected error: ${error}`;
         }
     }

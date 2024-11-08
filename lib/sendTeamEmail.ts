@@ -20,6 +20,7 @@ const Admin = models.Admin;
     Output: 
         Send email contains evaluation link to the rest of members
         Send confirmation email to initial applicant
+        Create team reminder to schedule
     Error:
         - Check if team exists
         - Check if course exists
@@ -30,12 +31,10 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
         const team = await Team.findById(teamId);
         const course = await Course.findById(courseId);
         if (!team) {
-            // console.error({ message: "Error - sendTeam: Team not found"});
-            return { message: "Team not found" }
+            return "Team not found"
         }
         if (!course) {
-            // console.error({ message: "Error - sendTeam: Course not found"});
-            return { message: "Course not found" }
+            return "Course not found"
         }
         const transport = nodemailer.createTransport({
             service: "gmail",
@@ -119,7 +118,6 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
         for (const mentorId of team.mentors) {
             const temp = await Admin.findById(mentorId);
             if (!temp) {
-                // console.error(`Error - sendTeam: ${temp} can not be found as a tutor`);
                 continue
             }
             emailList.push(temp.email);
@@ -167,12 +165,10 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
             mentors: team.mentors,
         });
         
-        // console.log('Notification sent to the team and tutors successfully');
         return { message: "Notification sent to the team and tutors successfully" };
 
     } catch (error) {
         if (error instanceof Error) {
-            // console.error('Error - sendTeam', error);
             return { message: `Error - sendTeam ${error}` }
         }
     }
