@@ -80,30 +80,37 @@ export async function GET(req : NextRequest, { params } : Params) {
                     teamName: 1,
                     _id: 1,
                     'mentorDetails.adminName': 1,  // Only keep mentor names
-                    'issueDetails.status': 1       // Only keep issue status
+                    'issueDetails.status': 1,
+                    'issueDetails.assignment': 1,
+                    'issueDetails._id': 1,       // Only keep issue status
                 }
             }
         ]);
         // Process the data for easier use if necessary
-        teams = teamData.map(team => ({
+        console.log(teamData)
+        teams = teamData.map(team => (
+            {
             groupName: team.teamName,
             lecturer: lecturerName,
             teamId: team._id,
             tutors: team.mentorDetails.map((mentor: Mentor) => mentor.adminName).join(', '),
             // if there is no any issues, in the team.
-            status: team.issueDetails ? getStatus(team.issueDetails.status) : 'Not Started'  // Handle null case for issue
+            status: team.issueDetails ? getStatus(team.issueDetails.status) : 'Not Started',  // Handle null case for issue
+            issueId: team.issueDetails? team.issueDetails._id : null,
         }));
         
 
         console.log(teams);
         return NextResponse.json({teams}, {status: 200});
     } catch (error) {
+        console.error(error)
         return NextResponse.json({ error: error}, {status: 500});
     }
     
 }
 
 function getStatus(status: string) : string  {
+    console.log(status);
     switch (status) {
         // if there is still some students no filled the form
         case 'pending':

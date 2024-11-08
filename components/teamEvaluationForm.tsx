@@ -17,46 +17,62 @@ interface TeamEvaluationFormProps{
     studentId: string| null;
 	issueId: string| null;
 }
-interface Question {
-	question: string;
+interface CourseData {
+	questions: {
+		question: string;
+	}
+	assignments: {
+		assignmentName: string;
+	};
 }
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Define state for the form inputs
 	const router = useRouter();
 	const { teamId, courseId, studentId, issueId } = props;
+
 	const [formData, setFormData] = useState<FormData>({
 		fileLinks: [],
 		answers: [], // Initialize as empty array
 	});
+	const [selectedOption, setSelectedOption] = useState('');
 	const [questions, setQuestions] = useState<string[]>([]);
+	const [assignments, setAssignments] = useState<string[]>([]);
 
-	const fetchQuestions = async(courseId : string | null) => {
+	const fetchCourse = async(courseId : string | null) => {
 		// Fetch questions from your API endpoint or database based on the provided teamId, courseId, and studentId
         // Replace the following code with your actual API call or database query
 		if (questions.length > 0) {
 			return; // Return early if questions are already fetched and available
 		}
-        const questionsData = await fetch(`/api/util/getCourseById/${courseId}`, {
+        const courseData = await fetch(`/api/util/getCourseById/${courseId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
         })
             .then((res) => res.json())
-            .then((data) => data.questions);
-		console.log('Fetched questions:', questionsData);
+            
+		console.log('Fetched questions:', courseData.questions);
+		console.log('Fetched assignments:', courseData.assignments);
 		setQuestions((prevQuestions) => {
 			const newQuestions = [...prevQuestions];
-			questionsData.forEach((row : Question, index: number) => {
-				newQuestions[index] = row.question; // Set question by index
+			courseData.forEach((row : CourseData, index: number) => {
+				newQuestions[index] = row.questions.question; // Set question by index
 			});
 			return newQuestions;
+		});
+		setAssignments((prevAssignments) => {
+			const newAssignments = [...prevAssignments];
+            courseData.forEach((row : CourseData, index: number) => {
+                newAssignments[index] = row.assignments.assignmentName; // Set assignment by index
+            });
+            return newAssignments;
 		});
 	};
     useEffect(() => {
         
-        fetchQuestions(courseId);
+        fetchCourse(courseId);
     }, [courseId]);
 
 	// Handle input changes for text areas
@@ -104,6 +120,10 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		  alert('An unexpected error occurred.');
 		}
 	  };
+	  
+	  const handleDropdownChange = (event) => {
+        setSelectedOption(event.target.value);
+    };
 	// Handle form submission
 	const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -208,6 +228,24 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 			<h1 className="text-black text-3xl font-bold">Team Evaluation Form</h1>
 		</div>
 		<form className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md" onSubmit={handleSubmit}>
+
+			<label htmlFor="dropdown" className="text-lg text-black block mb-2">
+                Select an option:
+            </label>
+            <select 
+                id="dropdown" 
+                className="border border-gray-300 p-2 rounded-md w-full text-black mb-4" 
+                value={selectedOption} 
+                onChange={handleDropdownChange}
+            >
+                <option value="" disabled>Select an option</option>
+				{assignments.map((assignment, index) => (
+					<option key={index} value={assignment}>
+                        {assignment}
+                    </option>
+				))}
+            </select>
+
 			{questions.map((question, index) => (
 				<div key={index}>
 					<div className="question-row" key={index}>

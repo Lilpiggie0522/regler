@@ -24,6 +24,7 @@ export default function UnifiedInfo() {
     const [content, setContent] = useState<string>('')
     const [tutorComment, setTutorComment] = useState<string>('')
     const [staffId,] = useLocalStorageState('staffId', '');
+    const [issueId,] = useLocalStorageState('issueId', '');
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
 
@@ -165,7 +166,7 @@ export default function UnifiedInfo() {
                                     
                                     <Button
                                         className="bg-blue-500 text-white py-1 px-3 rounded"
-                                        onClick={() => router.push(`/studentComment?studentId=${student.id}&teamId=${teamId}&studentName=${student.name}`)}
+                                        onClick={() => router.push(`/studentComment?studentId=${student.id}&issueId=${issueId}&studentName=${student.name}`)}
                                     >
                                         Details
                                     </Button>

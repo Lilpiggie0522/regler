@@ -51,8 +51,8 @@ describe('Create issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!"
+      questions
+      answers
       };
     
       // Mock a NextRequest with JSON body

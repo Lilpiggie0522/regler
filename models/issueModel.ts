@@ -2,6 +2,10 @@ import mongoose, { Schema } from 'mongoose';
 // import models from './models';
 
 export const issueSchema = new Schema({
+    assignment: {
+      type: "string",
+      required: true
+    },
     status: {
         type: 'string', 
         enum: ['pending', 'complete', 'Need Feedback'],
