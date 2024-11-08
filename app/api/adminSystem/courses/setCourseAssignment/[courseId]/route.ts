@@ -43,7 +43,7 @@ export async function PUT(req : NextRequest, { params } : Params) {
             return NextResponse.json({error: "invalid course id"}, {status: 400});
         }
         const request = await req.json();
-        const updateAssignments : UpdateAssignmentInput[]  = request.body.assignments;
+        const updateAssignments : UpdateAssignmentInput[]  = request.assignments;
         const course = await Course.updateOne({_id : courseId},
             {
                 $set:{ assignments: updateAssignments},
@@ -57,6 +57,7 @@ export async function PUT(req : NextRequest, { params } : Params) {
         return NextResponse.json({message: "assignments updated", assignments}, {status: 200});
         
     } catch (error) {
+        console.error("ERROR",error);
         return NextResponse.json({ error: error}, {status: 500});
     }
     
