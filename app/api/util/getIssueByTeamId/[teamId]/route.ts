@@ -33,13 +33,13 @@ export async function GET(req: NextRequest, { params }: Params) {
         }
 
         if(issue.tutorComments.length == 0) {
-            return NextResponse.json({ message: "No tutor comments are available"}, {status: 402 });
+            return NextResponse.json({ message: "No tutor comments are available"}, {status: 400 });
         }
         // content is required when created
         const tutorComment = issue.tutorComments[0].content;
         const tutor = await Admin.findById(issue.tutorComments[0].tutor).exec();
         if (!tutor) {
-            return NextResponse.json({ message: "Tutor not found " + tutor}, {status: 405 });
+            return NextResponse.json({ message: "Tutor not found " + tutor}, {status: 400 });
         }
         
         return NextResponse.json({ tutorComment, tutorName: tutor.adminName}, { status: 200 });
