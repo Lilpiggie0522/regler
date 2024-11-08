@@ -35,11 +35,11 @@ export default function UnifiedInfo() {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [content, setContent] = useState<string>('')
     const [tutorComment, setTutorComment] = useState<string>('')
-    const [lecturerComment, setLecturerComment] = useState<string>('')
+    //const [lecturerComment, setLecturerComment] = useState<string>('')
     const [staffId,] = useLocalStorageState('staffId', '');
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
-    const [isAdmin, setIsAdmin] = useState<boolean>(true);
+    const [isAdmin] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [showError, setShowError] = useState(false);
 
@@ -133,7 +133,7 @@ export default function UnifiedInfo() {
             }
         } catch (error) {
             console.error(error);
-            (false);
+            setIsUploadedSuccessfully(false);
         }
     };
 
