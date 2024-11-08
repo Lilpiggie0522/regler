@@ -9,6 +9,19 @@ let studentId : string, teamId : string, courseId: string;
 let notInTeamStudentIds : string;
 const { Team, Course, Student} = models;
 let mongoServer: MongoMemoryServer;
+
+const questions : string[] = [
+  
+   'How do you do'
+  ,
+  
+  'What is the weather like'
+  
+]
+
+const answers : string[] = [
+  'answer1', 'answer2'
+]
 // input fields
 beforeAll(async () => {
 
@@ -51,8 +64,9 @@ describe('Create issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      questions
-      answers
+      questions: questions,
+      answers: answers,
+      assignment:'default project',
       };
     
       // Mock a NextRequest with JSON body
@@ -104,8 +118,9 @@ describe('Create issue API Tests', () => {
       courseId: courseId,
       filesUrl: "anc.png,dasd.jpg",
       filesName: "anc,dasd",
-      title: "disagreement to the babalala",
-      content: "this is a very important issue!!!!"
+      questions: questions,
+      answers: answers,
+      assignment:'default project',
       };
     
      
@@ -130,13 +145,14 @@ describe('Create issue API Tests', () => {
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
         filesName: "anc,dasd",
-        title: "disagreement to the babalala",
-        content: "this is a very important issue!!!!"
+        questions: questions,
+        answers: answers,
+        assignment:'default project',
         };
       //const json = await res.json(); // Parse the JSON response
       //console.log(json);
 
-      //submitting again should be failed
+      
       req = new NextRequest(new URL('http://localhost/api/issueSystem/createIssue'), {
         method: 'POST',
         body: JSON.stringify(body),
@@ -152,8 +168,10 @@ describe('Create issue API Tests', () => {
         courseId: courseId,
         filesUrl: "anc.png,dasd.jpg",
         filesName: "anc,dasd",
-        title: "",
-        content: "this is a very important issue!!!!"
+        questions: questions,
+        answers: answers,
+        assignment: "",
+        
         };
       req = new NextRequest(new URL('http://localhost/api/issueSystem/createIssue'), {
         method: 'POST',

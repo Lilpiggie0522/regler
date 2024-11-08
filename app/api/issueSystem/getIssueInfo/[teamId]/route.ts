@@ -94,7 +94,7 @@ export async function GET(req : NextRequest, { params } : Params) {
 
     }
 
-    return NextResponse.json({ studentIssueInfos,  }, { status: 200 });
+    return NextResponse.json({ studentIssueInfos }, { status: 200 });
 
     } catch (err) { 
       console.error("Error retrieving team:", err);

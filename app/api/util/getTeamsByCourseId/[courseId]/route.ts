@@ -97,6 +97,7 @@ export async function GET(req : NextRequest, { params } : Params) {
             // if there is no any issues, in the team.
             status: team.issueDetails ? getStatus(team.issueDetails.status) : 'Not Started',  // Handle null case for issue
             issueId: team.issueDetails? team.issueDetails._id : null,
+            assignment: team.issueDetails? team.issueDetails.assignment : null,  // Handle null case for assignment
         }));
         
 

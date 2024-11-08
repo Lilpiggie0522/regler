@@ -1,5 +1,5 @@
 
-import {POST as createIssuePOST, DELETE} from '@/app/api/issueSystem/createIssue/route';
+import {CreateIssueInput, POST as createIssuePOST, DELETE} from '@/app/api/issueSystem/createIssue/route';
 import {POST as opinionPOST, TutorOpinionInput} from '@/app/api/staff/tutorOpinions/route';
 import models from '@/models/models';
 import { NextRequest } from 'next/server';
@@ -11,6 +11,18 @@ let studentId : string, teamId : string, courseId: string, tutorId: string;
 let teamId2: string, tutorId2: string, studentId2: string;
 const { Team, Course, Student, Admin} = models;
 let mongoServer: MongoMemoryServer;
+const questions : string[] = [
+  
+    'How do you do'
+   ,
+   
+   'What is the weather like'
+   
+  ]
+  
+  const answers : string[] = [
+   'answer1', 'answer2'
+  ]
 
 beforeAll(async () => {
 
@@ -53,13 +65,15 @@ afterAll(async () => {
 describe('Create tutor opinions API Tests', () => {
     it('Successfully submitted Tutors opinion, resubmit should fail', async () => {
         // Create a issue, return 200 if successful
-        const createIssueBody = {
+        const createIssueBody : CreateIssueInput = {
             studentId: studentId,
             teamId: teamId,
             courseId: courseId,
             filesUrl: "anc.png,dasd.jpg",
-            title: "disagreement to the babalala",
-            content: "this is a very important issue!!!!"
+            filesName: "anc,dasd",
+            questions: questions,
+            answers: answers,
+            assignment:'default project',
         };
         
         const createIssueRequest = new NextRequest(
@@ -156,13 +170,15 @@ describe('Debug tutor opinions API Tests', () => {
 
     it('Submit an empty comment or Team id invalid', async () => {
         // Create a issue, return 200 if successful
-        const createIssueBody = {
+        const createIssueBody : CreateIssueInput = {
             studentId: studentId2,
             teamId: teamId2,
             courseId: courseId,
             filesUrl: "anc.png,dasd.jpg",
-            title: "disagreement to the babalala",
-            content: "this is a very important issue!!!!"
+            filesName: "anc,dasd",
+            questions: questions,
+            answers: answers,
+            assignment:'default project',
         };
         
         const createIssueRequest = new NextRequest(

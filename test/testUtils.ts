@@ -30,6 +30,22 @@ export async function initialiseDatabase(input: initialiseInput) {
       term,
       teams: [],
       mentors: [],
+      assignments: [
+        {
+          assignmentName: 'default project'
+        },
+        {
+          assignmentName: 'default project2'
+        }
+      ],
+    questionBanks: [
+      {
+        question: 'How do you do'
+      },
+      {
+        question: 'What is the weather like'
+      }
+]
     });
   }
 

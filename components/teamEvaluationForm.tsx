@@ -5,6 +5,7 @@ import ImageKitUpload from './imageKit/ImageKitUpload';
 import ImageKitDelete from './imageKit/ImageKitDelete';
 import {deleteImage} from './services/imageKitApi';
 import {useEffect} from 'react';
+import { Question } from '@/app/api/issueSystem/createIssue/route';
 
 
 interface FormData {
@@ -17,14 +18,10 @@ interface TeamEvaluationFormProps{
     studentId: string| null;
 	issueId: string| null;
 }
-interface CourseData {
-	questions: {
-		question: string;
-	}
-	assignments: {
-		assignmentName: string;
-	};
+interface Assignment{
+	assignmentName: string;
 }
+
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 	// Define state for the form inputs
@@ -57,15 +54,15 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		console.log('Fetched assignments:', courseData.assignments);
 		setQuestions((prevQuestions) => {
 			const newQuestions = [...prevQuestions];
-			courseData.forEach((row : CourseData, index: number) => {
-				newQuestions[index] = row.questions.question; // Set question by index
+			courseData.questions.forEach((row : Question, index: number) => {
+				newQuestions[index] = row.question; // Set question by index
 			});
 			return newQuestions;
 		});
 		setAssignments((prevAssignments) => {
 			const newAssignments = [...prevAssignments];
-            courseData.forEach((row : CourseData, index: number) => {
-                newAssignments[index] = row.assignments.assignmentName; // Set assignment by index
+            courseData.assignments.forEach((row : Assignment, index: number) => {
+                newAssignments[index] = row.assignmentName; // Set assignment by index
             });
             return newAssignments;
 		});
@@ -121,7 +118,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		}
 	  };
 	  
-	  const handleDropdownChange = (event) => {
+	const handleDropdownChange = (event : React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedOption(event.target.value);
     };
 	// Handle form submission
@@ -230,15 +227,16 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		<form className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md" onSubmit={handleSubmit}>
 
 			<label htmlFor="dropdown" className="text-lg text-black block mb-2">
-                Select an option:
+				Select the project for this form: 
             </label>
             <select 
                 id="dropdown" 
                 className="border border-gray-300 p-2 rounded-md w-full text-black mb-4" 
                 value={selectedOption} 
                 onChange={handleDropdownChange}
+				required
             >
-                <option value="" disabled>Select an option</option>
+                <option value="" disabled></option>
 				{assignments.map((assignment, index) => (
 					<option key={index} value={assignment}>
                         {assignment}
