@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { gitContribution } from '@/lib/gitContribution';
 
 /*
@@ -8,7 +8,7 @@ import { gitContribution } from '@/lib/gitContribution';
     Output: 
         Return contributor lists
 */
-export async function GET(request: NextRequest) {
+export async function GET() {
     const owner = 'ruiqidiaodrq';
     const repo = 'TEST3900';
     
