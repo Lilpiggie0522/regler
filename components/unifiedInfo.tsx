@@ -56,9 +56,6 @@ export default function UnifiedInfo() {
                     setTutorComment(JSON.stringify(message).slice(1,).slice(0,-1));
                 } else {
                     const comment = await response.json()
-
-                    console.log("comment: " + comment)
-                    console.log("tutorName: " + comment.tutorName)
                     setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment).slice(1,).slice(0,-1));
                     //加回去slice
                 }
@@ -83,7 +80,6 @@ export default function UnifiedInfo() {
                     const studentInfos : Student[] = [];
                     if (students.studentIssueInfos !== undefined) {
                         for (const student of students.studentIssueInfos) {
-                            console.log(student)
                             const studentInfo : Student = {
                                 id : student.comment.student,
                                 name: student.studentName,
@@ -97,7 +93,6 @@ export default function UnifiedInfo() {
                     }
                     setStudents(studentInfos);
                     const {message} = students
-                    console.log("ksdjfakdjfksajfklszzzz")
                     console.log(message)
                 }
             } catch (error) {
