@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import ProjectModal from './modals/staffProjectModal';
+import AssessmentModal from './modals/staffAssessmentModal';
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -40,7 +40,7 @@ const GroupList: React.FC = () => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
-    const [showProjectModal, setShowProjectModal] = useState(false);
+    const [showAssessmentModal, setShowAssessmentModal] = useState(false);
     const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
 
     // Fetch groups from the API
@@ -148,11 +148,11 @@ const GroupList: React.FC = () => {
                     <button 
                         className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
                         onClick={() => {
-                            setShowProjectModal(true);
+                            setShowAssessmentModal(true);
                             setSelectedCourseId(courseId);
                         }}
                     >
-                        Edit Project
+                        Edit Assessments
                     </button>
 
                     {/* Search bar section */}
@@ -173,10 +173,10 @@ const GroupList: React.FC = () => {
 
             </div>
 
-            {showProjectModal && (
-                <ProjectModal
+            {showAssessmentModal && (
+                <AssessmentModal
                     courseId={selectedCourseId}
-                    onClose={() => setShowProjectModal(false)} 
+                    onClose={() => setShowAssessmentModal(false)} 
                 />
             )}
 
