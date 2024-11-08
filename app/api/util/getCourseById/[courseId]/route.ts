@@ -1,6 +1,6 @@
 // get courseById
 import { NextRequest, NextResponse } from "next/server";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import models from "@/models/models";
 import dbConnect from "@/lib/dbConnect";
 
@@ -15,7 +15,7 @@ export async function GET( req: NextRequest) {
    
     try {
         await dbConnect();
-        const courseId = req.url.split('/').pop();
+        const courseId = req.url.split("/").pop();
         if (!mongoose.isValidObjectId(courseId)) {
             return NextResponse.json({error: "invalid course id"}, {status: 400});
         }

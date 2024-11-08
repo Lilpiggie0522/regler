@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import dbConnect from '@/lib/dbConnect';
+import nodemailer from "nodemailer";
+import dbConnect from "@/lib/dbConnect";
 
 import models from "@/models/models";
 
@@ -29,16 +29,16 @@ export async function sendLecturerTutor(teamId: string, courseId: string, issueI
         const course = await Course.findById(courseId);
         const issue = await Issue.findById(issueId);
         if (!team) {
-            return 'team not exists';
+            return "team not exists";
         }
         if (!course) {
-            return 'course not exists';
+            return "course not exists";
         }
         if (!issue) {
-            return 'issue not exists';
+            return "issue not exists";
         }
         const transport = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
@@ -51,7 +51,7 @@ export async function sendLecturerTutor(teamId: string, courseId: string, issueI
             const mailingParameters = {
                 from: process.env.SMTP_EMAIL,
                 to: lecturer.email,
-                subject: 'Tutor Opinion Submission on Contribalance',
+                subject: "Tutor Opinion Submission on Contribalance",
                 html: 
                 `
                 <p>
@@ -71,10 +71,10 @@ export async function sendLecturerTutor(teamId: string, courseId: string, issueI
             };
             await transport.sendMail(mailingParameters);
         }
-        return 'Send email successfully';
+        return "Send email successfully";
     } catch (error) {
         if (error instanceof Error) {
-            return 'Unexpected error';
+            return "Unexpected error";
         }
     }
 }

@@ -22,7 +22,7 @@ export async function gitContribution(owner: string, repo: string) {
             owner: owner,
             repo: repo,
             headers: {
-                'X-GitHub-Api-Version': '2022-11-28'
+                "X-GitHub-Api-Version": "2022-11-28"
             },
         });
         
@@ -56,7 +56,7 @@ export async function gitContribution(owner: string, repo: string) {
         return contributorList;
     } catch (error) {
         if (error instanceof Error) {
-            console.log(error);
+            return "Unexpected error";
         }
     }
 }

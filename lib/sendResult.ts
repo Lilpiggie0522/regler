@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import dbConnect from '@/lib/dbConnect';
+import nodemailer from "nodemailer";
+import dbConnect from "@/lib/dbConnect";
 import models from "@/models/models";
 
 const Student = models.Student;
@@ -27,16 +27,16 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
         const course = await Course.findById(courseId);
         const issue = await Issue.findById(issueId);
         if (!team) {
-            return 'team not exists';
+            return "team not exists";
         }
         if (!course) {
-            return 'course not exists';
+            return "course not exists";
         }
         if (!issue) {
-            return 'issue not exists';
+            return "issue not exists";
         }
         const transport = nodemailer.createTransport({
-            service: 'gmail',
+            service: "gmail",
             auth: {
                 user: process.env.SMTP_EMAIL,
                 pass: process.env.SMTP_PASSWORD,
@@ -48,7 +48,7 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
             const mailingParameters = {
                 from: process.env.SMTP_EMAIL,
                 to: student.email,
-                subject: 'Contribution Dispute Completed',
+                subject: "Contribution Dispute Completed",
                 html: 
                 `
                 <p>
@@ -76,10 +76,10 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
             };
             await transport.sendMail(mailingParameters);
         }
-        return 'Send emails to students successfully';
+        return "Send emails to students successfully";
     } catch (error) {
         if (error instanceof Error) {
-            return 'failed to send result to students';
+            return "failed to send result to students";
         }
     }
 }

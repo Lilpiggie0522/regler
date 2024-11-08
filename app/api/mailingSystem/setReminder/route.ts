@@ -1,8 +1,8 @@
-import dbConnect from '@/lib/dbConnect';
-import reminderMod from '@/lib/reminderMod';
+import dbConnect from "@/lib/dbConnect";
+import reminderMod from "@/lib/reminderMod";
 import models from "@/models/models";
-import { NextResponse } from 'next/server';
-import cron from 'node-cron';
+import { NextResponse } from "next/server";
+import cron from "node-cron";
 
 // const CHECK_TIME = '';
 // const PRO_INTERVAL = 7*24*60*60*1000;
@@ -25,7 +25,7 @@ async function reminderRequest() {
                 Issue.findById(reminder.issue),
                 Course.findById(reminder.course)
             ]);
-            if (!teamCheck || !issueCheck || !courseCheck || issueCheck.status === 'closed') {
+            if (!teamCheck || !issueCheck || !courseCheck || issueCheck.status === "closed") {
                 await models.Reminder.deleteOne({ _id: reminder._id });
                 continue;
             }
@@ -53,7 +53,7 @@ async function reminderRequest() {
 async function InitialReminderCron() {
     await reminderRequest();
     // cron.schedule('25 4 * * *', async () => {
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule("*/5 * * * *", async () => {
         await reminderRequest();
     });
 }

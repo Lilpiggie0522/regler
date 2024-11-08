@@ -20,16 +20,16 @@ type DynamicResult = {
     [key: string]: string;
 };
 export function courseNameRegexCheck(filename: string): string | string[]{
-    const courseRegex = /COMP[0-9]{4}/;
+    const courseRegex = /[A-Za-z]{4}[0-9]{4}/;
     const courseMatch = filename.match(courseRegex);
     if (!courseMatch) {
-        return 'Please include course name in title'
+        return "Please include course name in title."
     }
 
     const courseTermRegex = /[0-9]{2}[Tt][0-3]/;
     const courseTermMatch = filename.match(courseTermRegex);
     if (!courseTermMatch) {
-        return 'Please include course term in title'
+        return "Please include course term in title."
     }
     return [courseMatch![0], courseTermMatch![0]]
 }
@@ -38,11 +38,11 @@ export function parseCSV(stream: Readable): Promise<DynamicResult[]> {
     const results: DynamicResult[] = []
     return new Promise((resolve, reject) => {
         stream.pipe(csvParser())
-            .on('data', (row) => {
+            .on("data", (row) => {
                 results.push(row)
             })
-            .on('end', () => resolve(results))
-            .on('error', (err) => reject(err))
+            .on("end", () => resolve(results))
+            .on("error", (err) => reject(err))
     })
 }
 
@@ -53,7 +53,7 @@ export async function convertFileData(file: File): Promise<convertedResult[]> {
     const results = await parseCSV(csvStream)
     const converted: convertedResult[] = results.map(row => {
         const lowerCaseRow = Object.fromEntries(
-            Object.entries(row).map(([key, value]) => [key.replace(/\s+/g, '').toLowerCase(), value?.trim()])
+            Object.entries(row).map(([key, value]) => [key.replace(/\s+/g, "").toLowerCase(), value?.trim()])
         ) as convertedResult
         return lowerCaseRow
     })
@@ -80,7 +80,7 @@ export function insertAdmin(converted: convertedResult[], courseAdmins: createAd
             const newAdmin: createAdminInput = {
                 adminName: newAdminName,
                 email: newAdminEmail,
-                role: 'admin',
+                role: "admin",
                 courseName: courseName,
                 term: courseTerm
             }
@@ -95,17 +95,17 @@ export function insertTeam(row: convertedResult, teams: createTeamInput[], newCo
     if (!alreadyPushedTeam) {
         const newTeam: createTeamInput = {
             teamName: newTeamName,
-            mentorsEmails: '',
-            studentsZids: ''
+            mentorsEmails: "",
+            studentsZids: ""
         }
         teams.push(newTeam)
 
         // adding team to courses
-        if (!newCourse.teams.split(',').includes(newTeamName)) {
-            if (newCourse.teams === '') {
+        if (!newCourse.teams.split(",").includes(newTeamName)) {
+            if (newCourse.teams === "") {
                 newCourse.teams += newTeamName
             } else {
-                newCourse.teams += ','
+                newCourse.teams += ","
                 newCourse.teams += newTeamName
             }
         }
@@ -125,19 +125,19 @@ export function insertTutor(row: convertedResult, staffAdmins: createAdminInput[
             email: newMentorEmail,
             courseName: courseName,
             term: courseTerm,
-            role: 'tutor'
+            role: "tutor"
         }
         staffAdmins.push(newMentor)
         // adding mentor email to course
         if (newCourse.mentorsEmails) {
-            newCourse.mentorsEmails += ','
+            newCourse.mentorsEmails += ","
         }
         newCourse.mentorsEmails += newMentorEmail
         // adding mentor id to team
         if (teamToAdd) {
-            if (!teamToAdd.mentorsEmails.split(',').includes(newMentorEmail)) {
+            if (!teamToAdd.mentorsEmails.split(",").includes(newMentorEmail)) {
                 if (teamToAdd.mentorsEmails) {
-                    teamToAdd.mentorsEmails += ','
+                    teamToAdd.mentorsEmails += ","
                 }
                 teamToAdd.mentorsEmails += newMentorEmail
             }
@@ -153,9 +153,9 @@ export function insertTutor(row: convertedResult, staffAdmins: createAdminInput[
         
         // adding mentor id to team
         if (teamToAdd) {
-            if (!teamToAdd.mentorsEmails.split(',').includes(newMentorEmail)) {
+            if (!teamToAdd.mentorsEmails.split(",").includes(newMentorEmail)) {
                 if (teamToAdd.mentorsEmails) {
-                    teamToAdd.mentorsEmails += ','
+                    teamToAdd.mentorsEmails += ","
                 }
                 teamToAdd.mentorsEmails += newMentorEmail
             }
@@ -168,22 +168,24 @@ export function insertStudent(row: convertedResult, students: createStudentInput
     const newStudentName = row.name
     const newStudentEmail = row.email
     const newStudentZid = row.zid
+    //const newStudentClass = row.class
     const alreadyPushedStudent = students.find(student => student.zid === newStudentZid)
     if (!alreadyPushedStudent) {
         const newStudent: createStudentInput = {
             studentName: newStudentName,
             email: newStudentEmail,
-            zid: newStudentZid
+            zid: newStudentZid,
+            //class: newStudentClass
         }
         students.push(newStudent)
 
         // adding student id to team
         if (teamToAdd) {
-            if (!teamToAdd.studentsZids.split(',').includes(newStudentZid)) {
-                if (teamToAdd.studentsZids === '') {
+            if (!teamToAdd.studentsZids.split(",").includes(newStudentZid)) {
+                if (teamToAdd.studentsZids === "") {
                     teamToAdd.studentsZids += newStudentZid
                 } else {
-                    teamToAdd.studentsZids += ','
+                    teamToAdd.studentsZids += ","
                     teamToAdd.studentsZids += newStudentZid
                 }
             }
