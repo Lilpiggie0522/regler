@@ -14,66 +14,48 @@ export async function gitContribution(owner: string, repo: string) {
     try {
         await dbConnect();
         
-        // Let student provide owner, repo by project owner and repo name
-        // Please ensure one of your team member is project owner.
-        // If one team member is project owner on github, provide 
-        // project owner and repo will be beneficial for us to adjust.
-        // token required and public repository only 
-        // test? called by api? or directly by 
-        // Or store github username in db and owner and repo, team, assignment?
-        // store info cannot refresh
-        // may need to distinguish initial issue and other issues.
-
-        // 
         const octokit = new Octokit({
             auth: process.env.GIT_TOKEN
-        })
-        // send lecturer if tutor has submited a opinion, send student if lecturer closed/complete. Database, contribution
-
-        // Contributors
-        const response2 = await octokit.request(`GET /repos/${owner}/${repo}/contributors`, {
+        });
+        
+        const response = await octokit.request(`GET /repos/${owner}/${repo}/commits`, {
             owner: owner,
             repo: repo,
             headers: {
                 'X-GitHub-Api-Version': '2022-11-28'
-            }
-        })
-        const contributors = response2.data;
-        console.log(contributors)
+            },
+        });
         
+        const tempRecord = new Map();
         // const Student = models.Student;
+        // Total contribution: commits and merge branch
+        for (const commit of response.data) {
+            if (commit.author) {
+                // unique username
+                const login = commit.author.login;
+                // const student = Student.findOne({ username: login });
 
-        const contributorList = [];
-        for (const contributor of contributors) {
-            // const student = await Student.findOne({ login: contributor.login });
-            // if (!student) {
-            //     console.log('Cannot find student given contributor login');
-            //     continue
-            // }
-            // contributorList.push({
-            //     login: contributor.login,
-            //     id: contributor.id,
-            //     totalCommits: contributor.contributions,
-            //     studentName: student.studentName,
-            //     zid: student.zid,
-            // })
-
-            contributorList.push({
-                login: contributor.login,
-                id: contributor.id,
-                totalCommits: contributor.contributions,
-                // studentName: 'Ruiqi Diao',
-                // zid: 'z5361545',
-            })
+                if (!tempRecord.has(login)) {
+                    tempRecord.set(login, {
+                        login: login,
+                        totalContribution: 1
+                    });
+                } else {
+                    tempRecord.get(login).totalContribution += 1;
+                }
+            }
         }
 
+        const contributorList = Array.from(tempRecord.values());
+        
         return contributorList;
     } catch (error) {
         if (error instanceof Error) {
-            console.log(error)
+            console.log(error);
         }
     }
 }
+
 
 export async function getContribution(issueId: string) {
     try {

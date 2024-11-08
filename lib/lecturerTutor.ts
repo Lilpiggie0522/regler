@@ -3,12 +3,9 @@ import dbConnect from '@/lib/dbConnect';
 
 import models from "@/models/models";
 
-
-const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
-// const Reminder = models.Reminder;
-// const Admin = models.Admin;
+const Admin = models.Admin;
 const Issue = models.Issue;
 
 
@@ -17,30 +14,32 @@ const Issue = models.Issue;
         - teamId: Unique object id of team
         - courseId: Unique object id of course
         - studentId: Unique object id of student who submits application
-        - issueId: Unique object id of issue
+        - lecturers: 
     Output: 
         Send email contains evaluation link to the rest of members
         Send confirmation email to initial applicant
     Error:
         - Check if team exists
         - Check if course exists
-        // - Check if team is contained in courses
-        // - Check if student given in team or not
+        - Check if issue exists
 */
-export async function sendLecturerTutor(teamId: string, courseId: string, issueId: string, result: string) {
+export async function sendLecturerTutor(teamId: string, courseId: string, issueId: string, lecturers: string[]) {
     try {
         await dbConnect();
         const team = await Team.findById(teamId);
         const course = await Course.findById(courseId);
         const issue = await Issue.findById(issueId);
         if (!team) {
-            console.log('team not exists')
+            // console.log('team not exists')
+            return 'team not exists';
         }
         if (!course) {
-            console.log('course not exists')
+            // console.log('course not exists')
+            return 'course not exists';
         }
         if (!issue) {
-            console.log('issue not exists')
+            // console.log('issue not exists')
+            return 'issue not exists';
         }
         const transport = nodemailer.createTransport({
             service: 'gmail',
@@ -50,12 +49,13 @@ export async function sendLecturerTutor(teamId: string, courseId: string, issueI
             },
         });
 
-        for (const tempId of team.students) {
-            const student = await Student.findById(tempId);
+        
+        for (const tempId of lecturers) {
+            const lecturer = await Admin.findById(tempId);
             const mailingParameters = {
                 from: process.env.SMTP_EMAIL,
-                to: student.email,
-                subject: 'Contribution Dispute Completed',
+                to: lecturer.email,
+                subject: 'Tutor Opinion Submission on Contribalance',
                 html: 
                 `
                 <p>
@@ -75,9 +75,11 @@ export async function sendLecturerTutor(teamId: string, courseId: string, issueI
             };
             await transport.sendMail(mailingParameters);
         }
+        return 'Send email successfully';
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - sendResult');
+            // console.error('Error - sendResult');
+            return 'Unexpected error';
         }
     }
 }

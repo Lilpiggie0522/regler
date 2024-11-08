@@ -31,11 +31,11 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
         const course = await Course.findById(courseId);
         if (!team) {
             // console.error({ message: "Error - sendTeam: Team not found"});
-            return { message: 'Team not found' }
+            return 'Team not found'
         }
         if (!course) {
             // console.error({ message: "Error - sendTeam: Course not found"});
-            return { message: 'Course not found' }
+            return 'Course not found'
         }
         const transport = nodemailer.createTransport({
             service: 'gmail',

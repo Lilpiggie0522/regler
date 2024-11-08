@@ -1,6 +1,8 @@
 import nodemailer from 'nodemailer';
 import models from '@/models/models';
 import { sendTeamEmail } from '@/lib/sendTeamEmail';
+import { sendLecturerTutor } from '@/lib/lecturerTutor';
+import { sendResult } from '@/lib/sendResult';
 
 
 jest.mock('nodemailer');
@@ -12,10 +14,9 @@ const Team = models.Team;
 const Course = models.Course;
 const Reminder = models.Reminder;
 const Admin = models.Admin;
+const Issue = models.Issue;
 
-describe('POST sendTeam Test', () => {
-    let response: any;
-    
+describe('sendTeamEmail - send email to students and tutors when a dispute', () => {
     beforeEach(() => {
         jest.clearAllMocks();
 
@@ -91,7 +92,7 @@ describe('POST sendTeam Test', () => {
         });
 
         (Reminder.create as jest.Mock).mockResolvedValue({});
-        response = await sendTeamEmail('team1', 'course1', 'student1', 'issue1');
+        const response = await sendTeamEmail('team1', 'course1', 'student1', 'issue1');
         // Send 4 emails to students and send emails to tutors at once (4+1).
         expect(nodemailer.createTransport).toHaveBeenCalledTimes(1);
         expect(nodemailer.createTransport().sendMail).toHaveBeenCalledTimes(5);
@@ -101,8 +102,8 @@ describe('POST sendTeam Test', () => {
     it('should return "Team not found" if team not exists', async () => {
         (Team.findById as jest.Mock).mockResolvedValue(null);
     
-        response = await sendTeamEmail('Invalid team', 'course1', 'student1', 'issue1');
-        expect(response.message).toBe('Team not found');
+        const response = await sendTeamEmail('Invalid team', 'course1', 'student1', 'issue1');
+        expect(response).toEqual('Team not found');
     });
   
     it('should return "Course not found" if course not exists', async () => {
@@ -115,8 +116,186 @@ describe('POST sendTeam Test', () => {
         });
         (Course.findById as jest.Mock).mockResolvedValue(null);
 
-        response = await sendTeamEmail('team1', 'Invalid course', 'student1', 'issue1');
-        expect(response.message).toBe('Course not found');
+        const response = await sendTeamEmail('team1', 'Invalid course', 'student1', 'issue1');
+        expect(response).toEqual('Course not found');
     });
 });
 
+
+
+describe('lecturerTutor - send email to lecturers and when tutors provide opinions', () => {
+    // let response: any;
+    
+    beforeEach(() => {
+        jest.clearAllMocks();
+
+        (nodemailer.createTransport as jest.Mock).mockReturnValue({
+            sendMail: jest.fn(),
+        });
+
+        Team.findById = jest.fn();
+        Course.findById = jest.fn();
+        Student.findById = jest.fn();
+        Admin.findById = jest.fn();
+        Reminder.create = jest.fn();
+        Issue.create = jest.fn();
+    });
+    afterAll(async () => {
+        jest.clearAllMocks();
+    });
+  
+    it('should send notifications to rest of the team and tutors successfully', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue({});
+        (Course.findById as jest.Mock).mockResolvedValue({});
+        (Issue.findById as jest.Mock).mockResolvedValue({});
+
+        (Admin.findById as jest.Mock).mockResolvedValueOnce({
+            _id: 'lecturer1',
+            adminName: 'Spongebob Superman',
+            email: 'lecturer1@unsw.edu.au',
+            role: 'admin',
+            courses: ['course1']
+        }).mockResolvedValueOnce({
+            _id: 'lecturer2',
+            adminName: 'Patrick Superman',
+            email: 'lecturer2@unsw.edu.au',
+            role: 'admin',
+            courses: ['course1']
+        });
+        const response = await sendLecturerTutor('team1', 'course1', 'issue1', ['lecturer1', 'lecturer2']);
+        // Send 2 emails to admins.
+        expect(nodemailer.createTransport).toHaveBeenCalledTimes(1);
+        expect(nodemailer.createTransport().sendMail).toHaveBeenCalledTimes(2);
+        expect(response).toEqual('Send email successfully');
+    });
+  
+    it('should return team not exists if team not exists', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue(null);
+        (Course.findById as jest.Mock).mockResolvedValue({});
+        (Issue.findById as jest.Mock).mockResolvedValue({});
+
+        const response = await sendLecturerTutor('team1', 'course1', 'issue1', ['lecturer1', 'lecturer2']);
+        expect(response).toEqual('team not exists');
+    });
+
+    it('should return course not exists if course not exists', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue({});
+        (Course.findById as jest.Mock).mockResolvedValue(null);
+        (Issue.findById as jest.Mock).mockResolvedValue({});
+
+        const response = await sendLecturerTutor('team1', 'course1', 'issue1', ['lecturer1', 'lecturer2']);
+        expect(response).toEqual('course not exists');
+    });
+
+    it('should return issue not exists if issue not exists', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue({});
+        (Course.findById as jest.Mock).mockResolvedValue({});
+        (Issue.findById as jest.Mock).mockResolvedValue(null);
+
+        const response = await sendLecturerTutor('team1', 'course1', 'issue1', ['lecturer1', 'lecturer2']);
+        expect(response).toEqual('issue not exists');
+    });
+
+});
+
+
+describe('sendResult - send results to students when lecturers finish scaling', () => {    
+    beforeEach(() => {
+        jest.clearAllMocks();
+
+        (nodemailer.createTransport as jest.Mock).mockReturnValue({
+            sendMail: jest.fn(),
+        });
+
+        Team.findById = jest.fn();
+        Course.findById = jest.fn();
+        Student.findById = jest.fn();
+        Admin.findById = jest.fn();
+        Reminder.create = jest.fn();
+    });
+    afterAll(async () => {
+        jest.clearAllMocks();
+    });
+  
+    it('should send result to students successfully', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue({
+            _id: 'team1',
+            teamName: 'Test Team',
+            course: 'course1',
+            students: ['student1', 'student2', 'student3', 'student4'],
+            mentors: ['mentor1', 'mentor2'],
+            issues: ['issue1'],
+        });
+        (Course.findById as jest.Mock).mockResolvedValue({
+            _id: 'course1',
+            courseName: 'TEST3900',
+            teams: ['team1'],
+            mentors: ['mentor1'],
+            term: '24T3',
+        });
+
+        (Student.findById as jest.Mock).mockResolvedValueOnce({
+            _id: 'student1',
+            studentName: 'Peter Simpson',
+            email: 'z1111111@ad.unsw.edu.au',
+            zid: 'z1111111',
+            course: ['course1'],
+        }).mockResolvedValueOnce({
+            _id: 'student2',
+            studentName: 'Mary White',
+            email: 'z2222222@ad.unsw.edu.au',
+            zid: 'z2222222',
+            course: ['course1'],
+        }).mockResolvedValueOnce({
+            _id: 'student3',
+            studentName: 'Ben Thompson',
+            email: 'z3333333@ad.unsw.edu.au',
+            zid: 'z3333333',
+            course: ['course1'],
+        }).mockResolvedValueOnce({
+            _id: 'student4',
+            studentName: 'Jerry Griffen',
+            email: 'z4444444@ad.unsw.edu.au',
+            zid: 'z4444444',
+            course: ['course1'],
+        });
+        
+        // dummy issue
+        (Issue.findById as jest.Mock).mockResolvedValue({});
+
+        const response = await sendResult('team1', 'course1', 'issue1', 'result1');
+
+        // Send 4 emails to students.
+        expect(nodemailer.createTransport).toHaveBeenCalledTimes(1);
+        expect(nodemailer.createTransport().sendMail).toHaveBeenCalledTimes(4);
+        expect(response).toEqual('Send emails to students successfully');
+    });
+    
+
+    it('should return team not exists if team not exists', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue(null);
+        (Course.findById as jest.Mock).mockResolvedValue({});
+        (Issue.findById as jest.Mock).mockResolvedValue({});
+
+        const response = await sendResult('team1', 'course1', 'issue1', 'result1');
+        expect(response).toEqual('team not exists');
+    });
+
+    it('should return course not exists if course not exists', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue({});
+        (Course.findById as jest.Mock).mockResolvedValue(null);
+        (Issue.findById as jest.Mock).mockResolvedValue({});
+
+        const response = await sendResult('team1', 'course1', 'issue1', 'result1');
+        expect(response).toEqual('course not exists');
+    });
+
+    it('should return issue not exists if issue not exists', async () => {
+        (Team.findById as jest.Mock).mockResolvedValue({});
+        (Course.findById as jest.Mock).mockResolvedValue({});
+        (Issue.findById as jest.Mock).mockResolvedValue(null);
+
+        const response = await sendResult('team1', 'course1', 'issue1', 'result1');
+        expect(response).toEqual('issue not exists');
+    });
+});

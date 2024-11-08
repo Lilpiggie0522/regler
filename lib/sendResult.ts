@@ -1,13 +1,11 @@
 import nodemailer from 'nodemailer';
 import dbConnect from '@/lib/dbConnect';
-
 import models from "@/models/models";
 
 const Student = models.Student;
 const Team = models.Team;
 const Course = models.Course;
-// const Reminder = models.Reminder;
-// const Admin = models.Admin;
+const Issue = models.Issue;
 
 /*
     Input: 
@@ -21,19 +19,25 @@ const Course = models.Course;
     Error:
         - Check if team exists
         - Check if course exists
-        // - Check if team is contained in courses
-        // - Check if student given in team or not
+        - Check if issue exists
 */
 export async function sendResult(teamId: string, courseId: string, issueId: string, result: string) {
     try {
         await dbConnect();
         const team = await Team.findById(teamId);
         const course = await Course.findById(courseId);
+        const issue = await Issue.findById(issueId);
         if (!team) {
-            console.log('team not exists')
+            // console.log('team not exists')
+            return 'team not exists';
         }
         if (!course) {
-            console.log('course not exists')
+            // console.log('course not exists')
+            return 'course not exists';
+        }
+        if (!issue) {
+            // console.log('issue not exists')
+            return 'issue not exists';
         }
         const transport = nodemailer.createTransport({
             service: 'gmail',
@@ -76,9 +80,11 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
             };
             await transport.sendMail(mailingParameters);
         }
+        return 'Send emails to students successfully';
     } catch (error) {
         if (error instanceof Error) {
-            console.error('Error - sendResult');
+            // console.error('Error - sendResult');
+            return 'failed to send result to students';
         }
     }
 }
