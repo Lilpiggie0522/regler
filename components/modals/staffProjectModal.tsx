@@ -48,8 +48,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ onClose, courseId }) => {
                 }
     
                 const data = await res.json();
-                const assignmentNames = data.assignments.map((assignment: { assignmentName: string }) => assignment.assignmentName);
-                setProjects(assignmentNames);
+                const assignments = data.assignments.map((assignment: { assignmentName: string }) => assignment.assignmentName);
+                setProjects(assignments);
             } catch (error) {
                 console.error(error);
                 setErrorMessage('Failed to fetch projects. Please try again.');
