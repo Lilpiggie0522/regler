@@ -137,11 +137,11 @@ const GroupList: React.FC = () => {
             <div className="bg-yellow-400 p-6 flex items-center justify-between">
                 <div>
                     {/* Back arrow icon */}
-                    <button onClick={() => window.history.back()} className="text-black mb-1 flex items-center ">
+                    <button onClick={() => window.history.back()} className="text-black mb-2 flex items-center ">
                         <FaArrowLeft className="mr-2" />
                         {"Back"}
                     </button>
-                    <h1 className="text-black text-3xl font-bold inline-block ml-2">Groups</h1>
+                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Groups</h1>
                 </div>
 
                 {/* Search bar section */}

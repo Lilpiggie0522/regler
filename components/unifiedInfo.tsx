@@ -4,6 +4,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
+import ErrorModal from "./modals/errorModal";
+import { FaArrowLeft } from "react-icons/fa";
 
 export interface Student {
     id: string;
@@ -14,6 +16,16 @@ export interface Student {
     status: "Submitted" | "No Submission";
 }
 
+const dummyTutorOpinions = [
+    { name: "Tutor A", content: "Great job on the project!" },
+    { name: "Tutor B", content: "Needs improvement in teamwork." },
+];
+
+const dummyLecturerOpinions = [
+    { name: "Lecturer X", content: "Excellent presentation skills." },
+    { name: "Lecturer Y", content: "Could use more analytical depth." },
+];
+
 export default function UnifiedInfo() {
     const router = useRouter();
     
@@ -23,9 +35,13 @@ export default function UnifiedInfo() {
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [content, setContent] = useState<string>("")
     const [tutorComment, setTutorComment] = useState<string>("")
+    //const [lecturerComment, setLecturerComment] = useState<string>('')
     const [staffId,] = useLocalStorageState("staffId", "");
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
+    const [isAdmin] = useState<boolean>(true);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showError, setShowError] = useState(false);
 
     useEffect(() => {
         async function getTutorOpinions() {
@@ -57,7 +73,9 @@ export default function UnifiedInfo() {
                 
                 const response = await fetch(`/api/issueSystem/getIssueInfo/${teamId}`)
                 if (!response.ok) {
-                    alert("Error: " + response.statusText);
+                    const errorString = await response.json();
+                    setErrorMessage(errorString.error);
+                    setShowError(true);
                 } else {
                     const students = await response.json();
                     const studentInfos : Student[] = [];
@@ -76,6 +94,9 @@ export default function UnifiedInfo() {
                         }
                     }
                     setStudents(studentInfos);
+                    const {message} = students
+                    console.log("ksdjfakdjfksajfklszzzz")
+                    console.log(message)
                 }
             } catch (error) {
                 console.error(error);
@@ -106,7 +127,8 @@ export default function UnifiedInfo() {
             });
             if (!response.ok) {
                 const errorString = await response.json();
-                alert(JSON.stringify(errorString));
+                setErrorMessage(errorString.error);
+                setShowError(true);
                 console.log(errorString);
                 setIsUploadedSuccessfully(false);
             }else {
@@ -118,10 +140,22 @@ export default function UnifiedInfo() {
         }
     };
 
+    const handleClose = () => {
+        setErrorMessage("Close button clicked");
+        setShowError(true);
+    };
+
     return (
         <div className="min-h-screen bg-gray-100">
-            <div className="bg-yellow-400 p-9 flex justify-between items-center">
-                <h1 className="text-black text-3xl font-bold">{group}</h1>
+            <div className="bg-yellow-400 p-6 flex justify-between items-center">
+                <div>
+                    {/* Back arrow icon */}
+                    <button onClick={() => window.history.back()} className="text-black mb-2 flex items-center ">
+                        <FaArrowLeft className="mr-2" />
+                        {"Back"}
+                    </button>
+                    <h1 className="text-black text-3xl font-bold inline-block ml-6">{group}</h1>
+                </div>
 
                 {/* Search bar section */}
                 <div className="relative">
@@ -183,12 +217,28 @@ export default function UnifiedInfo() {
                     </tbody>
                 </table>
 
+                <div className="bg-gray-100 border border-gray-300 rounded-md p-4 mb-4 mt-6">
+                    <h2 className="font-semibold">Tutor Opinions</h2>
+                    {dummyTutorOpinions.map((opinion, index) => (
+                        <div key={index} className="mt-2">
+                            <span className="text-sm font-semibold text-gray-700">{opinion.name}:</span>
+                            <p className="text-black">{opinion.content}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="bg-gray-100 border border-gray-300 rounded-md p-4">
+                    <h2 className="font-semibold">Lecturer Opinions</h2>
+                    {dummyLecturerOpinions.map((opinion, index) => (
+                        <div key={index} className="mt-2">
+                            <span className="text-sm font-semibold text-gray-700">{opinion.name}:</span>
+                            <p className="text-black">{opinion.content}</p>
+                        </div>
+                    ))}
+                </div>
+
                 <form className="mt-6 w-full" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-4">
-                        <label className="text-lg text-black">Tutor&apos;s</label>
-                        <div className="w-full bg-gray-100 border border-gray-300 rounded-md p-4">
-                            <p className="text-black mt-1">{tutorComment}</p> 
-                        </div>
                         <label className="text-lg text-black">Enter your opinion here</label>
                         <textarea
                             name="yourOpinion"
@@ -197,11 +247,26 @@ export default function UnifiedInfo() {
                             onChange={(input) => setContent(input.target.value)}
                             required
                         />
-                        <button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">
-                            Submit
-                        </button>
+                        <div className="flex gap-4 justify-center">
+                            <button type="submit" className="bg-black text-white py-2 w-40 rounded-md">
+                                Submit
+                            </button>
+                            {isAdmin && (
+                                <button
+                                    type="button" onClick={handleClose} className="bg-black text-white py-2 w-40 rounded-md">
+                                    Close this issue
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </form>
+
+                {showError ? (
+                    <ErrorModal
+                        errorMessage={errorMessage}
+                        onClose={() => setShowError(false)}
+                    />
+                ) : null}
 
             </div>
         </div>

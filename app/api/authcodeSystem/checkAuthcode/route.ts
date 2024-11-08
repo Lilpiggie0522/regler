@@ -18,24 +18,18 @@ export async function POST(request: NextRequest) {
         const staffEmail = zid.match(emailRegex)?.[0]
         let isStaff = false
         if (staffEmail) {
-            console.log("staff yes")
             isStaff = true
         }
         // find the auth code entry for the user
         const authCodeEntry = await AuthCode.findOne({ zid: zid }).exec();
 
         if (!authCodeEntry) {
-            return NextResponse.json({ error: "No code found for user" }, { status: 404 });
-        }
-
-        // check if the auth code has expired
-        if (new Date() > authCodeEntry.expiresAt) {
-            return NextResponse.json({ error: "Auth code has expired" }, { status: 400 });
+            return NextResponse.json({ error: "No code found for user!" }, { status: 404 });
         }
 
         // check if the code is correct
         if (authCodeEntry.code !== code) {
-            return NextResponse.json({ error: "Invalid auth code" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid auth code!" }, { status: 400 });
         }
 
         // correct code
