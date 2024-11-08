@@ -8,16 +8,13 @@ import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testU
 
 
 // Mock the `cookies()` function
-
 jest.mock('next/headers', () => ({
   cookies: jest.fn().mockReturnValue({
       set: jest.fn(),
   }),
 }))
 
-let studentId : string, teamId : string, courseId: string;
-let notInTeamStudentIds : string;
-const { Team, Course, Student, AuthCode } = models;
+const { AuthCode } = models;
 // In-memory MongoDB server instance
 let mongoServer: MongoMemoryServer;
 
@@ -38,13 +35,6 @@ beforeAll(async () => {
   };
 
   mongoServer = await createDatabase(input, mongoServer);
-  const course = await Course.findOne({}).exec();
-  courseId = course._id;
-  teamId = course.teams[0];
-  const team = await Team.findOne({_id: teamId}).exec();
-  studentId = team.students[0];
-  const notInTeamStudent = await Student.findOne({studentName: "John"}).exec();
-  notInTeamStudentIds = notInTeamStudent._id;
 });
 
 afterAll(async () => {
@@ -54,7 +44,6 @@ afterAll(async () => {
 });
 
 describe('student checkAuthCode API Tests', () => {
-  
   it('auth code check was successful', async () => {
     const authCodeCheckbody = {
         zid: 'z1234567',
