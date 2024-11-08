@@ -11,11 +11,10 @@ const Issue = models.Issue;
     Input: 
         - teamId: Unique object id of team
         - courseId: Unique object id of course
-        - studentId: Unique object id of student who submits application
         - issueId: Unique object id of issue
+        - result: Result string
     Output: 
-        Send email contains evaluation link to the rest of members
-        Send confirmation email to initial applicant
+        Send email containing results to student
     Error:
         - Check if team exists
         - Check if course exists
@@ -28,15 +27,12 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
         const course = await Course.findById(courseId);
         const issue = await Issue.findById(issueId);
         if (!team) {
-            // console.log('team not exists')
             return 'team not exists';
         }
         if (!course) {
-            // console.log('course not exists')
             return 'course not exists';
         }
         if (!issue) {
-            // console.log('issue not exists')
             return 'issue not exists';
         }
         const transport = nodemailer.createTransport({
@@ -83,8 +79,9 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
         return 'Send emails to students successfully';
     } catch (error) {
         if (error instanceof Error) {
-            // console.error('Error - sendResult');
             return 'failed to send result to students';
         }
     }
 }
+
+export default sendResult;
