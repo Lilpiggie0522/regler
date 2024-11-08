@@ -2,11 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { FaTrash, FaUndo, FaPlus } from 'react-icons/fa';
 import { AssessmentModalProps } from './ModalProps';
+import ErrorModal from "./errorModal";
 
 const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) => {
     const [Assessments, setAssessments] = useState<string[]>([]);
     const [newAssessment, setNewAssessment] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [showErrorModal, setShowErrorModal] = useState(false);
     const [AssessmentsToDelete, setAssessmentsToDelete] = useState<string[]>([]);
 
     // fetch all already exist stages
@@ -14,19 +16,19 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
 
         const fetchAssessment = async (courseId: string|null) => {
             try {
-                const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
-                setAssessments(dummyData);
+                // const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
+                // setAssessments(dummyData);
 
                 // should return a list of teams in this course
-                // const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`);
-                const res = await fetch(`/api/test/${courseId}`, {
+                const res = await fetch(`/api/adminSystem/courses/setCourseAssignment/${courseId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-        
+                
                 if (!res.ok) {
+                    console.log()
                     const errObj = await res.json();
         
                     throw Error(errObj.error);
@@ -38,6 +40,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
             } catch (error) {
                 console.error(error);
                 setErrorMessage('Failed to fetch Assessments. Please try again.');
+                setShowErrorModal(true);
             }
         }
         
@@ -54,14 +57,15 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
 
         // Prepare the request body with the updated list of Assessments
         const body = {
-            assignments: updatedAssessments,
+            assignments: updatedAssessments.map(assessment => ({
+                assignmentName: assessment, 
+            })),
         };
 
         console.log("Submitting the following data:", body);
 
         try {
-            // const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`, {
-            const response = await fetch(`/api/test/${courseId}`, {
+            const response = await fetch(`/api/adminSystem/courses/setCourseAssignment/${courseId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -69,13 +73,30 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                 body: JSON.stringify(body),
             });
 
-            if (!response.ok) throw new Error('Failed to update Assessments');
+            if (!response.ok) {
+                const errObj = await response.json();
+                console.error("Error Response:", errObj);
+                throw Error(errObj.error);
+                
+            }
+
             setAssessments(updatedAssessments); // Update current Assessments
-            setNewAssessment(''); // Clear input
-            setAssessmentsToDelete([]); // Clear delete list
+            setNewAssessment('');
+            setAssessmentsToDelete([]);
+            
+
+            console.log('Before showing success modal:', errorMessage, showErrorModal);
+
+            setErrorMessage('Assessments have been successfully update.');
+            setShowErrorModal(true);
+            console.log('After setting success modal:', errorMessage, showErrorModal);
+            // onClose();
+            // alert(updatedAssessments)
+            
         } catch (error) {
             setErrorMessage('Failed to update Assessments. Please try again.');
-            console.error(error);
+            console.error("Submission Error:", error);
+            setShowErrorModal(true);
         }
     };
 
@@ -95,7 +116,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
     const handleUndoDelete = (Assessment: string) => {
         // Remove Assessment from deletion list and restore it to the Assessments
         setAssessmentsToDelete(prev => prev.filter(p => p !== Assessment));
-        // Only add it back if it's not already in the Assessments list
+
         setAssessments(prev => {
             if (!prev.includes(Assessment)) {
                 return [...prev, Assessment];
@@ -149,7 +170,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
 
                                     {AssessmentsToDelete.includes(Assessment) && (
                                         <button className="text-black p-1" onClick={() => handleUndoDelete(Assessment)}>
-                                            <FaUndo /> {/* Use FaUndo icon */}
+                                            <FaUndo />
                                         </button>
                                     )}
                                 </div>
@@ -184,8 +205,15 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                     Submit
                 </button>
 
-                {errorMessage && (
+                {/* {errorMessage && (
                     <p className="text-red-500 mt-2 text-center">{errorMessage}</p>
+                )} */}
+                {/* ErrorModal */}
+                {showErrorModal && (
+                    <ErrorModal
+                        errorMessage={errorMessage}
+                        onClose={() => setShowErrorModal(false)}
+                    />
                 )}
             </div>
         </div>
