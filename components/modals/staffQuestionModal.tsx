@@ -9,6 +9,41 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [questionCount, setQuestionCount] = useState(1);
 
+    // fetch all already exist questions
+    useEffect(() => {
+        // const fetchProject = async () => {
+        //     // const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
+        //     // setProjects(dummyData);
+        
+        const fetchProjects = async (courseId: string|null) => {
+            try {
+                // should return a list of teams in this course
+                // const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`);
+                const res = await fetch(`/api/test/${courseId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+        
+                if (!res.ok) {
+                    const errObj = await res.json();
+        
+                    throw Error(errObj.error);
+                }
+    
+                const data = await res.json();
+                const assignments = data.assignments.map((assignment: { assignmentName: string }) => assignment.assignmentName);
+                setProjects(assignments);
+            } catch (error) {
+                console.error(error);
+                setErrorMessage('Failed to fetch projects. Please try again.');
+            }
+        }
+        
+        fetchProjects(courseId);
+    }, [courseId]);
+
     const handleSubmit = async () => {
         const body = {
             questions: [...questions, ...newQuestions].filter(q => q.trim() !== ''),
