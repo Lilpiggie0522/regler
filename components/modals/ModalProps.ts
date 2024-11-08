@@ -4,7 +4,7 @@ export interface ModalProps {
 }
 
 export interface ErrorModalProps extends ModalProps {
-    errorMessage: string | null;
+    errorMessage: string;
 }
 
 export interface StudentVerificationModalProps extends ModalProps {
@@ -19,4 +19,7 @@ export interface StaffVerificationModalProps extends ModalProps {
     email: string;
 }
 
+export interface AssessmentModalProps extends ModalProps {
+    courseId: string | null;
+}
   
