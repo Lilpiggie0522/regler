@@ -1,6 +1,6 @@
 // get team by Id
 import { NextRequest, NextResponse } from "next/server";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import models from "@/models/models";
 import dbConnect from "@/lib/dbConnect";
 
@@ -17,7 +17,7 @@ export async function GET( req : NextRequest) {
     
     try {
         await dbConnect();
-        const teamId = req.url.split('/').pop();
+        const teamId = req.url.split("/").pop();
         if (!mongoose.isValidObjectId(teamId)) {
             return NextResponse.json({error: "invalid team id"}, {status: 400});
         }
@@ -26,11 +26,11 @@ export async function GET( req : NextRequest) {
             return NextResponse.json({error: "course not found"}, {status: 404});
         }
         const mentorsIds = team.mentors;
-        let mentorsNames = '';
+        let mentorsNames = "";
         for (const mentorId of mentorsIds) {
             const mentor = await Admin.findById(mentorId).exec();
             if (mentor) {
-                mentorsNames += mentor.adminName + ',';
+                mentorsNames += mentor.adminName + ",";
             }
         }
         const teamResponse : TeamResponse = {

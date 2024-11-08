@@ -87,13 +87,13 @@ export async function POST(req: NextRequest) {
             { _id: teamId,
             }
         )
-        .exec();
+            .exec();
         const issuesIds = existingTeam.issues;
-       // console.log(existingTeam)
+        // console.log(existingTeam)
         for (const issueId of issuesIds) {
             const existingIssue = await Issue.findById(issueId).exec();
-           // console.log(existingIssue);
-            if (existingIssue && ((existingIssue.status === 'pending' || existingIssue.status === 'Need Feedback'))) {
+            // console.log(existingIssue);
+            if (existingIssue && ((existingIssue.status === "pending" || existingIssue.status === "Need Feedback"))) {
                 return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
             }
         }
@@ -122,9 +122,9 @@ export async function POST(req: NextRequest) {
         );
         // calling mailing function send teams
         // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
         
-        if (!(process.env.NODE_ENV === 'test')) {
+        if (!(process.env.NODE_ENV === "test")) {
             const mailResponse = await fetch(`${baseUrl}/api/mailingSystem/sendTeam`, {
                 method: "POST",
                 headers: {
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
             studentId: studentId,
             courseId: courseId,
             issueId: issueId,
-          }, { status: 200 });
+        }, { status: 200 });
 
         // Additional checks if necessary
 

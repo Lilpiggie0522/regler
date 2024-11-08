@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 import models from "@/models/models";
 
 const Course = models.Course;
@@ -7,11 +7,11 @@ const Issue = models.Issue;
 export async function POST(request : NextRequest) {
     try {
         const { email } : { email: string }   = await request.json();
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
         const studentListResponse = await fetch(`${baseUrl}/api/staff/studentList`, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ email })
         });
@@ -19,9 +19,9 @@ export async function POST(request : NextRequest) {
             return studentListResponse;
         }
         const groupListResponse = await fetch(`${baseUrl}/api/staff/groupList`, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({ email })
         });

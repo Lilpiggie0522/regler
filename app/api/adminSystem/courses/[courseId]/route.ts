@@ -2,7 +2,7 @@
 // update courseById
 
 import { NextRequest, NextResponse } from "next/server";
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 import models from "@/models/models";
 
 
@@ -46,6 +46,6 @@ export async function DELETE(req : NextRequest, { params } : Params) {
         return NextResponse.json({ error: error}, {status: 500});
     }
     
-  }
+}
 // Add mentors
 // Add mentor
