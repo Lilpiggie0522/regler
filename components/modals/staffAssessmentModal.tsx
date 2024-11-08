@@ -16,8 +16,6 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
 
         const fetchAssessment = async (courseId: string|null) => {
             try {
-                // const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
-                // setAssessments(dummyData);
 
                 // should return a list of teams in this course
                 const res = await fetch(`/api/adminSystem/courses/setCourseAssignment/${courseId}`, {
@@ -77,19 +75,14 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                 const errObj = await response.json();
                 console.error("Error Response:", errObj);
                 throw Error(errObj.error);
-                
             }
 
             setAssessments(updatedAssessments); // Update current Assessments
             setNewAssessment('');
             setAssessmentsToDelete([]);
-            
-
-            console.log('Before showing success modal:', errorMessage, showErrorModal);
 
             setErrorMessage('Assessments have been successfully update.');
             setShowErrorModal(true);
-            console.log('After setting success modal:', errorMessage, showErrorModal);
             // onClose();
             // alert(updatedAssessments)
             
@@ -124,18 +117,6 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
             return prev;
         });
     };
-
-    // Close error message when clicking anywhere
-    useEffect(() => {
-        const handleClickOutside = () => {
-            setErrorMessage(''); // Clear the error message on any click
-        };
-        
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -194,7 +175,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                         onClick={handleAddAssessment}
                         className="bg-yellow-500 text-white rounded-lg ml-2 px-2 py-2"
                     >
-                        <FaPlus /> {/* Add icon */}
+                        <FaPlus />
                     </button>
                 </div>
                 
@@ -205,9 +186,6 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                     Submit
                 </button>
 
-                {/* {errorMessage && (
-                    <p className="text-red-500 mt-2 text-center">{errorMessage}</p>
-                )} */}
                 {/* ErrorModal */}
                 {showErrorModal && (
                     <ErrorModal
