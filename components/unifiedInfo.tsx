@@ -2,7 +2,7 @@
 import { useLocalStorageState } from "@/context/studentContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+// import { Button } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import ErrorModal from "./modals/errorModal";
 import { FaArrowLeft, FaTrash, FaInfoCircle } from "react-icons/fa";
@@ -226,7 +226,7 @@ export default function UnifiedInfo() {
                                         disabled={!issueId}
                                     >
                                         <FaInfoCircle />
-                                       <span>Details</span>
+                                        <span>Details</span>
                                     </button>
                                 </td>
                                 <td className="px-4 py-2 text-center w-1/7 align-items-center">

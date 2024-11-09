@@ -260,7 +260,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
                 {questions.map((question, index) => (
                     <div key={index}>
-                        <div className="question-row" key={index} style={{ wordBreak: 'break-word', whiteSpace: 'normal' }}>
+                        <div className="question-row" key={index} style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
                             <label className="text-lg text-black block">{`${index + 1}. ${question}`}</label>
                             <textarea
                                 placeholder="Enter your answer here"

@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { FaSignOutAlt } from 'react-icons/fa';
+import { FaSignOutAlt } from "react-icons/fa";
 import { Button } from "react-bootstrap";
 
 export default function LogoutButton() {

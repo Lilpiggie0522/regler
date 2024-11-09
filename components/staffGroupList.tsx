@@ -100,8 +100,8 @@ const GroupList: React.FC = () => {
 
         const matchesSearchTerm = matchesTeam || matchesMentors;
         const matchesAss = selectedAss 
-        ? (selectedAss === "N/A" ? (!group.assignment || group.assignment === "N/A") : group.assignment === selectedAss) 
-        : true;
+            ? (selectedAss === "N/A" ? (!group.assignment || group.assignment === "N/A") : group.assignment === selectedAss) 
+            : true;
 
         const matchesStatus = selectedStatus ? group.status === selectedStatus : true;
 
@@ -201,7 +201,7 @@ const GroupList: React.FC = () => {
                         setSelectedCourseId(courseId);
                     }}
                 >
-                        <FaEdit size={20} /> <span>Edit Assessments</span>
+                    <FaEdit size={20} /> <span>Edit Assessments</span>
                 </button>
                 
                 <div className="flex items-center">
@@ -234,16 +234,16 @@ const GroupList: React.FC = () => {
 
             {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
-            <table className="min-w-full divide-y divide-gray-200 table-fixed">
+                <table className="min-w-full divide-y divide-gray-200 table-fixed">
                     <thead className="bg-gray-200 sticky top-0 z-10">
                         <tr >
-                        <th className="py-2 px-4 font-bold text-black text-center w-1/5">Group Name</th>
-                        <th className="py-2 px-4 font-bold text-black text-center w-1/5">Tutors</th>
+                            <th className="py-2 px-4 font-bold text-black text-center w-1/5">Group Name</th>
+                            <th className="py-2 px-4 font-bold text-black text-center w-1/5">Tutors</th>
                             <th className="py-2 px-4 font-bold text-black text-center w-1/5">
-                            <div className="flex items-center justify-center cursor-pointer" onClick={() => setIsAssDropdownOpen(!isAssDropdownOpen)}>
-                                <span>Assessment</span>
-                                <FaFilter className="ml-2" />
-                            </div>
+                                <div className="flex items-center justify-center cursor-pointer" onClick={() => setIsAssDropdownOpen(!isAssDropdownOpen)}>
+                                    <span>Assessment</span>
+                                    <FaFilter className="ml-2" />
+                                </div>
 
                                 {isAssDropdownOpen && (
                                     <div
@@ -279,10 +279,10 @@ const GroupList: React.FC = () => {
                             </th>
 
                             <th className="py-2 px-4 font-bold text-black text-center w-1/5">
-                            <div className="flex items-center justify-center cursor-pointer" onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}>
-                                <span>Status</span>
-                                <FaFilter className="ml-2" />
-                            </div>
+                                <div className="flex items-center justify-center cursor-pointer" onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}>
+                                    <span>Status</span>
+                                    <FaFilter className="ml-2" />
+                                </div>
 
                                 {isStatusDropdownOpen && (
                                     <div
@@ -330,11 +330,11 @@ const GroupList: React.FC = () => {
 
                                     <td className="py-3 px-4 text-center w-1/5">
                                         <div className={`inline-block px-4 py-1 border-2 items-center justify-center rounded-md ${group.assignment ? getAssColor(group.assignment) : "bg-gray-200 text-gray-700 border border-gray-500"}`} style={{
-                                                width: "140px",
-                                                height: "auto",
-                                                wordWrap: "break-word",
-                                                whiteSpace: "normal",
-                                            }}>
+                                            width: "140px",
+                                            height: "auto",
+                                            wordWrap: "break-word",
+                                            whiteSpace: "normal",
+                                        }}>
                                             {group.assignment ? group.assignment : "N/A"}
                                         </div>
                                     </td>
