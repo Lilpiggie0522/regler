@@ -46,8 +46,11 @@ export default function UnifiedInfo() {
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
     useEffect(() => {
-        role === "admin" ? setIsAdmin(true): setIsAdmin(false)
-        console.log("issueId:", issueId);
+        if (role === "admin") {
+            setIsAdmin(true);
+        } else {
+            setIsAdmin(false);
+        }
     }, [role])
 
     useEffect(() => {
