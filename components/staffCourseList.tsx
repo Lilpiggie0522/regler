@@ -6,6 +6,7 @@ import { FaSearch, FaTrash } from "react-icons/fa";
 import { useStudentContext } from "@/context/studentContext";
 import { useRouter } from "next/navigation";
 import ErrorModal from "@/components/modals/errorModal";
+import LogoutButton from "./logoutButton";
 
 interface Course {
     id: string;
@@ -180,13 +181,14 @@ export default function CourseList() {
             {/* Title */}
             <div className="bg-yellow-400 p-9 flex justify-between items-center">
                 <h1 className="text-black text-3xl font-bold">Courses</h1>
-                <div className="flex items-center">
+                <div className="flex items-center space-x-1">
                     <button 
                         className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
                         onClick={handleShowWindow}
                     >
                         Import CSV
                     </button>
+                    <LogoutButton />
                     
                     {/* Search bar section */}
                     <div className="relative">
