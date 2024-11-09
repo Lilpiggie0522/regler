@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocalStorageState, useStudentContext } from "@/context/studentContext";
+import { useLocalStorageState } from "@/context/studentContext";
 import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaArrowLeft, FaFilter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
