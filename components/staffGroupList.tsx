@@ -42,8 +42,11 @@ const GroupList: React.FC = () => {
 
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [selectedStatus, setSelectedStatus] = useState<GroupStatus | "">("");
-    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-    const dropdownRef = useRef<HTMLDivElement>(null);
+    const [selectedAss, setSelectedAss] = useState<GroupStatus | "">("");
+    const [isAssDropdownOpen, setIsAssDropdownOpen] = useState(false);
+    const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+    const assDropdownRef = useRef<HTMLDivElement>(null);
+    const statusDropdownRef = useRef<HTMLDivElement>(null);
 
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
@@ -127,16 +130,20 @@ const GroupList: React.FC = () => {
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-                setIsDropdownOpen(false);
+            if (assDropdownRef.current && !assDropdownRef.current.contains(event.target as Node)) {
+                setIsAssDropdownOpen(false);
+            }
+            if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+                setIsStatusDropdownOpen(false);
             }
         };
-
+    
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [dropdownRef]);
+    }, [assDropdownRef, statusDropdownRef]);
+    
 
     const handleSelectGroup = (group : Group) => {
         setIssueId(group.issueId);
@@ -194,25 +201,63 @@ const GroupList: React.FC = () => {
 
             {/* Table */}
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
-                <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 table-fixed">
                     <thead className="bg-gray-200 sticky top-0 z-10">
                         <tr className="text-left mt-6">
-                            <th className="py-2 px-4 font-bold text-black text-center">Group Name</th>
-                            <th className="py-2 px-4 font-bold text-black text-center">Lecturer</th>
-                            <th className="py-2 px-4 font-bold text-black text-center">Tutors</th>
-                            <th className="py-2 px-4 font-bold text-black text-center flex items-center justify-center">
-                                <div className="flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                                    <span>Status</span>
-                                    <FaFilter className="ml-2" />
-                                </div>
+                        <th className="py-2 px-4 font-bold text-black text-center w-1/5">Group Name</th>
+                        <th className="py-2 px-4 font-bold text-black text-center w-1/5">Tutors</th>
+                            <th className="py-2 px-4 font-bold text-black text-center w-1/5">
+                            <div className="flex items-center justify-center cursor-pointer" onClick={() => setIsAssDropdownOpen(!isAssDropdownOpen)}>
+                                <span>Assessment</span>
+                                <FaFilter className="ml-2" />
+                            </div>
 
-                                {isDropdownOpen && (
+                                {isAssDropdownOpen && (
                                     <div
-                                        ref={dropdownRef}
+                                        ref={assDropdownRef}
                                         className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
                                         style={{ marginTop: "100px" }}
                                     >
+                                        {/* Status options */}
+                                        {Object.values(GroupStatus).map((status) => (
+                                            <div
+                                                key={status}
+                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedAss === status ? "bg-gray-200" : ""}`}
+                                                onClick={() => {
+                                                    setSelectedAss(status);
+                                                    setIsAssDropdownOpen(false);
+                                                }}
+                                            >
+                                                {status}
+                                            </div>
+                                        ))}
 
+                                        {/* Clear option */}
+                                        <div
+                                            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                                            onClick={() => {
+                                                setSelectedAss(""); // Clear the selected assessment
+                                                setIsAssDropdownOpen(false);
+                                            }}
+                                        >
+                                            Clear
+                                        </div>
+                                    </div>
+                                )}
+                            </th>
+
+                            <th className="py-2 px-4 font-bold text-black text-center w-1/5">
+                            <div className="flex items-center justify-center cursor-pointer" onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}>
+                                <span>Status</span>
+                                <FaFilter className="ml-2" />
+                            </div>
+
+                                {isStatusDropdownOpen && (
+                                    <div
+                                        ref={statusDropdownRef}
+                                        className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
+                                        style={{ marginTop: "100px" }}
+                                    >
                                         {/* Status options */}
                                         {Object.values(GroupStatus).map((status) => (
                                             <div
@@ -220,7 +265,7 @@ const GroupList: React.FC = () => {
                                                 className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedStatus === status ? "bg-gray-200" : ""}`}
                                                 onClick={() => {
                                                     setSelectedStatus(status);
-                                                    setIsDropdownOpen(false);
+                                                    setIsStatusDropdownOpen(false);
                                                 }}
                                             >
                                                 {status}
@@ -232,7 +277,7 @@ const GroupList: React.FC = () => {
                                             className="px-4 py-2 cursor-pointer hover:bg-gray-100"
                                             onClick={() => {
                                                 setSelectedStatus(""); // Clear the selected status
-                                                setIsDropdownOpen(false);
+                                                setIsStatusDropdownOpen(false);
                                             }}
                                         >
                                             Clear
@@ -240,31 +285,38 @@ const GroupList: React.FC = () => {
                                     </div>
                                 )}
                             </th>
-                            <th className="py-2 px-4 font-bold text-black text-center">Action</th>
+                            <th className="py-2 px-4 font-bold text-black text-center w-1/5">Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {sortedGroups.length > 0 ? (
                             sortedGroups.map((group, index) => (
                                 <tr key={index} className="border-b">
-                                    <td className="py-3 px-4 text-black text-center">{group.groupName}</td>
-                                    <td className="py-3 px-4 text-black text-center">
-                                        {group.lecturer}
+                                    <td className="py-3 px-4 text-black text-center w-1/5">
+                                        {group.groupName}
                                     </td>
-                                    <td className="py-3 px-4 text-black text-center">
+                                    <td className="py-3 px-4 text-black text-center w-1/5">
                                         {group.tutors}
                                     </td>
-                                    <td className="py-3 px-4 flex justify-center items-center">
+                                    <td className="py-3 px-4 text-black text-center w-1/5">
+                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: "140px", height: "35px", borderRadius: "8px" }}>
+                                            ass
+                                        </div>
+                                    </td>
+                                    <td className="py-3 px-4 text-black text-center w-1/5">
                                         <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: "140px", height: "35px", borderRadius: "8px" }}>
                                             {group.status}
                                         </div>
                                     </td>
-                                    <td className="py-3 px-4 text-center">
+                                    <td className="py-3 px-4 text-center w-1/5">
                                         <button
                                             className="bg-black text-white py-1 px-3 rounded-lg"
                                             onClick={() => handleSelectGroup(group)}
-                                        >Select</button>
+                                        >
+                                            Select
+                                        </button>
                                     </td>
+
                                 </tr>
                             ))
                         ) : (
