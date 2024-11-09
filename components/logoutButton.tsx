@@ -1,4 +1,5 @@
 import { useRouter } from "next/navigation";
+import { FaSignOutAlt } from "react-icons/fa";
 import { Button } from "react-bootstrap";
 
 export default function LogoutButton() {
@@ -15,5 +16,9 @@ export default function LogoutButton() {
             window.location.reload()
         }
     }
-    return (<Button className="bg-black text-white py-1 px-3 rounded-md flex items-center justify-center" onClick={handleLogout}>Logout</Button>)
+    return (
+        <Button className="bg-black text-white py-1 px-4 rounded-lg flex items-center justify-center space-x-1" onClick={handleLogout}>
+            <FaSignOutAlt size={20} /> <span>Logout</span>
+        </Button>
+    )
 }
