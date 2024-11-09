@@ -6,6 +6,7 @@ import { FaSearch, FaArrowLeft, FaFilter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import AssessmentModal from "./modals/staffAssessmentModal";
+import QuestionModal from "./modals/staffQuestionModal";
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -48,6 +49,8 @@ const GroupList: React.FC = () => {
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
     const [showAssessmentModal, setShowAssessmentModal] = useState(false);
     const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+    const [showQuestionModal, setShowQuestionModal] = useState(false);
+
 
     // Fetch groups from the API
     const fetchTeams = async (courseId: string|null) => {
@@ -156,17 +159,28 @@ const GroupList: React.FC = () => {
                     </button>
                     <h1 className="text-black text-3xl font-bold inline-block ml-6">Groups</h1>
                 </div>
-                <div className="flex items-center">
-                    <button 
-                        className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                        onClick={() => {
-                            setShowAssessmentModal(true);
-                            setSelectedCourseId(courseId);
-                        }}
-                    >
-                        Edit Assessments
-                    </button>
-
+                    <div className="flex items-center">
+                        <button 
+                            className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
+                            onClick={() => {
+                                setShowAssessmentModal(true);
+                                setSelectedCourseId(courseId);
+                            }}
+                        >
+                            Edit Assessments
+                        </button>
+                    
+                    <div className="flex items-center">
+                        <button 
+                            className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
+                            onClick={() => {
+                                setShowQuestionModal(true);
+                                setSelectedCourseId(courseId);
+                            }}
+                        >
+                            Edit Questions
+                        </button>
+                    </div>
                     {/* Search bar section */}
                     <div className="relative flex items-center">
                         <span className="absolute left-3 flex items-center pointer-events-none">
@@ -189,6 +203,13 @@ const GroupList: React.FC = () => {
                 <AssessmentModal
                     courseId={selectedCourseId}
                     onClose={() => setShowAssessmentModal(false)} 
+                />
+            )}
+
+            {showQuestionModal && (
+                <QuestionModal
+                    courseId={selectedCourseId}
+                    onClose={() => setShowQuestionModal(false)} 
                 />
             )}
 
