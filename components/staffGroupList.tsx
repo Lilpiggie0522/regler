@@ -1,6 +1,6 @@
 "use client";
 
-import { useStudentContext } from "@/context/studentContext";
+import { useLocalStorageState, useStudentContext } from "@/context/studentContext";
 import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaArrowLeft, FaFilter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,7 @@ interface Group {
     tutors: string;
     teamId: string;
     issueId: string;
+    assignment: string;
 }
 
 const GroupList: React.FC = () => {
@@ -32,7 +33,6 @@ const GroupList: React.FC = () => {
     
 
     const courseId = params.get("courseId");
-    const { useLocalStorageState } = useStudentContext();
     const [, setIssueId] = useLocalStorageState("issueId", "")
 
 
@@ -142,9 +142,8 @@ const GroupList: React.FC = () => {
     }, [dropdownRef]);
 
     const handleSelectGroup = (group : Group) => {
-        setIssueId(group.issueId);
+        setIssueId(group.issueId ? group.issueId : "");
         router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`);
-        
     }
 
     return (
@@ -157,18 +156,18 @@ const GroupList: React.FC = () => {
                         <FaArrowLeft className="mr-2" />
                         {"Back"}
                     </button>
-                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Groups</h1>
+                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Assignments Dashboard</h1>
                 </div>
-                    <div className="flex items-center">
-                        <button 
-                            className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                            onClick={() => {
-                                setShowAssessmentModal(true);
-                                setSelectedCourseId(courseId);
-                            }}
-                        >
+                <div className="flex items-center">
+                    <button 
+                        className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
+                        onClick={() => {
+                            setShowAssessmentModal(true);
+                            setSelectedCourseId(courseId);
+                        }}
+                    >
                             Edit Assessments
-                        </button>
+                    </button>
                     
                     <div className="flex items-center">
                         <button 
@@ -219,7 +218,7 @@ const GroupList: React.FC = () => {
                     <thead className="bg-gray-200 sticky top-0 z-10">
                         <tr className="text-left mt-6">
                             <th className="py-2 px-4 font-bold text-black text-center">Group Name</th>
-                            <th className="py-2 px-4 font-bold text-black text-center">Lecturer</th>
+                            <th className="py-2 px-4 font-bold text-black text-center">Assessment</th>
                             <th className="py-2 px-4 font-bold text-black text-center">Tutors</th>
                             <th className="py-2 px-4 font-bold text-black text-center flex items-center justify-center">
                                 <div className="flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
@@ -270,7 +269,7 @@ const GroupList: React.FC = () => {
                                 <tr key={index} className="border-b">
                                     <td className="py-3 px-4 text-black text-center">{group.groupName}</td>
                                     <td className="py-3 px-4 text-black text-center">
-                                        {group.lecturer}
+                                        {group.assignment?group.assignment:"N/A"}
                                     </td>
                                     <td className="py-3 px-4 text-black text-center">
                                         {group.tutors}

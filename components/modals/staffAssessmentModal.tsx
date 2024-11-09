@@ -138,7 +138,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                 <div className="flex flex-col mt-4">
                     {Assessments.length > 0 ? (
                         Assessments.map((Assessment) => (
-                            <div key={Assessment} className={`flex items-center justify-between mb-1 ${AssessmentsToDelete.includes(Assessment) ? 'opacity-50 line-through text-black' : ''}`}>
+                            <div key={Assessment} className={`flex items-center justify-between mb-1 ${AssessmentsToDelete.includes(Assessment) ? "opacity-50 line-through text-black" : ""}`}>
                                 <div className="bg-yellow-400 text-black rounded-md px-4 py-1 break-all">
                                     {Assessment}
                                 </div>
