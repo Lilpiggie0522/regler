@@ -38,12 +38,20 @@ export default function UnifiedInfo() {
     const [tutorComment, setTutorComment] = useState<string>("")
     const [staffId,] = useLocalStorageState("staffId", "");
     const [issueId,] = useLocalStorageState("issueId", "");
-
+    const [role,] = useLocalStorageState("role", "")
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
-    const [isAdmin] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [showError, setShowError] = useState(false);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+    useEffect(() => {
+        if (role === "admin") {
+            setIsAdmin(true);
+        } else {
+            setIsAdmin(false);
+        }
+    }, [role])
 
     useEffect(() => {
         async function getTutorOpinions() {
@@ -193,10 +201,11 @@ export default function UnifiedInfo() {
                                     {student.status}
                                 </td>
                                 <td>
-                                    
+                                    {/* "bg-blue-500 text-white py-1 px-3 rounded" */}
                                     <Button
-                                        className="bg-blue-500 text-white py-1 px-3 rounded"
+                                        className={`bg-blue-500 text-white py-1 px-3 rounded ${issueId ? "" : "opacity-50 cursor-not-allowed"}`}
                                         onClick={() => router.push(`/studentComment?studentId=${student.id}&issueId=${issueId}&studentName=${student.name}`)}
+                                        disabled={!issueId}
                                     >
                                         Details
                                     </Button>
@@ -248,7 +257,7 @@ export default function UnifiedInfo() {
                             <button type="submit" className="bg-black text-white py-2 w-40 rounded-md">
                                 Submit
                             </button>
-                            {isAdmin && (
+                            {isAdmin && issueId && (
                                 <button
                                     type="button" onClick={handleClose} className="bg-black text-white py-2 w-40 rounded-md">
                                     Close this issue

@@ -1,4 +1,4 @@
-import {POST} from '@/app/api/adminSystem/initialise/route';
+import { dbInitialization } from '@/app/api/adminSystem/initialise/dbInitialisation';
 import { NextRequest } from 'next/server';
 //import { createMocks } from 'node-mocks-http';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -41,15 +41,8 @@ describe('Initialisation API Tests', () => {
         course: { courseName: 'CS101', mentorsEmails: 'tutor1@example.com', teams: 'Team1', term: 'T1' },
       };
     
-      // Mock a NextRequest with JSON body
-      const req = new NextRequest(new URL('http://localhost/api/adminSystem/initialise'), {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
-      });
-    
       // Call the POST handler
-      const res = await POST(req);
+      const res = await dbInitialization(body)
     
       // Verify response status and content
       expect(res.status).toBe(200);
@@ -70,15 +63,8 @@ describe('Initialisation API Tests', () => {
         course: { courseName: 'CS102', mentorsEmails: 'tutor2@example.com', teams: 'Team3,Team2', term: 'T1' },
       };
     
-      // Mock a NextRequest with JSON body
-      const req = new NextRequest(new URL('http://localhost/api/adminSystem/initialise'), {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' },
-      });
-    
       // Call the POST handler
-      const res = await POST(req);
+      const res = await dbInitialization(body)
     
       // Verify response status and content
       expect(res.status).toBe(200);

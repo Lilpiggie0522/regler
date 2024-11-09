@@ -1,6 +1,6 @@
 "use client";
 
-import { useStudentContext } from "@/context/studentContext";
+import { useLocalStorageState } from "@/context/studentContext";
 import React, { useState, useEffect, useRef } from "react";
 import { FaSearch, FaArrowLeft, FaFilter } from "react-icons/fa";
 import { useRouter } from "next/navigation";
@@ -24,6 +24,7 @@ interface Group {
     tutors: string;
     teamId: string;
     issueId: string;
+    assignment: string;
 }
 
 const GroupList: React.FC = () => {
@@ -32,7 +33,6 @@ const GroupList: React.FC = () => {
     
 
     const courseId = params.get("courseId");
-    const { useLocalStorageState } = useStudentContext();
     const [, setIssueId] = useLocalStorageState("issueId", "")
 
 
@@ -43,7 +43,7 @@ const GroupList: React.FC = () => {
 
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [selectedStatus, setSelectedStatus] = useState<GroupStatus | "">("");
-    const [selectedAss, setSelectedAss] = useState<GroupStatus | "">("");
+    const [selectedAss, setSelectedAss] = useState<string>("");
     const [isAssDropdownOpen, setIsAssDropdownOpen] = useState(false);
     const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
     const assDropdownRef = useRef<HTMLDivElement>(null);
@@ -54,6 +54,14 @@ const GroupList: React.FC = () => {
     const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
     const [showQuestionModal, setShowQuestionModal] = useState(false);
 
+    // Random color classes for assessments
+    const getAssColor = (Ass: string): string => {
+        if (Ass === "N/A") {
+            return "bg-gray-200 text-gray-700 border border-gray-500";
+        } else {
+            return "bg-yellow-400 text-black border border-black";
+        }
+    };
 
     // Fetch groups from the API
     const fetchTeams = async (courseId: string|null) => {
@@ -85,18 +93,21 @@ const GroupList: React.FC = () => {
         fetchTeams(courseId);
     }, [courseId]);  // Run effect when these values change
 
-    
+    const uniqueAssignments = Array.from(new Set(groups.map(group => group.assignment || "N/A")));
 
     // Filter groups based on the search term and status filter
     const filteredGroups = groups.filter(group => {
         const matchesTeam = group.groupName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesMentors = group.tutors.split(",").map(tutor => tutor.toLowerCase()).includes(searchTerm.toLowerCase())
-        const matchesLecturer = group.lecturer.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesSearchTerm = matchesTeam || matchesMentors || matchesLecturer;
+
+        const matchesSearchTerm = matchesTeam || matchesMentors;
+        const matchesAss = selectedAss 
+        ? (selectedAss === "N/A" ? (!group.assignment || group.assignment === "N/A") : group.assignment === selectedAss) 
+        : true;
 
         const matchesStatus = selectedStatus ? group.status === selectedStatus : true;
 
-        return matchesSearchTerm && matchesStatus;
+        return matchesSearchTerm && matchesStatus && matchesAss;
     });
 
 
@@ -118,17 +129,18 @@ const GroupList: React.FC = () => {
     const getStatusClass = (status: GroupStatus): string => {
         switch (status) {
         case GroupStatus.Complete:
-            return "bg-green-400 text-white border-xl border-green-700";
+            return "bg-green-200 text-green-700 border border-green-500";
         case GroupStatus.Pending:
-            return "bg-orange-400 text-white border-xl border-orange-700";
+            return "bg-orange-200 text-orange-700 border border-orange-500";
         case GroupStatus.NotStarted:
-            return "bg-gray-400 text-white border-xl border-gray-700";
+            return "bg-gray-200 text-gray-700 border border-gray-500";
         case GroupStatus.NeedFeedback:
-            return "bg-blue-400 text-white border-xl border-blue-700";
+            return "bg-blue-200 text-blue-700 border border-blue-500";
         default:
             return "";
         }
     };
+
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -149,9 +161,8 @@ const GroupList: React.FC = () => {
     
 
     const handleSelectGroup = (group : Group) => {
-        setIssueId(group.issueId);
+        setIssueId(group.issueId ? group.issueId : "");
         router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`);
-        
     }
 
     return (
@@ -164,18 +175,18 @@ const GroupList: React.FC = () => {
                         <FaArrowLeft className="mr-2" />
                         {"Back"}
                     </button>
-                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Groups</h1>
+                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Assignments Dashboard</h1>
                 </div>
-                    <div className="flex items-center">
-                        <button 
-                            className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                            onClick={() => {
-                                setShowAssessmentModal(true);
-                                setSelectedCourseId(courseId);
-                            }}
-                        >
+                <div className="flex items-center">
+                    <button 
+                        className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
+                        onClick={() => {
+                            setShowAssessmentModal(true);
+                            setSelectedCourseId(courseId);
+                        }}
+                    >
                             Edit Assessments
-                        </button>
+                    </button>
                     
                     <div className="flex items-center">
                         <button 
@@ -224,7 +235,7 @@ const GroupList: React.FC = () => {
             <div className="flex flex-col p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
             <table className="min-w-full divide-y divide-gray-200 table-fixed">
                     <thead className="bg-gray-200 sticky top-0 z-10">
-                        <tr className="text-left mt-6">
+                        <tr >
                         <th className="py-2 px-4 font-bold text-black text-center w-1/5">Group Name</th>
                         <th className="py-2 px-4 font-bold text-black text-center w-1/5">Tutors</th>
                             <th className="py-2 px-4 font-bold text-black text-center w-1/5">
@@ -237,19 +248,18 @@ const GroupList: React.FC = () => {
                                     <div
                                         ref={assDropdownRef}
                                         className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
-                                        style={{ marginTop: "100px" }}
                                     >
-                                        {/* Status options */}
-                                        {Object.values(GroupStatus).map((status) => (
+                                        {/* Assignment options */}
+                                        {uniqueAssignments.map((assignment) => (
                                             <div
-                                                key={status}
-                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getStatusClass(status)} ${selectedAss === status ? "bg-gray-200" : ""}`}
+                                                key={assignment}
+                                                className={`px-4 py-2 cursor-pointer hover:bg-gray-100 rounded-md ${getAssColor(assignment)} ${selectedAss === assignment ? "bg-gray-200 text-gray-700 border border-gray-500" : ""}`}
                                                 onClick={() => {
-                                                    setSelectedAss(status);
+                                                    setSelectedAss(assignment);
                                                     setIsAssDropdownOpen(false);
                                                 }}
                                             >
-                                                {status}
+                                                {assignment}
                                             </div>
                                         ))}
 
@@ -277,7 +287,6 @@ const GroupList: React.FC = () => {
                                     <div
                                         ref={statusDropdownRef}
                                         className="absolute w-55 bg-white border border-gray-200 rounded-lg shadow-lg z-10"
-                                        style={{ marginTop: "100px" }}
                                     >
                                         {/* Status options */}
                                         {Object.values(GroupStatus).map((status) => (
@@ -313,22 +322,28 @@ const GroupList: React.FC = () => {
                         {sortedGroups.length > 0 ? (
                             sortedGroups.map((group, index) => (
                                 <tr key={index} className="border-b">
-                                    <td className="py-3 px-4 text-black text-center w-1/5">
-                                        {group.groupName}
-                                    </td>
+                                    <td className="py-3 px-4 text-black text-center w-1/5">{group.groupName}</td>
                                     <td className="py-3 px-4 text-black text-center w-1/5">
                                         {group.tutors}
                                     </td>
-                                    <td className="py-3 px-4 text-black text-center w-1/5">
-                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: "140px", height: "35px", borderRadius: "8px" }}>
-                                            ass
+
+                                    <td className="py-3 px-4 text-center w-1/5">
+                                        <div className={`inline-block px-4 py-1 border-2 items-center justify-center rounded-md ${group.assignment ? getAssColor(group.assignment) : "bg-gray-200 text-gray-700 border border-gray-500"}`} style={{
+                                                width: "140px",
+                                                height: "auto",
+                                                wordWrap: "break-word",
+                                                whiteSpace: "normal",
+                                            }}>
+                                            {group.assignment ? group.assignment : "N/A"}
                                         </div>
                                     </td>
-                                    <td className="py-3 px-4 text-black text-center w-1/5">
-                                        <div className={`flex items-center justify-center ${getStatusClass(group.status)}`} style={{ width: "140px", height: "35px", borderRadius: "8px" }}>
+
+                                    <td className="py-3 px-4 text-center w-1/5">
+                                        <div className={`inline-block px-4 py-1 border-2 items-center justify-center rounded-md ${getStatusClass(group.status)}`} style={{ width: "140px", height: "35px",  }}>
                                             {group.status}
                                         </div>
                                     </td>
+
                                     <td className="py-3 px-4 text-center w-1/5">
                                         <button
                                             className="bg-black text-white py-1 px-3 rounded-lg"

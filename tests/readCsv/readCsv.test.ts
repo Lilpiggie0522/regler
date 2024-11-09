@@ -1,4 +1,4 @@
-import { createAdminInput, createCourseInput, createStudentInput, createTeamInput } from '@/app/api/adminSystem/initialise/route'
+import { createAdminInput, createCourseInput, createStudentInput, createTeamInput } from '@/app/api/adminSystem/initialise/dbInitialisation'
 import * as func from '@/app/api/staff/readCsv/helpers'
 
 import { convertedResult, convertFileData } from '@/app/api/staff/readCsv/helpers'
