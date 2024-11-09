@@ -22,4 +22,6 @@ export interface StaffVerificationModalProps extends ModalProps {
 export interface AssessmentModalProps extends ModalProps {
     courseId: string | null;
 }
-  
+export interface QuestionModalProps extends ModalProps {
+    courseId: string | null;
+}

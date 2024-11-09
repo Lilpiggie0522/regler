@@ -83,9 +83,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
 
             setErrorMessage("Assessments have been successfully update.");
             setShowErrorModal(true);
-            // onClose();
             // alert(updatedAssessments)
-            
         } catch (error) {
             setErrorMessage("Failed to update Assessments. Please try again.");
             console.error("Submission Error:", error);
@@ -131,7 +129,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                 </button>
                 <div className="bg-yellow-100 p-4 rounded-lg mb-4">
                     <h1 className="text-lg text-black font-semibold text-center">
-                        Please click `Submit` to save all of your changes after editing.
+                        Please click `Submit` to save all of your changes on Assessments.
                     </h1>
                 </div>
                 
@@ -140,8 +138,8 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                 <div className="flex flex-col mt-4">
                     {Assessments.length > 0 ? (
                         Assessments.map((Assessment) => (
-                            <div key={Assessment} className={`flex items-center justify-between mb-1 ${AssessmentsToDelete.includes(Assessment) ? "opacity-50 line-through text-black" : ""}`}>
-                                <div className="bg-yellow-400 text-black rounded-full px-4 py-1">
+                            <div key={Assessment} className={`flex items-center justify-between mb-1 ${AssessmentsToDelete.includes(Assessment) ? 'opacity-50 line-through text-black' : ''}`}>
+                                <div className="bg-yellow-400 text-black rounded-md px-4 py-1 break-all">
                                     {Assessment}
                                 </div>
                                 <div className="flex items-center">
@@ -173,7 +171,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                     />
                     <button 
                         onClick={handleAddAssessment}
-                        className="bg-yellow-500 text-white rounded-lg ml-2 px-2 py-2"
+                        className="bg-yellow-400 text-white rounded-lg ml-2 px-2 py-2"
                     >
                         <FaPlus />
                     </button>
