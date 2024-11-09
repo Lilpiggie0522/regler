@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import { Button } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import ErrorModal from "./modals/errorModal";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaTrash, FaInfoCircle } from "react-icons/fa";
+import LogoutButton from "./logoutButton";
 
 export interface Student {
     id: string;
@@ -65,7 +66,7 @@ export default function UnifiedInfo() {
                 } else {
                     const comment = await response.json()
                     setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment).slice(1,).slice(0,-1));
-                    //加回去slice
+                    //add back slice
                 }
             } catch (error) {
                 console.error(error);
@@ -177,45 +178,64 @@ export default function UnifiedInfo() {
                 </div>
             </div>
 
+            <div className="bg-gray-100 p-2 pr-9 flex justify-end items-center shadow-md">
+                <LogoutButton />
+            </div>
+
             <div className="max-w-7xl mx-auto p-8 bg-white text-black mt-6 rounded-lg shadow-md">
                 <table className="w-full table-auto">
-                    <thead>
+                    <thead className="bg-gray-200 sticky top-0 z-10">
                         <tr className="text-left">
-                            <th className="py-2">Members</th>
-                            <th className="py-2">Class</th>
-                            <th className="py-2">ZID</th>
-                            <th className="py-2">Email</th>
-                            <th className="py-2">Status</th>
-                            <th className="py-2">Details</th>
-                            <th className="py-2">Actions</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Members</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Class</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">ZID</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Email</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Status</th>
+                            <th className="px-4 py-2 text-left w-1/7 font-bold pl-9">Details</th>
+                            <th className="px-4 py-2 text-left w-1/7 font-bold pl-8">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {students.map((student, index) => (
-                            <tr key={index} className="border-b">
-                                <td className="py-2">{student.name}</td>
-                                <td className="py-2">{student.class}</td>
-                                <td className="py-2">{student.zid}</td>
-                                <td className="py-2">{student.email}</td>
-                                <td className={`py-2 ${student.status === "Submitted" ? "text-green-500" : "text-red-500"}`}>
+                            <tr key={index} className="border-b align-content-center">
+                                <td className="px-4 py-2 text-center w-1/7">{student.name}</td>
+                                <td className="px-4 py-2 text-center w-1/7">{student.class}</td>
+                                <td className="px-4 py-2 text-center w-1/7">{student.zid}</td>
+                                <td className="px-4 py-2 text-center w-1/7">{student.email}</td>
+                                {/* <td className={`py-2 `}>
                                     {student.status}
+                                </td> */}
+                                <td className="px-4 py-2 text-center w-1/7">
+                                    <div
+                                        className={`inline-block px-4 py-1 border-2 items-center justify-center rounded-md ${
+                                            student.status === "Submitted"
+                                                ? "bg-green-200 text-green-700 border-green-500"
+                                                : "bg-red-200 text-red-700 border-red-500"
+                                        }`}
+                                        style={{ width: "150px", height: "35px" }}
+                                    >
+                                        {student.status}
+                                    </div>
                                 </td>
-                                <td>
+
+                                <td className="px-4 py-2 text-center w-1/7 align-items-center">
                                     {/* "bg-blue-500 text-white py-1 px-3 rounded" */}
-                                    <Button
-                                        className={`bg-blue-500 text-white py-1 px-3 rounded ${issueId ? "" : "opacity-50 cursor-not-allowed"}`}
+                                    <button
+                                        className={`bg-blue-500 text-white py-1 px-3 rounded flex items-center justify-center space-x-1 ${issueId ? "" : "opacity-50 cursor-not-allowed"}`}
                                         onClick={() => router.push(`/studentComment?studentId=${student.id}&issueId=${issueId}&studentName=${student.name}`)}
                                         disabled={!issueId}
                                     >
-                                        Details
-                                    </Button>
+                                        <FaInfoCircle />
+                                       <span>Details</span>
+                                    </button>
                                 </td>
-                                <td className="py-2">
+                                <td className="px-4 py-2 text-center w-1/7 align-items-center">
                                     <button
-                                        className="bg-red-500 text-white py-1 px-3 rounded"
+                                        className="bg-red-500 text-white py-1 px-3 rounded flex items-center justify-center space-x-1"
                                         onClick={() => handleDelete(index)}
                                     >
-                                        Delete
+                                        <FaTrash /> 
+                                        <span>Delete</span>
                                     </button>
                                 </td>
                             </tr>
@@ -259,7 +279,7 @@ export default function UnifiedInfo() {
                             </button>
                             {isAdmin && issueId && (
                                 <button
-                                    type="button" onClick={handleClose} className="bg-black text-white py-2 w-40 rounded-md">
+                                    type="button" onClick={handleClose} className="bg-red-600 text-white py-2 w-40 rounded-md">
                                     Close this issue
                                 </button>
                             )}

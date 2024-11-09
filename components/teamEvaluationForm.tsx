@@ -7,6 +7,7 @@ import ImageKitDelete from "./imageKit/ImageKitDelete";
 import {deleteImage} from "./services/imageKitApi";
 import {useEffect} from "react";
 import { Question } from "@/app/api/issueSystem/createIssue/route";
+import LogoutButton from "./logoutButton";
 
 
 
@@ -233,8 +234,9 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <div className="bg-yellow-400 p-9">
+            <div className="bg-yellow-400 p-9 flex justify-between">
                 <h1 className="text-black text-3xl font-bold">Team Evaluation Form</h1>
+                <LogoutButton />
             </div>
             <form className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md" onSubmit={handleSubmit}>
 

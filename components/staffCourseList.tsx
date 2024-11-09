@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useState, ChangeEvent } from "react";
-import { FaSearch, FaTrash } from "react-icons/fa";
+import { FaSearch, FaTrash, FaUpload } from "react-icons/fa";
 
 import { useStudentContext } from "@/context/studentContext";
 import { useRouter } from "next/navigation";
 import ErrorModal from "@/components/modals/errorModal";
+import LogoutButton from "./logoutButton";
 
 interface Course {
     id: string;
@@ -180,14 +181,8 @@ export default function CourseList() {
             {/* Title */}
             <div className="bg-yellow-400 p-9 flex justify-between items-center">
                 <h1 className="text-black text-3xl font-bold">Courses</h1>
-                <div className="flex items-center">
-                    <button 
-                        className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                        onClick={handleShowWindow}
-                    >
-                        Import CSV
-                    </button>
-                    
+                <div className="flex items-center space-x-1">
+         
                     {/* Search bar section */}
                     <div className="relative">
                         <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -202,6 +197,17 @@ export default function CourseList() {
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* Button Row */}
+            <div className="bg-gray-100 p-2 pr-9 flex justify-end items-center shadow-md">
+                <button 
+                    className="bg-black text-white py-1 px-4 rounded-lg flex items-center justify-center mr-4 space-x-1"
+                    onClick={handleShowWindow}
+                >
+                    <FaUpload size={20} /> <span>Import CSV</span>
+                </button>
+                <LogoutButton />
             </div>
 
             {showWindow && (

@@ -2,11 +2,12 @@
 
 import { useLocalStorageState } from "@/context/studentContext";
 import React, { useState, useEffect, useRef } from "react";
-import { FaSearch, FaArrowLeft, FaFilter } from "react-icons/fa";
+import { FaSearch, FaArrowLeft, FaFilter, FaEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import AssessmentModal from "./modals/staffAssessmentModal";
 import QuestionModal from "./modals/staffQuestionModal";
+import LogoutButton from "./logoutButton";
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -35,9 +36,6 @@ const GroupList: React.FC = () => {
     const courseId = params.get("courseId");
     const [, setIssueId] = useLocalStorageState("issueId", "")
 
-
-
-    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [email,] = useLocalStorageState("email", "");
 
@@ -175,46 +173,49 @@ const GroupList: React.FC = () => {
                         <FaArrowLeft className="mr-2" />
                         {"Back"}
                     </button>
-                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Assignments Dashboard</h1>
+                    <h1 className="text-black text-3xl font-bold inline-block ml-6">Group Requests</h1>
                 </div>
                 <div className="flex items-center">
-                    <button 
-                        className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                        onClick={() => {
-                            setShowAssessmentModal(true);
-                            setSelectedCourseId(courseId);
-                        }}
-                    >
-                            Edit Assessments
-                    </button>
                     
-                    <div className="flex items-center">
-                        <button 
-                            className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                            onClick={() => {
-                                setShowQuestionModal(true);
-                                setSelectedCourseId(courseId);
-                            }}
-                        >
-                            Edit Questions
-                        </button>
-                    </div>
                     {/* Search bar section */}
-                    <div className="relative flex items-center">
-                        <span className="absolute left-3 flex items-center pointer-events-none">
-                            <FaSearch className="text-gray-400" />
+                    <div className="relative">
+                        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <FaSearch className="absolute left-2 text-gray-400" />
                         </span>
                         <input
                             type="text"
                             placeholder="Search"
-                            className="border border-gray-400 pl-10 pr-4 py-1 rounded-full text-gray-800" // Added padding left to accommodate icon
+                            className="border border-gray-400 px-10 py-1 rounded-full text-gray-800"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
                 </div>
+            </div>
 
-
+            <div className="bg-gray-100 p-2 pr-9 flex justify-end items-center shadow-md">
+                <button 
+                    className="bg-black text-white py-1 px-4 rounded-lg flex items-center justify-center mr-4 space-x-1" 
+                    onClick={() => {
+                        setShowAssessmentModal(true);
+                        setSelectedCourseId(courseId);
+                    }}
+                >
+                        <FaEdit size={20} /> <span>Edit Assessments</span>
+                </button>
+                
+                <div className="flex items-center">
+                    <button 
+                        className="bg-black text-white py-1 px-4 rounded-lg flex items-center justify-center mr-4 space-x-1" 
+                        onClick={() => {
+                            setShowQuestionModal(true);
+                            setSelectedCourseId(courseId);
+                        }}
+                    >
+                        <FaEdit size={20} /> <span>Edit Questions</span>
+                    </button>
+                </div>
+                <LogoutButton />
             </div>
 
             {showAssessmentModal && (
