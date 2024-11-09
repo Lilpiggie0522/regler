@@ -102,7 +102,7 @@ export async function GET(req : NextRequest, { params } : Params) {
             }));
         
 
-        // console.log(teams);
+        console.log(teams);
         return NextResponse.json({teams}, {status: 200});
     } catch (error) {
         console.error(error)
