@@ -16,15 +16,15 @@ export interface Student {
     status: "Submitted" | "No Submission";
 }
 
-const dummyTutorOpinions = [
-    { name: "Tutor A", content: "Great job on the project!" },
-    { name: "Tutor B", content: "Needs improvement in teamwork." },
-];
+// const dummyTutorOpinions = [
+//     { name: "Tutor A", content: "Great job on the project!" },
+//     { name: "Tutor B", content: "Needs improvement in teamwork." },
+// ];
 
-const dummyLecturerOpinions = [
-    { name: "Lecturer X", content: "Excellent presentation skills." },
-    { name: "Lecturer Y", content: "Could use more analytical depth." },
-];
+// const dummyLecturerOpinions = [
+//     { name: "Lecturer X", content: "Excellent presentation skills." },
+//     { name: "Lecturer Y", content: "Could use more analytical depth." },
+// ];
 
 export default function UnifiedInfo() {
     const router = useRouter();
@@ -35,11 +35,11 @@ export default function UnifiedInfo() {
     const group = params.get("group");
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [content, setContent] = useState<string>("")
-    const [tutorComment, setTutorComment] = useState<string>("")
+    const [tutorComment, setTutorComment] = useState<[]>([])
+    const [lectureComment, setLecturerComment] = useState<[]>([])
     const [staffId,] = useLocalStorageState("staffId", "");
     const [issueId,] = useLocalStorageState("issueId", "");
     const [role,] = useLocalStorageState("role", "")
-    const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
     const [errorMessage, setErrorMessage] = useState("");
     const [showError, setShowError] = useState(false);
@@ -56,15 +56,15 @@ export default function UnifiedInfo() {
     useEffect(() => {
         async function getTutorOpinions() {
             try {
-                const response = await fetch(`/api/util/getIssueByTeamId/${teamId}`)
+                const response = await fetch(`/api/util/getIssueById/${issueId}`)
                 if (!response.ok) {
                     const error = await response.json();
-                    const message = error.message;
+                    console.log(error)
                     // alert("Error: " + message);
-                    setTutorComment(JSON.stringify(message).slice(1,).slice(0,-1));
                 } else {
                     const comment = await response.json()
-                    setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment).slice(1,).slice(0,-1));
+                    setTutorComment(comment.tutorComments);
+                    setLecturerComment(comment.lecturerComments)
                     //加回去slice
                 }
             } catch (error) {
@@ -72,7 +72,7 @@ export default function UnifiedInfo() {
             }
         }
         getTutorOpinions()
-    }, [teamId, tutorComment, isUploadedSuccessfully])
+    }, [issueId])
 
     useEffect(() => {
         async function getIssueInfo() {
@@ -100,8 +100,6 @@ export default function UnifiedInfo() {
                         }
                     }
                     setStudents(studentInfos);
-                    const {message} = students
-                    console.log(message)
                 }
             } catch (error) {
                 console.error(error);
@@ -127,21 +125,20 @@ export default function UnifiedInfo() {
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify({content: content, teamId: teamId, staffId: staffId})
+                body: JSON.stringify({content: content, issueId, staffId: staffId})
                 
             });
             if (!response.ok) {
                 const errorString = await response.json();
                 setErrorMessage(errorString.error);
                 setShowError(true);
-                console.log(errorString);
-                setIsUploadedSuccessfully(false);
             }else {
-                setIsUploadedSuccessfully(true);
+                const successPrompt = await response.json()
+                setErrorMessage(successPrompt.message);
+                setShowError(true);
             }
         } catch (error) {
             console.error(error);
-            setIsUploadedSuccessfully(false);
         }
     };
 
@@ -225,22 +222,22 @@ export default function UnifiedInfo() {
 
                 <div className="bg-gray-100 border border-gray-300 rounded-md p-4 mb-4 mt-6">
                     <h2 className="font-semibold">Tutor Opinions</h2>
-                    {dummyTutorOpinions.map((opinion, index) => (
+                    {tutorComment.length ? tutorComment.map((opinion: {name: string, content: string}, index: number) => (
                         <div key={index} className="mt-2">
                             <span className="text-sm font-semibold text-gray-700">{opinion.name}:</span>
                             <p className="text-black">{opinion.content}</p>
                         </div>
-                    ))}
+                    )):"No tutor comments"}
                 </div>
 
                 <div className="bg-gray-100 border border-gray-300 rounded-md p-4">
                     <h2 className="font-semibold">Lecturer Opinions</h2>
-                    {dummyLecturerOpinions.map((opinion, index) => (
+                    {lectureComment.length ? lectureComment.map((opinion: {name: string, content: string}, index) => (
                         <div key={index} className="mt-2">
                             <span className="text-sm font-semibold text-gray-700">{opinion.name}:</span>
                             <p className="text-black">{opinion.content}</p>
                         </div>
-                    ))}
+                    )) : "No lecturer comments"}
                 </div>
 
                 <form className="mt-6 w-full" onSubmit={handleSubmit}>
@@ -270,7 +267,10 @@ export default function UnifiedInfo() {
                 {showError ? (
                     <ErrorModal
                         errorMessage={errorMessage}
-                        onClose={() => setShowError(false)}
+                        onClose={() => {
+                            setShowError(false)
+                            window.location.reload()
+                        }}
                     />
                 ) : null}
 
