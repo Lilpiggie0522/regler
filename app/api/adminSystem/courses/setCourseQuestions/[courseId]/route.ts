@@ -22,7 +22,8 @@ export async function GET(req : NextRequest, { params } : Params) {
         if (!course) {
             return NextResponse.json({error: "course not found"}, {status: 404});
         }
-        const questions = course.questions;
+        const questions = course.questionBanks;
+        // console.log(questions)
         return NextResponse.json({questions}, {status: 200});
     } catch (error) {
         return NextResponse.json({ error: error}, {status: 500});
@@ -43,17 +44,20 @@ export async function PUT(req : NextRequest, { params } : Params) {
         
 
         const request = await req.json();
-        const updateQuestions : UpdateQuestionInput[]  = request.body.questions;
+        console.log("REQ:", request)
+        const updateQuestions : UpdateQuestionInput[]  = request.questions;
         const course = await Course.updateOne({_id : courseId},
             {
-                $set:{ question: updateQuestions},
+                $set:{ questionBanks: updateQuestions},
             }
         );
+        console.log("course:", course)
         if (!course) {
             return NextResponse.json({error: "course not found"}, {status: 404});
         }
         const currentCourse = await Course.findById(courseId).exec();
-        const questions = currentCourse.questions
+        const questions = currentCourse.questionBanks
+        console.log("questions:", questions)
         return NextResponse.json({message: "question updated", questions}, {status: 200});
         
     } catch (error) {

@@ -1,74 +1,114 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { FaTrash, FaPlus } from 'react-icons/fa';
+import { FaTrash, FaUndo, FaPlus } from 'react-icons/fa';
 import { QuestionModalProps } from './ModalProps';
+import ErrorModal from "./errorModal";
 
 const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
     const [questions, setQuestions] = useState<string[]>([]);
-    const [newQuestions, setNewQuestions] = useState<string[]>(['']); 
+    const [newQuestions, setNewQuestions] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const [questionCount, setQuestionCount] = useState(1);
+    const [showErrorModal, setShowErrorModal] = useState(false);
+    const [questionsToDelete, setQuestionsToDelete] = useState<string[]>([]);
 
-    // fetch all already exist questions
+    // Fetch existing questions from the database
     useEffect(() => {
-        // const fetchProject = async () => {
-        //     // const dummyData = ['Stage 1', 'Stage 2', 'Stage 3'];
-        //     // setProjects(dummyData);
-        
-        const fetchProjects = async (courseId: string|null) => {
+        const fetchQuestions = async (courseId: string | null) => {
             try {
-                // should return a list of teams in this course
-                // const response = await fetch(`/api/adminSystem/setCourseAssignment/${courseId}`);
-                const res = await fetch(`/api/test/${courseId}`, {
+                const res = await fetch(`/api/adminSystem/courses/setCourseQuestions/${courseId}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                 });
-        
+
                 if (!res.ok) {
                     const errObj = await res.json();
-        
                     throw Error(errObj.error);
                 }
-    
+
                 const data = await res.json();
-                const assignments = data.assignments.map((assignment: { assignmentName: string }) => assignment.assignmentName);
-                setProjects(assignments);
+                const fetchedQuestions = data.questions.map((questionList: { question: string }) => questionList.question);
+
+                console.log(fetchedQuestions);
+                setQuestions(fetchedQuestions);
             } catch (error) {
                 console.error(error);
-                setErrorMessage('Failed to fetch projects. Please try again.');
+                setErrorMessage('Failed to fetch questions. Please try again.');
+                setShowErrorModal(true);
             }
         }
-        
-        fetchProjects(courseId);
+
+        fetchQuestions(courseId);
     }, [courseId]);
 
     const handleSubmit = async () => {
+        const updatedQuestions = questions.filter(question => !questionsToDelete.includes(question)); // Remove deleted questions
+
+        // Add new question if it exists
+        if (newQuestions.trim()) {
+            updatedQuestions.push(newQuestions.trim());
+        }
+
+        // Prepare the request body with the updated list of questions
         const body = {
-            questions: [...questions, ...newQuestions].filter(q => q.trim() !== ''),
+            questions: updatedQuestions.map(question => ({
+                question: question, 
+            })),
         };
 
         console.log("Submitting the following data:", body);
-        alert(JSON.stringify(body, null, 2)); // Display the data to confirm submission
-        setQuestions(body.questions); // Update the questions state
-        setNewQuestions(['']); // Clear new questions
-        onClose();
+
+        try {
+            const response = await fetch(`/api/adminSystem/courses/setCourseQuestions/${courseId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+                const errObj = await response.json();
+                console.error("Error Response:", errObj);
+                throw Error(errObj.error);
+            }
+
+            setQuestions(updatedQuestions);
+            setNewQuestions('');
+            setQuestionsToDelete([]);
+
+            setErrorMessage('Questions have been successfully update.');
+            setShowErrorModal(true);      
+        } catch (error) {
+            setErrorMessage('Failed to update questions. Please try again.');
+            console.error("Submission Error:", error);
+            setShowErrorModal(true);
+        }
     };
 
     const handleAddQuestion = () => {
-        setNewQuestions(prev => [...prev, '']); // Add a new empty string for a new question input
+        if (newQuestions.trim()) {
+            setQuestions(prev => [...prev, newQuestions.trim()]);
+            setNewQuestions('');
+        }
     };
 
-    const handleNewQuestionChange = (index: number, value: string) => {
-        const updatedQuestions = [...newQuestions];
-        updatedQuestions[index] = value;
-        setNewQuestions(updatedQuestions);
+    const handleDelete = (question: string) => {
+        if (!questionsToDelete.includes(question)) {
+            setQuestionsToDelete(prev => [...prev, question]);
+        }
     };
 
-    const handleDeleteQuestion = (index: number) => {
-        const updatedQuestions = newQuestions.filter((_, i) => i !== index);
-        setNewQuestions(updatedQuestions); // Update the questions list
+    const handleUndoDelete = (question: string) => {
+        setQuestionsToDelete(prev => prev.filter(p => p !== question));
+
+        setQuestions(prev => {
+            if (!prev.includes(question)) {
+                return [...prev, question];
+            }
+            return prev;
+        });
     };
 
     return (
@@ -79,38 +119,51 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
                 </button>
                 <div className="bg-yellow-100 p-4 rounded-lg mb-4">
                     <h1 className="text-lg text-black font-semibold text-center">
-                        Please click `Submit` to save all questions.
+                        Please click `Submit` to save all of your changes on Team Evaluation Form Questions.
                     </h1>
                 </div>
 
-                <h2 className="text-md mt-4 text-black font-bold">Enter Team Evaluation Form Questions:</h2>
-                {newQuestions.map((question, index) => (
-                    <div className="flex items-start mt-2" key={index}>
-                        <span className="text-black">Q{index + questionCount}: </span>
-                        <textarea
-                            value={question}
-                            onChange={(e) => handleNewQuestionChange(index, e.target.value)}
-                            className="border border-gray-400 rounded-lg w-full p-1 text-gray-800 ml-2 resize-none" 
-                            rows={3} 
-                            placeholder="What is your question?"
-                            style={{ overflow: 'auto', resize: 'none' }} 
-                        />
-                        <button 
-                            onClick={() => handleDeleteQuestion(index)} 
-                            className="text-black ml-2 flex items-center"
-                        >
-                            <FaTrash /> {/* Delete icon */}
-                        </button>
-                    </div>
-                ))}
+                <h2 className="text-md mt-4 text-black font-bold">Current Questions</h2>
+                <div className="flex flex-col mt-4">
+                    {questions.length > 0 ? (
+                        questions.map((question) => (
+                            <div key={question} className={`flex items-center justify-between mb-1 ${questionsToDelete.includes(question) ? 'opacity-50 line-through text-black' : ''}`}>
+                                <div className="bg-yellow-400 text-black rounded-md px-4 py-1 break-all">
+                                    {question}
+                                </div>
+                                <div className="flex items-center">
+                                    <button className="text-black p-1" onClick={() => handleDelete(question)}>
+                                        <FaTrash />
+                                    </button>
 
-                <div className="flex justify-center mt-2">
+                                    {questionsToDelete.includes(question) && (
+                                        <button className="text-black p-1" onClick={() => handleUndoDelete(question)}>
+                                            <FaUndo />
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <span className="text-gray-500 text-center">No Assessments available.</span>
+                    )}
+                </div>
+
+                <h2 className="text-md mt-4 text-black font-bold">Enter New Questions</h2>
+                <div className="flex items-center mt-2">
+                    <textarea
+                        value={newQuestions}
+                        onChange={(e) => setNewQuestions(e.target.value)}
+                        className="border border-gray-400 rounded-lg w-full p-1 text-gray-800 ml-2 resize-none"
+                        rows={3}
+                        placeholder="What is your question?"
+                        style={{ overflow: 'auto', resize: 'none' }}
+                    />
                     <button 
                         onClick={handleAddQuestion}
-                        className="bg-yellow-400 text-white rounded-lg py-2 px-4 flex items-center justify-center"
+                        className="bg-yellow-400 text-white rounded-lg ml-2 px-2 py-2"
                     >
-                        <FaPlus className="mr-2" /> 
-                        Add More Question
+                        <FaPlus />
                     </button>
                 </div>
 
@@ -121,8 +174,11 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
                     Submit
                 </button>
 
-                {errorMessage && (
-                    <p className="text-red-500 mt-2 text-center">{errorMessage}</p>
+                {showErrorModal && (
+                    <ErrorModal
+                        errorMessage={errorMessage}
+                        onClose={() => setShowErrorModal(false)}
+                    />
                 )}
             </div>
         </div>

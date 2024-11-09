@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
+import AssessmentModal from './modals/staffAssessmentModal';
 import QuestionModal from './modals/staffQuestionModal';
 
 // Define an enum for the group statuses
@@ -22,17 +23,21 @@ interface Group {
     status: GroupStatus;
     tutors: string;
     teamId: string;
+    issueId: string;
 }
 
 const GroupList: React.FC = () => {
     const router = useRouter();
     const params = useSearchParams();
     
+
     const courseId = params.get("courseId");
-    
-
-
     const { useLocalStorageState } = useStudentContext();
+    const [, setIssueId] = useLocalStorageState("issueId", "")
+
+
+
+    
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [email,] = useLocalStorageState("email", "");
 
@@ -42,8 +47,10 @@ const GroupList: React.FC = () => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const [groups, setGroups] = useState<Group[]>([]); // State for groups
-    const [showQuestionModal, setShowQuestionModal] = useState(false);
+    const [showAssessmentModal, setShowAssessmentModal] = useState(false);
     const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
+    const [showQuestionModal, setShowQuestionModal] = useState(false);
+
 
     // Fetch groups from the API
     const fetchTeams = async (courseId: string|null) => {
@@ -107,16 +114,16 @@ const GroupList: React.FC = () => {
     // Get the corresponding class for the status
     const getStatusClass = (status: GroupStatus): string => {
         switch (status) {
-        case GroupStatus.Complete:
-            return "bg-green-500 text-white border border-green-700";
-        case GroupStatus.Pending:
-            return "bg-orange-500 text-white border border-orange-700";
-        case GroupStatus.NotStarted:
-            return "bg-gray-500 text-white border border-gray-700";
-        case GroupStatus.NeedFeedback:
-            return "bg-blue-500 text-white border border-blue-700";
-        default:
-            return "";
+            case GroupStatus.Complete:
+                return "bg-green-400 text-white border-xl border-green-700";
+            case GroupStatus.Pending:
+                return "bg-orange-400 text-white border-xl border-orange-700";
+            case GroupStatus.NotStarted:
+                return "bg-gray-400 text-white border-xl border-gray-700";
+            case GroupStatus.NeedFeedback:
+                return "bg-blue-400 text-white border-xl border-blue-700";
+            default:
+                return "";
         }
     };
 
@@ -134,6 +141,12 @@ const GroupList: React.FC = () => {
         };
     }, [dropdownRef]);
 
+    const handleSelectGroup = (group : Group) => {
+        setIssueId(group.issueId);
+        router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`);
+        
+    }
+
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Title */}
@@ -146,17 +159,28 @@ const GroupList: React.FC = () => {
                     </button>
                     <h1 className="text-black text-3xl font-bold inline-block ml-6">Groups</h1>
                 </div>
-                <div className="flex items-center">
-                    <button 
-                        className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
-                        onClick={() => {
-                            setShowQuestionModal(true);
-                            setSelectedCourseId(courseId);
-                        }}
-                    >
-                        Edit Questions
-                    </button>
-
+                    <div className="flex items-center">
+                        <button 
+                            className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
+                            onClick={() => {
+                                setShowAssessmentModal(true);
+                                setSelectedCourseId(courseId);
+                            }}
+                        >
+                            Edit Assessments
+                        </button>
+                    
+                    <div className="flex items-center">
+                        <button 
+                            className="bg-black text-white py-1 px-4 rounded-lg mr-4" 
+                            onClick={() => {
+                                setShowQuestionModal(true);
+                                setSelectedCourseId(courseId);
+                            }}
+                        >
+                            Edit Questions
+                        </button>
+                    </div>
                     {/* Search bar section */}
                     <div className="relative flex items-center">
                         <span className="absolute left-3 flex items-center pointer-events-none">
@@ -174,6 +198,13 @@ const GroupList: React.FC = () => {
 
 
             </div>
+
+            {showAssessmentModal && (
+                <AssessmentModal
+                    courseId={selectedCourseId}
+                    onClose={() => setShowAssessmentModal(false)} 
+                />
+            )}
 
             {showQuestionModal && (
                 <QuestionModal
@@ -252,7 +283,7 @@ const GroupList: React.FC = () => {
                                     <td className="py-3 px-4 text-center">
                                         <button
                                             className="bg-black text-white py-1 px-3 rounded-lg"
-                                            onClick={() => router.push(`/unifiedInfo?&group=${group.groupName}&teamId=${group.teamId as string}`)}
+                                            onClick={() => handleSelectGroup(group)}
                                         >Select</button>
                                     </td>
                                 </tr>

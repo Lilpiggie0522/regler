@@ -12,15 +12,15 @@ const Issue = models.Issue;
         - teamId: Unique object id of team
         - courseId: Unique object id of course
         - issueId: Unique object id of issue
-        - result: Result string
+        - comment: Result string
     Output: 
-        Send closing email to student
+        Send email containing comments to student
     Error:
         - Check if team exists
         - Check if course exists
         - Check if issue exists
 */
-export async function sendResult(teamId: string, courseId: string, issueId: string) {
+export async function sendComment(teamId: string, courseId: string, issueId: string, comment: string) {
     try {
         await dbConnect();
         const team = await Team.findById(teamId);
@@ -48,18 +48,20 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
             const mailingParameters = {
                 from: process.env.SMTP_EMAIL,
                 to: student.email,
-                subject: "Contribution Dispute Completed",
+                subject: "A Lecturer commented on Your Dispute",
                 html: 
                 `
                 <p>
                     Hi, <strong>${student.studentName}</strong>!
                 </p>
                 <p>
-                    Your lecturer has finalised the dispute application regarding 
+                    A lecturer has commented on the dispute application regarding 
                     the contribution to your group <strong>${team.teamName}</strong> 
-                    in the course <strong>${course.courseName}</strong>. If you 
-                    want to express any objection, please contact your course
-                    admin via email.
+                    in the course <strong>${course.courseName}</strong>. Comment is 
+                    specified as belowed:
+                </p>
+                <p>
+                    <strong>${comment}</strong>
                 </p>
                 <p>
                     If the information is not correct, or this message does
@@ -82,4 +84,4 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
     }
 }
 
-export default sendResult;
+export default sendComment;
