@@ -12,6 +12,7 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/dbConnect";
 import { validateId } from "@/lib/validateId";
 import models from "@/models/models";
+import sendTeamEmail from "@/lib/sendTeamEmail";
 
 const Issue = models.Issue;
 const Student = models.Student;
@@ -152,27 +153,13 @@ export async function POST(req: NextRequest) {
         );
         // calling mailing function send teams
         // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
         
         if (!(process.env.NODE_ENV === "test")) {
-            const mailResponse = await fetch(`${baseUrl}/api/mailingSystem/sendTeam`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    teamId: teamId,
-                    studentId: studentId,
-                    courseId: courseId,
-                    issueId: issueId,
-                }),
-            });
-
+            const mailResponse = await sendTeamEmail(teamId, courseId, studentId, issueId)
             if (!mailResponse.ok) {
                 return NextResponse.json({ error: "Failed to send team information to mailing system" }, { status: 500 });
             } 
         }
-
         return NextResponse.json({ success: true, issue,
             teamId: teamId,
             studentId: studentId,

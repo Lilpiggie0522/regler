@@ -2,6 +2,7 @@ import nodemailer from "nodemailer";
 import dbConnect from "@/lib/dbConnect";
 
 import models from "@/models/models";
+import { NextResponse } from "next/server";
 
 
 const Student = models.Student;
@@ -31,10 +32,10 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
         const team = await Team.findById(teamId);
         const course = await Course.findById(courseId);
         if (!team) {
-            return "Team not found"
+            return NextResponse.json("Team not found", { status: 404 })
         }
         if (!course) {
-            return "Course not found"
+            return NextResponse.json("Course not found", { status: 404 })
         }
         const transport = nodemailer.createTransport({
             service: "gmail",
@@ -165,12 +166,10 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
             mentors: team.mentors,
         });
         
-        return { message: "Notification sent to the team and tutors successfully" };
+        return NextResponse.json("Notification sent to the team and tutors successfully", {status: 200})
 
     } catch (error) {
-        if (error instanceof Error) {
-            return { message: `Error - sendTeam ${error}` }
-        }
+        return NextResponse.json(`Error - sendTeam ${error}`, {status: 500})
     }
 }
 
