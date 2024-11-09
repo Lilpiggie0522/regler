@@ -1,13 +1,13 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { FaTrash, FaUndo, FaPlus } from 'react-icons/fa';
-import { QuestionModalProps } from './ModalProps';
+import React, { useEffect, useState } from "react";
+import { FaTrash, FaUndo, FaPlus } from "react-icons/fa";
+import { QuestionModalProps } from "./ModalProps";
 import ErrorModal from "./errorModal";
 
 const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
     const [questions, setQuestions] = useState<string[]>([]);
-    const [newQuestions, setNewQuestions] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [newQuestions, setNewQuestions] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [questionsToDelete, setQuestionsToDelete] = useState<string[]>([]);
 
@@ -16,9 +16,9 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
         const fetchQuestions = async (courseId: string | null) => {
             try {
                 const res = await fetch(`/api/adminSystem/courses/setCourseQuestions/${courseId}`, {
-                    method: 'GET',
+                    method: "GET",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                 });
 
@@ -34,7 +34,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
                 setQuestions(fetchedQuestions);
             } catch (error) {
                 console.error(error);
-                setErrorMessage('Failed to fetch questions. Please try again.');
+                setErrorMessage("Failed to fetch questions. Please try again.");
                 setShowErrorModal(true);
             }
         }
@@ -61,9 +61,9 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
 
         try {
             const response = await fetch(`/api/adminSystem/courses/setCourseQuestions/${courseId}`, {
-                method: 'PUT',
+                method: "PUT",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(body),
             });
@@ -75,13 +75,13 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
             }
 
             setQuestions(updatedQuestions);
-            setNewQuestions('');
+            setNewQuestions("");
             setQuestionsToDelete([]);
 
-            setErrorMessage('Questions have been successfully update.');
+            setErrorMessage("Questions have been successfully update.");
             setShowErrorModal(true);      
         } catch (error) {
-            setErrorMessage('Failed to update questions. Please try again.');
+            setErrorMessage("Failed to update questions. Please try again.");
             console.error("Submission Error:", error);
             setShowErrorModal(true);
         }
@@ -90,7 +90,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
     const handleAddQuestion = () => {
         if (newQuestions.trim()) {
             setQuestions(prev => [...prev, newQuestions.trim()]);
-            setNewQuestions('');
+            setNewQuestions("");
         }
     };
 
@@ -127,7 +127,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
                 <div className="flex flex-col mt-4">
                     {questions.length > 0 ? (
                         questions.map((question) => (
-                            <div key={question} className={`flex items-center justify-between mb-1 ${questionsToDelete.includes(question) ? 'opacity-50 line-through text-black' : ''}`}>
+                            <div key={question} className={`flex items-center justify-between mb-1 ${questionsToDelete.includes(question) ? "opacity-50 line-through text-black" : ""}`}>
                                 <div className="bg-yellow-400 text-black rounded-md px-4 py-1 break-all">
                                     {question}
                                 </div>
@@ -157,7 +157,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({ onClose, courseId }) => {
                         className="border border-gray-400 rounded-lg w-full p-1 text-gray-800 ml-2 resize-none"
                         rows={3}
                         placeholder="What is your question?"
-                        style={{ overflow: 'auto', resize: 'none' }}
+                        style={{ overflow: "auto", resize: "none" }}
                     />
                     <button 
                         onClick={handleAddQuestion}

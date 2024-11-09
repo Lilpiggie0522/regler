@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json("Invalid Email", {status: 401})
         }
         const authCode = await createUniqueAuthCode(email)
-        sendAuthCode(email, authCode, "admin")
+        sendAuthCode(email, authCode, admin.role)
         // object id of staff and role
         return NextResponse.json({email: admin.email, role: admin.role, _id: admin._id}, {status: 200})
     } catch (error) {

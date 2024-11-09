@@ -89,7 +89,6 @@ export async function GET(req : NextRequest, { params } : Params) {
             }
         ]);
         // Process the data for easier use if necessary
-        console.log(teamData)
         teams = teamData.map(team => (
             {
                 groupName: team.teamName,
@@ -103,7 +102,7 @@ export async function GET(req : NextRequest, { params } : Params) {
             }));
         
 
-        console.log(teams);
+        // console.log(teams);
         return NextResponse.json({teams}, {status: 200});
     } catch (error) {
         console.error(error)

@@ -7,13 +7,12 @@ import { useRouter } from "next/navigation";
 import TermsOfServiceModal from "@/components/modals/termsOfServiceModal";
 import ErrorModal from "./modals/errorModal";
 import { sendStaffVerificationEmail } from "@/components/services/emailService";
-import { useStudentContext } from "@/context/studentContext";
+import { useLocalStorageState } from "@/context/studentContext";
 import StaffVerificationModal from "./modals/staffVerificationModal";
 
 export default function StaffLogin() {
     const router = useRouter();
     // const {setStudentId, setTeamId, setCourseId} = useStudentContext()
-    const { useLocalStorageState } = useStudentContext()
     const [, setStaffEmail] = useLocalStorageState("email", "")
     const [, setStaffRole] = useLocalStorageState("role", "")
     const [, setStaffId] = useLocalStorageState("staffId", "")
