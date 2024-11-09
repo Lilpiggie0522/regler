@@ -1,12 +1,12 @@
 "use client";
 
-import { useStudentContext } from '@/context/studentContext';
-import React, { useState, useEffect, useRef } from 'react';
-import { FaSearch, FaArrowLeft, FaFilter } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
-import AssessmentModal from './modals/staffAssessmentModal';
-import QuestionModal from './modals/staffQuestionModal';
+import { useStudentContext } from "@/context/studentContext";
+import React, { useState, useEffect, useRef } from "react";
+import { FaSearch, FaArrowLeft, FaFilter } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import AssessmentModal from "./modals/staffAssessmentModal";
+import QuestionModal from "./modals/staffQuestionModal";
 
 // Define an enum for the group statuses
 enum GroupStatus {
@@ -114,16 +114,16 @@ const GroupList: React.FC = () => {
     // Get the corresponding class for the status
     const getStatusClass = (status: GroupStatus): string => {
         switch (status) {
-            case GroupStatus.Complete:
-                return "bg-green-400 text-white border-xl border-green-700";
-            case GroupStatus.Pending:
-                return "bg-orange-400 text-white border-xl border-orange-700";
-            case GroupStatus.NotStarted:
-                return "bg-gray-400 text-white border-xl border-gray-700";
-            case GroupStatus.NeedFeedback:
-                return "bg-blue-400 text-white border-xl border-blue-700";
-            default:
-                return "";
+        case GroupStatus.Complete:
+            return "bg-green-400 text-white border-xl border-green-700";
+        case GroupStatus.Pending:
+            return "bg-orange-400 text-white border-xl border-orange-700";
+        case GroupStatus.NotStarted:
+            return "bg-gray-400 text-white border-xl border-gray-700";
+        case GroupStatus.NeedFeedback:
+            return "bg-blue-400 text-white border-xl border-blue-700";
+        default:
+            return "";
         }
     };
 

@@ -1,13 +1,13 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import { FaTrash, FaUndo, FaPlus } from 'react-icons/fa';
-import { AssessmentModalProps } from './ModalProps';
+import React, { useEffect, useState } from "react";
+import { FaTrash, FaUndo, FaPlus } from "react-icons/fa";
+import { AssessmentModalProps } from "./ModalProps";
 import ErrorModal from "./errorModal";
 
 const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) => {
     const [Assessments, setAssessments] = useState<string[]>([]);
-    const [newAssessment, setNewAssessment] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [newAssessment, setNewAssessment] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
     const [showErrorModal, setShowErrorModal] = useState(false);
     const [AssessmentsToDelete, setAssessmentsToDelete] = useState<string[]>([]);
 
@@ -19,9 +19,9 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
 
                 // should return a list of teams in this course
                 const res = await fetch(`/api/adminSystem/courses/setCourseAssignment/${courseId}`, {
-                    method: 'GET',
+                    method: "GET",
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                 });
                 
@@ -37,7 +37,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
                 setAssessments(assignments);
             } catch (error) {
                 console.error(error);
-                setErrorMessage('Failed to fetch Assessments. Please try again.');
+                setErrorMessage("Failed to fetch Assessments. Please try again.");
                 setShowErrorModal(true);
             }
         }
@@ -64,9 +64,9 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
 
         try {
             const response = await fetch(`/api/adminSystem/courses/setCourseAssignment/${courseId}`, {
-                method: 'PUT',
+                method: "PUT",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
                 body: JSON.stringify(body),
             });
@@ -78,14 +78,14 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
             }
 
             setAssessments(updatedAssessments); // Update current Assessments
-            setNewAssessment('');
+            setNewAssessment("");
             setAssessmentsToDelete([]);
 
-            setErrorMessage('Assessments have been successfully update.');
+            setErrorMessage("Assessments have been successfully update.");
             setShowErrorModal(true);
             // alert(updatedAssessments)
         } catch (error) {
-            setErrorMessage('Failed to update Assessments. Please try again.');
+            setErrorMessage("Failed to update Assessments. Please try again.");
             console.error("Submission Error:", error);
             setShowErrorModal(true);
         }
@@ -94,7 +94,7 @@ const AssessmentModal: React.FC<AssessmentModalProps> = ({ onClose, courseId }) 
     const handleAddAssessment = () => {
         if (newAssessment.trim()) {
             setAssessments(prev => [...prev, newAssessment.trim()]); // Add new Assessment to the list
-            setNewAssessment(''); // Clear input after adding
+            setNewAssessment(""); // Clear input after adding
         }
     };
 

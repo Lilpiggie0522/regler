@@ -12,7 +12,7 @@ export async function POST(request : NextRequest) {
         await dbConnect();
         const admin = await Admin.findOne({email: email})
         if (!admin) {
-            return NextResponse.json("invalid staff email", {status: 401})
+            return NextResponse.json("invalid staff email!", {status: 401})
         }
         // Step 1: Fetch all courses for the admin at once
         const coursesFound = await Course.find({ _id: { $in: admin.courses } });
