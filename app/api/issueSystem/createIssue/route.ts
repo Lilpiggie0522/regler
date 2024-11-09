@@ -111,7 +111,6 @@ export async function POST(req: NextRequest) {
         const existingIssue = await Issue.find({
             assignment: assignment
         }).exec();
-        console.log(existingIssue);
         if (existingIssue.length > 0) {
             return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
 
