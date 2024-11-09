@@ -53,7 +53,6 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             },
         })
             .then((res) => res.json())
-            
         console.log("Fetched questions:", courseData.questions);
         console.log("Fetched assignments:", courseData.assignments);
         setQuestions((prevQuestions) => {
@@ -75,7 +74,6 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
         
         fetchCourse(courseId);
     }, [courseId]);
-
     // Handle input changes for text areas
     const handleAnswerChange = (index: number, value: string) => {
         setFormData(prevData => {

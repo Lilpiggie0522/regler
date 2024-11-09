@@ -38,12 +38,16 @@ export default function UnifiedInfo() {
     const [tutorComment, setTutorComment] = useState<string>("")
     const [staffId,] = useLocalStorageState("staffId", "");
     const [issueId,] = useLocalStorageState("issueId", "");
-
+    const [role,] = useLocalStorageState('role', "")
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
-    const [isAdmin] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [showError, setShowError] = useState(false);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+    useEffect(() => {
+        role === 'admin' ? setIsAdmin(true): setIsAdmin(false)
+    }, [role])
 
     useEffect(() => {
         async function getTutorOpinions() {
