@@ -37,7 +37,7 @@ export default function Home() {
 
                     {/* student login button */}
                     <div className="flex justify-center">
-                        <Link href="/studentLogin" className="w-full bg-black text-white py-2 rounded-full text-center">
+                        <Link href="/studentLogin" className="w-full bg-black text-white py-2 rounded-full text-center mb-4">
               Students
                         </Link>
                     </div>

@@ -14,14 +14,18 @@ const Issue = models.Issue;
         - issueId: Unique object id of issue
         - result: Result string
     Output: 
-        Send email containing results to student
+        Send closing email to student
     Error:
         - Check if team exists
         - Check if course exists
         - Check if issue exists
 */
+<<<<<<< HEAD
 //sendResult(teamId: string, courseId: string, issueId: string, content: string, type: string);
 export async function sendResult(teamId: string, courseId: string, issueId: string, result: string) {
+=======
+export async function sendResult(teamId: string, courseId: string, issueId: string) {
+>>>>>>> 1b5a1454db863c6a372604ce4944438e180712ae
     try {
         await dbConnect();
         const team = await Team.findById(teamId);
@@ -58,11 +62,9 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
                 <p>
                     Your lecturer has finalised the dispute application regarding 
                     the contribution to your group <strong>${team.teamName}</strong> 
-                    in the course <strong>${course.courseName}</strong>. Result 
-                    specified as belowed:
-                </p>
-                <p>
-                    <strong>${result}</strong>
+                    in the course <strong>${course.courseName}</strong>. If you 
+                    want to express any objection, please contact your course
+                    admin via email.
                 </p>
                 <p>
                     If the information is not correct, or this message does

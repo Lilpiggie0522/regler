@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
         const { teamId, content, staffId, issueId, courseId } = request as OpinionInput;
 
         // Validate the team ID
-        let response = await validateId(teamId, "Team");
+        let response = await validateId(issueId, "Issue");
         if (response) return response;
 
         response = await validateId(staffId, "Admin");

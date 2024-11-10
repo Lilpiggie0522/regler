@@ -1,6 +1,6 @@
 import csvParser from "csv-parser";
 import { Readable } from "stream";
-import { createAdminInput, createCourseInput, createStudentInput, createTeamInput } from "../../adminSystem/initialise/route";
+import { createAdminInput, createCourseInput, createStudentInput, createTeamInput } from "../../adminSystem/initialise/dbInitialisation";
 
 export type convertedResult = {
     name: string;

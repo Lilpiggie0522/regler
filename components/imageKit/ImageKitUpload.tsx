@@ -6,6 +6,7 @@ interface ImageKitProps {
     path?: string;
     onUploadError?: (error: Error) => void;
     onUploadSuccess?: (url: string, fileName: string, id: string) => void;
+    setSpinner: (isUploading : boolean) => void;
 }
 
 
@@ -15,7 +16,7 @@ const ImageKitUpload = (props : ImageKitProps) => {
         <ImageKitContext>
             <p>Upload an image</p>
             <IKUpload
-         
+                onUploadProgress={() => props.setSpinner(true)}
                 onError={(err) => props.onUploadError && props.onUploadError(err)}
                 onSuccess={(res) => props.onUploadSuccess && props.onUploadSuccess(res.url, res.name, res.fileId)}
                 useUniqueFileName={true}

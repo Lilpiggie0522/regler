@@ -15,9 +15,8 @@ export default function ErrorModal({ onClose, errorMessage }: ErrorModalProps) {
                 </button>
 
                 <p className="text-center text-lg font-bold text-black">
-                    {errorMessage || "Something went wrong."}
+                    {errorMessage}
                 </p>
-                {/* <p className="text-center text-lg text-black font-bold">Please try again.</p> */}
             </div>
         </div>
     );

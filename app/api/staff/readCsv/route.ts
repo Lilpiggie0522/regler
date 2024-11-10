@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createStudentInput, createTeamInput, createCourseInput, createAdminInput, initialiseInput } from "../../adminSystem/initialise/route";
+import { createStudentInput, createTeamInput, createCourseInput, createAdminInput, initialiseInput, dbInitialization } from "@/app/api/adminSystem/initialise/dbInitialisation"
 import { convertFileData, courseNameRegexCheck, insertAdmin, insertStudent, insertTeam, insertTutor, validateConvertedData } from "./helpers";
 
 export async function POST(req: NextRequest) {
@@ -50,20 +50,9 @@ export async function POST(req: NextRequest) {
         teams: teams,
         course: newCourse
     }
-
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const response = await fetch(`${baseUrl}/api/adminSystem/initialise`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(result)
-    })
-    if (response.ok) {
-        return NextResponse.json(converted, { status: 200 })
-    } else {
-        const errorObj = await response.json()
-        const err = errorObj.error
-        return NextResponse.json(err, { status: 500 })
+    const dbResponse = await dbInitialization(result)
+    if (!dbResponse.ok) {
+        return dbResponse
     }
+    return NextResponse.json(converted, {status: 200})
 }

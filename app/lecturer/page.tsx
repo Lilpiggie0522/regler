@@ -74,11 +74,11 @@ export default function LecturerPage() {
                 setDisplayData(displayData)
             } else {
                 const error = await response.json()
-                alert(error)
+                console.log(error)
             }
         } catch (error) {
             console.log(error)
-            alert("oh no!")
+            alert("something is wrong with api/readCsv!")
         }
         setUploading(false)
     }

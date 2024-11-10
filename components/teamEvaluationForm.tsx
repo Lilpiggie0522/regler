@@ -7,6 +7,7 @@ import ImageKitDelete from "./imageKit/ImageKitDelete";
 import {deleteImage} from "./services/imageKitApi";
 import {useEffect} from "react";
 import { Question } from "@/app/api/issueSystem/createIssue/route";
+import LogoutButton from "./logoutButton";
 
 
 
@@ -28,6 +29,7 @@ interface Assignment{
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
     // Define state for the form inputs
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { teamId, courseId, studentId, issueId } = props;
 
@@ -38,6 +40,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
     const [selectedOption, setSelectedOption] = useState("");
     const [questions, setQuestions] = useState<string[]>([]);
     const [assignments, setAssignments] = useState<string[]>([]);
+    
 
     const fetchCourse = async(courseId : string | null) => {
         // Fetch questions from your API endpoint or database based on the provided teamId, courseId, and studentId
@@ -52,7 +55,6 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             },
         })
             .then((res) => res.json())
-            
         console.log("Fetched questions:", courseData.questions);
         console.log("Fetched assignments:", courseData.assignments);
         setQuestions((prevQuestions) => {
@@ -74,7 +76,6 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
         
         fetchCourse(courseId);
     }, [courseId]);
-
     // Handle input changes for text areas
     const handleAnswerChange = (index: number, value: string) => {
         setFormData(prevData => {
@@ -95,13 +96,13 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
         })
         );
         console.log("File uploaded successfully:", fileUrl);
-		
+		setLoading(false);
 		
 	  };
 
 
 	  const handleDeleteFile = async (index: number, fileId: string) => {
-
+        setLoading(true);
 
         try {
 
@@ -122,6 +123,9 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		  console.error("Error deleting file:", error);
 		  alert("An unexpected error occurred.");
         }
+        finally {
+            setLoading(false);
+        }
 	  };
 
 	  
@@ -131,6 +135,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
     // Handle form submission
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoading(true)
         let filesUrl = "";
         let filesName = "";
         for (const file of formData.fileLinks) {
@@ -156,7 +161,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                         filesName: filesName,
                         questions: questions,
                         answers: formData.answers,
-                        issueId: issueId,
+                        issueId: issueId
                     }),
                 });
                 if (res.ok) {
@@ -184,6 +189,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
 
         console.log(studentId)
+        console.log(selectedOption)
         try {
             const res = await fetch("/api/issueSystem/createIssue", {
                 method: "POST",
@@ -198,6 +204,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                     filesName: filesName,
                     questions: questions,
                     answers: formData.answers,
+                    assignment: selectedOption
                 }),
 
             });
@@ -211,8 +218,9 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             if (!res.ok) {
                 const errObj = await res.json();
                 console.log(errObj.error)
-                alert("Error sending the form data. Please try again later.");
+                alert(errObj.error)
             }
+            setLoading(false)
         } 
         catch (error) {
             console.error(error);
@@ -230,8 +238,9 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <div className="bg-yellow-400 p-9">
+            <div className="bg-yellow-400 p-9 flex justify-between">
                 <h1 className="text-black text-3xl font-bold">Team Evaluation Form</h1>
+                <LogoutButton />
             </div>
             <form className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md" onSubmit={handleSubmit}>
 
@@ -241,7 +250,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                 <select 
                     id="dropdown" 
                     className="border border-gray-300 p-2 rounded-md w-full text-black mb-4" 
-                    value={selectedOption} 
+                    value={selectedOption}
                     onChange={handleDropdownChange}
                     required
                 >
@@ -255,7 +264,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
                 {questions.map((question, index) => (
                     <div key={index}>
-                        <div className="question-row" key={index}>
+                        <div className="question-row" key={index} style={{ wordBreak: "break-word", whiteSpace: "normal" }}>
                             <label className="text-lg text-black block">{`${index + 1}. ${question}`}</label>
                             <textarea
                                 placeholder="Enter your answer here"
@@ -270,7 +279,10 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                 ))}
 
                 <label className="text-lg text-black">3. You can upload your files here.</label>
-                <ImageKitUpload onUploadSuccess={handleUploadSuccess} onUploadError={error => alert(`Upload error: ${error.message}`)} />
+                <ImageKitUpload 
+                    onUploadSuccess={handleUploadSuccess} 
+                    onUploadError={error => alert(`Upload error: ${error.message}`)}
+                    setSpinner={setLoading} />
 
                 <div className="mt-4">
                     {formData.fileLinks.map((file, index) => (
@@ -283,7 +295,24 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                     ))}
                 </div>
 
-                <button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">Submit</button>
+                {/* <button type="submit" className="bg-black text-white py-2 w-40 rounded-md mx-auto">Submit</button> */}
+                <button
+                    type="submit"
+                    className={`bg-black w-40 mx-auto text-white py-2 rounded-full flex items-center justify-center ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <>
+                            <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 000 8v4a8 8 0 01-8-8z"></path>
+                            </svg>
+                      Processing...
+                        </>
+                    ) : (
+                        "Submit"
+                    )}
+                </button>
             </form>
         </div>
     );

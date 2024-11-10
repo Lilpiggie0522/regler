@@ -157,9 +157,9 @@ describe("Debug tutor opinions API Tests", () => {
             }
         );
         const opinionResponse = await opinionPOST(opinionRequest);
-        expect(opinionResponse.status).toBe(404);
+        expect(opinionResponse.status).toBe(400);
         const opinionJson = await opinionResponse.json();
-        expect(opinionJson.error).toBe("No pending issues for this team");
+        expect(opinionJson.error).toBe("Invalid Issue ID");
     });
 
     it("Submit an empty comment or Team id invalid", async () => {

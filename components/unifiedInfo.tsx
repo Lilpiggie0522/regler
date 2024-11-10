@@ -2,10 +2,11 @@
 import { useLocalStorageState } from "@/context/studentContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Button } from "react-bootstrap";
+// import { Button } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import ErrorModal from "./modals/errorModal";
-import { FaArrowLeft } from "react-icons/fa";
+import { FaArrowLeft, FaTrash, FaInfoCircle } from "react-icons/fa";
+import LogoutButton from "./logoutButton";
 
 export interface Student {
     id: string;
@@ -48,12 +49,20 @@ export default function UnifiedInfo() {
     const [staffId,] = useLocalStorageState("staffId", "");
     const [issueId,] = useLocalStorageState("issueId", "");
     const [courseId,] = useLocalStorageState("courseId", "");
-
+    const [role,] = useLocalStorageState("role", "")
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
-    const [isAdmin] = useState<boolean>(true);
     const [errorMessage, setErrorMessage] = useState("");
     const [showError, setShowError] = useState(false);
+    const [isAdmin, setIsAdmin] = useState<boolean>(false)
+
+    useEffect(() => {
+        if (role === "admin") {
+            setIsAdmin(true);
+        } else {
+            setIsAdmin(false);
+        }
+    }, [role])
 
     useEffect(() => {
         async function getOpinions() {
@@ -62,13 +71,13 @@ export default function UnifiedInfo() {
                 let lecturerComments: LectuerComment[] = [];
                 const response = await fetch(`/api/util/getIssueByTeamId/${issueId}`)
                 if (!response.ok) {
-                    const error = await response.json();
-                    const message = error.message;
+                    const res = await response.json();
+                    console.log(res.error)
                     // alert("Error: " + message);
                     tutorComments.push(
                         {
                             tutorName: "System",
-                            content: JSON.stringify(message).slice(1,).slice(0,-1)
+                            content: JSON.stringify(res.error).slice(1,).slice(0,-1)
                         });
                     setTutorComments(tutorComments);
                 } else {
@@ -112,7 +121,6 @@ export default function UnifiedInfo() {
                     const studentInfos : Student[] = [];
                     if (students.studentIssueInfos !== undefined) {
                         for (const student of students.studentIssueInfos) {
-                            console.log(student)
                             const studentInfo : Student = {
                                 id : student.comment.student,
                                 name: student.studentName,
@@ -125,9 +133,6 @@ export default function UnifiedInfo() {
                         }
                     }
                     setStudents(studentInfos);
-                    const {message} = students
-                    console.log("ksdjfakdjfksajfklszzzz")
-                    console.log(message)
                 }
             } catch (error) {
                 console.error(error);
@@ -161,18 +166,18 @@ export default function UnifiedInfo() {
                 console.log(errorString);
                 setErrorMessage(errorString.error);
                 setShowError(true);
-                console.log(errorString);
-                setIsUploadedSuccessfully(false);
             }else {
                 const res = response.json();
                 console.log(res);
 
                 setIsUploadedSuccessfully(true);
                 
+                const successPrompt = await response.json()
+                setErrorMessage(successPrompt.message);
+                setShowError(true);
             }
         } catch (error) {
             console.error(error);
-            setIsUploadedSuccessfully(false);
         }
 
 
@@ -210,44 +215,64 @@ export default function UnifiedInfo() {
                 </div>
             </div>
 
+            <div className="bg-gray-100 p-2 pr-9 flex justify-end items-center shadow-md">
+                <LogoutButton />
+            </div>
+
             <div className="max-w-7xl mx-auto p-8 bg-white text-black mt-6 rounded-lg shadow-md">
                 <table className="w-full table-auto">
-                    <thead>
+                    <thead className="bg-gray-200 sticky top-0 z-10">
                         <tr className="text-left">
-                            <th className="py-2">Members</th>
-                            <th className="py-2">Class</th>
-                            <th className="py-2">ZID</th>
-                            <th className="py-2">Email</th>
-                            <th className="py-2">Status</th>
-                            <th className="py-2">Details</th>
-                            <th className="py-2">Actions</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Members</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Class</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">ZID</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Email</th>
+                            <th className="px-4 py-2 text-center w-1/7 font-bold ">Status</th>
+                            <th className="px-4 py-2 text-left w-1/7 font-bold pl-9">Details</th>
+                            <th className="px-4 py-2 text-left w-1/7 font-bold pl-8">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {students.map((student, index) => (
-                            <tr key={index} className="border-b">
-                                <td className="py-2">{student.name}</td>
-                                <td className="py-2">{student.class}</td>
-                                <td className="py-2">{student.zid}</td>
-                                <td className="py-2">{student.email}</td>
-                                <td className={`py-2 ${student.status === "Submitted" ? "text-green-500" : "text-red-500"}`}>
+                            <tr key={index} className="border-b align-content-center">
+                                <td className="px-4 py-2 text-center w-1/7">{student.name}</td>
+                                <td className="px-4 py-2 text-center w-1/7">{student.class}</td>
+                                <td className="px-4 py-2 text-center w-1/7">{student.zid}</td>
+                                <td className="px-4 py-2 text-center w-1/7">{student.email}</td>
+                                {/* <td className={`py-2 `}>
                                     {student.status}
-                                </td>
-                                <td>
-                                    
-                                    <Button
-                                        className="bg-blue-500 text-white py-1 px-3 rounded"
-                                        onClick={() => router.push(`/studentComment?studentId=${student.id}&issueId=${issueId}&studentName=${student.name}`)}
+                                </td> */}
+                                <td className="px-4 py-2 text-center w-1/7">
+                                    <div
+                                        className={`inline-block px-4 py-1 border-2 items-center justify-center rounded-md ${
+                                            student.status === "Submitted"
+                                                ? "bg-green-200 text-green-700 border-green-500"
+                                                : "bg-red-200 text-red-700 border-red-500"
+                                        }`}
+                                        style={{ width: "150px", height: "35px" }}
                                     >
-                                        Details
-                                    </Button>
+                                        {student.status}
+                                    </div>
                                 </td>
-                                <td className="py-2">
+
+                                <td className="px-4 py-2 text-center w-1/7 align-items-center">
+                                    {/* "bg-blue-500 text-white py-1 px-3 rounded" */}
                                     <button
-                                        className="bg-red-500 text-white py-1 px-3 rounded"
+                                        className={`bg-blue-500 text-white py-1 px-3 rounded flex items-center justify-center space-x-1 ${issueId ? "" : "opacity-50 cursor-not-allowed"}`}
+                                        onClick={() => router.push(`/studentComment?studentId=${student.id}&issueId=${issueId}&studentName=${student.name}`)}
+                                        disabled={!issueId}
+                                    >
+                                        <FaInfoCircle />
+                                        <span>Details</span>
+                                    </button>
+                                </td>
+                                <td className="px-4 py-2 text-center w-1/7 align-items-center">
+                                    <button
+                                        className="bg-red-500 text-white py-1 px-3 rounded flex items-center justify-center space-x-1"
                                         onClick={() => handleDelete(index)}
                                     >
-                                        Delete
+                                        <FaTrash /> 
+                                        <span>Delete</span>
                                     </button>
                                 </td>
                             </tr>
@@ -257,22 +282,22 @@ export default function UnifiedInfo() {
 
                 <div className="bg-gray-100 border border-gray-300 rounded-md p-4 mb-4 mt-6">
                     <h2 className="font-semibold">Tutor Opinions</h2>
-                    {tutorComments.map((opinion, index) => (
+                    {tutorComments.length? tutorComments.map((opinion, index) => (
                         <div key={index} className="mt-2">
                             <span className="text-sm font-semibold text-gray-700">{opinion.tutorName}:</span>
                             <p className="text-black">{opinion.content}</p>
                         </div>
-                    ))}
+                    )):"No tutor comments"}
                 </div>
 
                 <div className="bg-gray-100 border border-gray-300 rounded-md p-4">
                     <h2 className="font-semibold">Lecturer Opinions</h2>
-                    {lecturerComments.map((opinion, index) => (
+                    {lecturerComments.length ? lecturerComments.map((opinion, index) => (
                         <div key={index} className="mt-2">
                             <span className="text-sm font-semibold text-gray-700">{opinion.lecturerName}:</span>
                             <p className="text-black">{opinion.content}</p>
                         </div>
-                    ))}
+                    )) : "No lecturer comments"}
                 </div>
 
                 <form className="mt-6 w-full" onSubmit={handleSubmit}>
@@ -289,9 +314,9 @@ export default function UnifiedInfo() {
                             <button type="submit" className="bg-black text-white py-2 w-40 rounded-md">
                                 Submit
                             </button>
-                            {isAdmin && (
+                            {isAdmin && issueId && (
                                 <button
-                                    type="button" onClick={handleClose} className="bg-black text-white py-2 w-40 rounded-md">
+                                    type="button" onClick={handleClose} className="bg-red-600 text-white py-2 w-40 rounded-md">
                                     Close this issue
                                 </button>
                             )}
@@ -302,7 +327,10 @@ export default function UnifiedInfo() {
                 {showError ? (
                     <ErrorModal
                         errorMessage={errorMessage}
-                        onClose={() => setShowError(false)}
+                        onClose={() => {
+                            setShowError(false)
+                            window.location.reload()
+                        }}
                     />
                 ) : null}
 

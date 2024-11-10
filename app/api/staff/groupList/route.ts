@@ -16,11 +16,11 @@ export async function POST(request: NextRequest) {
         await dbConnect();
         const admin = await Admin.findOne({ email: email })
         if (!admin) {
-            return NextResponse.json("invalid staff email", { status: 401 })
+            return NextResponse.json("invalid staff email!", { status: 401 })
         }
         const course = await Course.findOne({ courseName: courseName, term: term })
         if (!course) {
-            return NextResponse.json("invalid course and term", { status: 401 })
+            return NextResponse.json("invalid course or term!", { status: 401 })
         }
         const course_objId = course._id
         const lecturer = await Admin.findOne({ courses: { $in: [course_objId] }, role: "admin" });
