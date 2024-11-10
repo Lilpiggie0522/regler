@@ -105,7 +105,7 @@ export default function StudentComment() {
                 <h1 className="text-black text-3xl font-bold">Team Evaluation Form For {studentName}</h1>
             </div>
             
-            <div className="max-w-7xl w-full p-8 mt-6 bg-white rounded-lg shadow-md">
+            <div className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md">
     
 
                 {formData.questions.map((q, index) => (

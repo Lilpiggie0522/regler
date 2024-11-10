@@ -25,3 +25,10 @@ export interface AssessmentModalProps extends ModalProps {
 export interface QuestionModalProps extends ModalProps {
     courseId: string | null;
 }
+
+export interface ConfirmModalProps extends ModalProps{
+    message: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+    onClose: () => void;
+}

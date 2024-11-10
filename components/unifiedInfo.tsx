@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 // import { Button } from "react-bootstrap";
 import { FaSearch } from "react-icons/fa";
 import ErrorModal from "./modals/errorModal";
+import ConfirmModal from "./modals/confirmModal";
 import { FaArrowLeft, FaTrash, FaInfoCircle } from "react-icons/fa";
 import LogoutButton from "./logoutButton";
 
@@ -53,6 +54,7 @@ export default function UnifiedInfo() {
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
     const [errorMessage, setErrorMessage] = useState("");
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [showError, setShowError] = useState(false);
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
@@ -183,10 +185,34 @@ export default function UnifiedInfo() {
 
     };
 
-    const handleClose = () => {
-        setErrorMessage("Close button clicked");
-        setShowError(true);
+    const handleCloseIssue = async () => {
+        try {
+            const response = await fetch("/api/issueSystem/closeIssue", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ issueId, adminId: staffId })
+            });
+
+            if (response.ok) {
+                setErrorMessage("Issue closed successfully");
+                setShowError(true);
+            } else {
+                const errorString = await response.json();
+                setErrorMessage(errorString.error);
+                setShowError(true);
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
+
+    const handleConfirmClose = () => {
+        setShowConfirmModal(false); 
+        handleCloseIssue(); 
+    };
+    
+    const handleCloseClick = () => setShowConfirmModal(true); 
+    const handleCancelClose = () => setShowConfirmModal(false); 
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -316,7 +342,7 @@ export default function UnifiedInfo() {
                             </button>
                             {isAdmin && issueId && (
                                 <button
-                                    type="button" onClick={handleClose} className="bg-red-600 text-white py-2 w-40 rounded-md">
+                                    type="button" onClick={handleCloseClick} className="bg-red-600 text-white py-2 w-40 rounded-md">
                                     Close this issue
                                 </button>
                             )}
@@ -333,6 +359,15 @@ export default function UnifiedInfo() {
                         }}
                     />
                 ) : null}
+
+                {showConfirmModal && (
+                    <ConfirmModal
+                        message="Are you sure you want to close this issue?"
+                        onConfirm={handleConfirmClose}
+                        onCancel={handleCancelClose}
+                        onClose={handleCancelClose}
+                    />
+                )}
 
             </div>
         </div>
