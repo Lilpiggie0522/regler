@@ -69,7 +69,6 @@ export async function PUT(req: NextRequest) {
         if (!team.issues.includes(existingIssue._id)) {
             return NextResponse.json({ error: "Issue does not belong to this team" }, { status: 406 });
         }
-        // can student submit multiple times?
         
         const curAnswers: Answer[] = answers.map(answer => ({ answer }));
         const issues = existingIssue.studentComments.filter((comment: { student: string; }) => comment.student.toString() === studentId);

@@ -8,8 +8,7 @@ import {deleteImage} from "./services/imageKitApi";
 import {useEffect} from "react";
 import { Question } from "@/app/api/issueSystem/createIssue/route";
 import LogoutButton from "./logoutButton";
-
-
+import ErrorModal from "./modals/errorModal";
 
 interface FormData {
 	fileLinks: { url: string; name: string , id: string}[];
@@ -27,7 +26,6 @@ interface Assignment{
 
 
 export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
-
     // Define state for the form inputs
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -40,6 +38,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
     const [selectedOption, setSelectedOption] = useState("");
     const [questions, setQuestions] = useState<string[]>([]);
     const [assignments, setAssignments] = useState<string[]>([]);
+    const [errorMessage, setErrorMessage] = useState("");
+    const [showError, setShowError] = useState(false);
 
     const fetchCourse = async(courseId : string | null) => {
         // Fetch questions from your API endpoint or database based on the provided teamId, courseId, and studentId
@@ -101,14 +101,13 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
 
 	  const handleDeleteFile = async (index: number, fileId: string) => {
-
-
         try {
 
 		  const res = await deleteImage(fileId);
 		  if (res) {
-                console.log("File deleted successfully:", res);
-                alert("File deleted successfully!");
+                setErrorMessage("File deleted successfully!");
+                setShowError(true);
+                
                 setFormData((prevData) => ({
                     ...prevData,
                     fileLinks: prevData.fileLinks.filter((file) => file.id !== fileId),
@@ -117,10 +116,13 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		  }
 		  else {
                 console.error("Failed to delete file:", res);
+                setErrorMessage("Error deleting file");
+                setShowError(true);
 		  }
         } catch (error) {
-		  console.error("Error deleting file:", error);
-		  alert("An unexpected error occurred.");
+            console.error("Error deleting file:", error);
+            setErrorMessage("Error deleting file");
+            setShowError(true);
         }
 	  };
 
@@ -161,20 +163,20 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                     }),
                 });
                 if (res.ok) {
-                    const result = await res.json();
-                    console.log("Form submitted successfully:", result);
-                    alert("Success!");
-			
+                    setErrorMessage("Form submitted successfully");
+                    setShowError(true);
                 }
                 if (!res.ok) {
-                    //const result = await res.json();
-                    alert("Error sending the form data. Please try again later.");
+                    const errorString = await res.json();
+                    setErrorMessage(errorString.error);
+                    setShowError(true);
                 }
                 return;
 
             } catch (error) {
                 console.error(error);
-                alert("Error updating the issue. Please try again later.");
+                setErrorMessage("Error updating the issue. Please try again later.");
+                setShowError(true);
                 return;
             }
         }
@@ -205,22 +207,22 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 
             });
 
-            if (res.ok) {
-                const result = await res.json();
-                console.log("Form submitted successfully:", result);
-                alert("Success!");
+            if (res.ok) {                
+                setErrorMessage("Form submitted successfully");
+                setShowError(true);
                 router.push("/studentLogout"); 
             }
             if (!res.ok) {
-                const errObj = await res.json();
-                console.log(errObj.error)
-                alert(errObj.error)
+                const errorString = await res.json();
+                setErrorMessage(errorString.error);
+                setShowError(true);
             }
             setLoading(false)
         } 
         catch (error) {
             console.error(error);
-            alert("Error sending the form data. Please try again later.");
+            setErrorMessage("Error updating the issue. Please try again later.");
+            setShowError(true);
         }
 	
         finally {
@@ -307,6 +309,17 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                     )}
                 </button>
             </form>
+
+            {showError ? (
+                <ErrorModal
+                    errorMessage={errorMessage}
+                    onClose={() => {
+                        setShowError(false)
+                        window.location.reload()
+                    }}
+                />
+            ) : null}
+
         </div>
     );
 

@@ -63,7 +63,7 @@ afterAll(async () => {
 });
 
 describe('Create tutor opinions API Tests', () => {
-    it('Successfully submitted Tutors opinion, resubmit overwrites previous opinion', async () => {
+    it('Successfully submitted Tutors opinion, resubmit add after previous opinion', async () => {
         // Create a issue, return 200 if successful
         const createIssueBody : CreateIssueInput = {
             studentId: studentId,
@@ -111,10 +111,8 @@ describe('Create tutor opinions API Tests', () => {
         const opinionJson = await opinionResponse.json();
         console.log(opinionJson);
         expect(opinionJson.message).toBe("Tutor opinion added successfully");
-        // expect(opinionJson.updateIssue.tutorComments[0].tutor.toString()).toBe(tutorId.toString());
-        // expect(opinionJson.updateIssue.tutorComments[0].content).toBe("This is the opinion.");
 
-        // Resubmit should return error 400
+        // Resubmit should add another opinon
         const opinionResubmit = new NextRequest(
             new URL('http://localhost/api/staff/tutorOpinions'),
             {
