@@ -8,6 +8,7 @@ export const getAdminsByCourseId = async (courseId: string): Promise<string[] | 
         await dbConnect();
         const course = await Course.findById(courseId);
         if (!course) {
+            console.error("Not course fOund: "); 
             return null;
         }
 
@@ -25,14 +26,14 @@ export const getAdminsByCourseId = async (courseId: string): Promise<string[] | 
             { $match: { "adminsDetails.role": "admin" } },
             { $project: { "adminsDetails._id": 1 } }
         ]);
-
+        console.log(admins);
         // Ensure _id is a string and map the results
         const adminIds = admins.map(doc => String(doc.adminsDetails._id)); // Ensure _id is cast to string
 
         // Return the admin IDs as a string array
         return adminIds;
     } catch (error) {
-        console.error(error); // Log the error for debugging purposes
+        console.error("Unexpected Error: " + error); // Log the error for debugging purposes
         return null; // Return null in case of an error
     }
 };

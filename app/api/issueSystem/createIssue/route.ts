@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
         const existingIssue = await Issue.find({
             assignment: assignment
         }).exec();
-        console.log(existingIssue);
+
         if (existingIssue.length > 0) {
             return NextResponse.json({ error: "A relative issue already exists for this team" }, { status: 409 });
 
@@ -122,12 +122,6 @@ export async function POST(req: NextRequest) {
 
         const curQuestions: Question[] = questions.map(question => ({ question: question }));
         
-
-        console.log("Question input: " + questions)
-        console.log("Answer input: " + answers)
-        console.log("CurQuestions: " + curQuestions);
-        console.log("CurAnswers: " + curAnswers);
-        console.log("Assignment:" + assignment);
         const initialStudentComment: StudentCommentInput = {
             
             filesUrl: filesUrl,
@@ -152,9 +146,7 @@ export async function POST(req: NextRequest) {
             { $push: { issues: issueId } } 
         );
         // calling mailing function send teams
-        // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
-        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-        
+
         if (!(process.env.NODE_ENV === "test")) {
             await sendTeamEmail(teamId, courseId, studentId, issueId);
         }

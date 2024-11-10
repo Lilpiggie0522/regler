@@ -1,6 +1,6 @@
 import models from "@/models/models";
 import { NextResponse } from "next/server";
-import { getAdminsByCourseId } from "../opinionsUtil/util";
+import { getAdminsByCourseId, getStudentsByTeamId } from "../opinionsUtil/util";
 import deleteReminder from "@/lib/deleteReminder";
 import sendLecturerTutor from "@/lib/lecturerTutor";
 
@@ -9,7 +9,7 @@ export interface SubmitOptionProps {
 }
 
 const Issue = models.Issue;
-export const submitOpinions = async (props : SubmitOptionProps): Promise<void|NextResponse> => {
+export const submitOpinions = async (props : SubmitOptionProps): Promise<NextResponse> => {
     const {isAdmin, staffId, content, issueId, teamId, courseId} = props;
     if (isAdmin) {
 
@@ -22,6 +22,10 @@ export const submitOpinions = async (props : SubmitOptionProps): Promise<void|Ne
             });
             await issue.save();
         }
+        const students = getStudentsByTeamId(teamId);
+        if (!students) return NextResponse.json({ error: "No students found for this team" }, { status: 404 });
+        
+        //TODO: add sendComment
 
     }
     else {
@@ -29,7 +33,7 @@ export const submitOpinions = async (props : SubmitOptionProps): Promise<void|Ne
             content: content,
             tutor: staffId
         };
-        const lecturers = await getAdminsByCourseId(staffId);
+        const lecturers = await getAdminsByCourseId(courseId);
         if (!lecturers) return NextResponse.json({ error: "No lecturers found for this staff" }, { status: 404 });
         await Issue.updateOne(
             { _id: issueId },
