@@ -135,7 +135,7 @@ export default function UnifiedInfo() {
 
     const handleCloseIssue = async () => {
         try {
-            const response = await fetch(`/api/issueSystem/closeIssue`, {
+            const response = await fetch("/api/issueSystem/closeIssue", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ issueId, adminId: staffId })

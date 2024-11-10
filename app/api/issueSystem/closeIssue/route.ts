@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
         const issue = await Issue.findById(issueId).exec();
         if (!issue) {
-            return NextResponse.json({ error: "This group not have a issue yet" }, { status: 404 });
+            return NextResponse.json({ error: "This group does not have a issue yet" }, { status: 404 });
         }
 
         if (issue.status === "complete") {

@@ -53,13 +53,13 @@ export async function POST(req: NextRequest) {
         //     { new: true } // Return the updated document
         // )
         // if (!updatedIssue) {
-            await Issue.findOneAndUpdate(
-                { _id: issueId }, // Match the issueId
-                {
-                    $push: { tutorComments: {content: content, tutor: tutorId} }, // Push new comment if not found
-                },
-                { new: true } // Return the updated document
-            )
+        await Issue.findOneAndUpdate(
+            { _id: issueId }, // Match the issueId
+            {
+                $push: { tutorComments: {content: content, tutor: tutorId} }, // Push new comment if not found
+            },
+            { new: true } // Return the updated document
+        )
         //}
         return NextResponse.json({ message: "Tutor opinion added successfully"}, { status: 200 });
 

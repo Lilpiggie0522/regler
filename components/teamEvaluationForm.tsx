@@ -308,13 +308,13 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             </form>
 
             {showError ? (
-                    <ErrorModal
-                        errorMessage={errorMessage}
-                        onClose={() => {
-                            setShowError(false)
-                            window.location.reload()
-                        }}
-                    />
+                <ErrorModal
+                    errorMessage={errorMessage}
+                    onClose={() => {
+                        setShowError(false)
+                        window.location.reload()
+                    }}
+                />
             ) : null}
 
         </div>
