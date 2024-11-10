@@ -1,6 +1,6 @@
 
 import {CreateIssueInput, POST as createIssuePOST, DELETE} from '@/app/api/issueSystem/createIssue/route';
-import {POST as opinionPOST, TutorOpinionInput} from '@/app/api/staff/tutorOpinions/route';
+import {POST as opinionPOST, TutorOpinionInput} from '@/app/api/staff/submitOpinions/route';
 import models from '@/models/models';
 import { NextRequest } from 'next/server';
 import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
@@ -99,7 +99,7 @@ describe('Create tutor opinions API Tests', () => {
         };
 
         const opinionRequest = new NextRequest(
-            new URL('http://localhost/api/staff/tutorOpinions'),
+            new URL('http://localhost/api/staff/submitOpinions'),
             {
                 method: 'POST',
                 body: JSON.stringify(opinionBody),

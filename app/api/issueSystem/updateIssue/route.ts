@@ -6,6 +6,7 @@ import models from "@/models/models";
 import { Answer, StudentCommentInput } from "../createIssue/route";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import StudentComment from "../../../../components/studentComment";
+import deleteReminder from "@/lib/deleteReminder";
 
 
 const Issue = models.Issue;
@@ -102,7 +103,7 @@ export async function PUT(req: NextRequest) {
 
 
         // TODO: Should delete this student at remainder after submission
-
+        await deleteReminder(issueId, studentId, "student");
 
         return NextResponse.json({ message: "Issue updated successfully", updatedIssue}, { status: 200 });
 

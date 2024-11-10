@@ -63,6 +63,7 @@ export async function POST() {
         await InitialReminderCron();
         return NextResponse.json({ message: "Reminder Initialised" }, { status: 200 });
     } catch (error) {
+        console.log(error);
         return NextResponse.json({ error: error }, { status: 404 });
     }
 }

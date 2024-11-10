@@ -15,16 +15,24 @@ export interface Student {
     email: string;
     status: "Submitted" | "No Submission";
 }
+interface TutorComment {
+    tutorName: string;
+    content: string;
+}
+interface LectuerComment {
+    lecturerName: string;
+    content: string;
+}
 
-const dummyTutorOpinions = [
-    { name: "Tutor A", content: "Great job on the project!" },
-    { name: "Tutor B", content: "Needs improvement in teamwork." },
+/*const dummyTutorOpinions : TutorComment[] = [
+    { tutorName: "Tutor A", content: "Great job on the project!" },
+    { tutorName: "Tutor B", content: "Needs improvement in teamwork." },
 ];
 
-const dummyLecturerOpinions = [
-    { name: "Lecturer X", content: "Excellent presentation skills." },
-    { name: "Lecturer Y", content: "Could use more analytical depth." },
-];
+const dummyLecturerOpinions: LectuerComment[] = [
+    { lecturerName: "Lecturer X", content: "Excellent presentation skills." },
+    { lecturerName: "Lecturer Y", content: "Could use more analytical depth." },
+];*/
 
 export default function UnifiedInfo() {
     const router = useRouter();
@@ -35,9 +43,11 @@ export default function UnifiedInfo() {
     const group = params.get("group");
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [content, setContent] = useState<string>("")
-    const [tutorComment, setTutorComment] = useState<string>("")
+    const [tutorComments, setTutorComments] = useState<TutorComment[]>([])
+    const [lecturerComments, setlecturerComments] = useState<LectuerComment[]>([]);
     const [staffId,] = useLocalStorageState("staffId", "");
     const [issueId,] = useLocalStorageState("issueId", "");
+    const [courseId,] = useLocalStorageState("courseId", "");
 
     const [isUploadedSuccessfully, setIsUploadedSuccessfully] = useState<boolean>(false);
     const [students, setStudents] = useState<Student[]>([]);
@@ -46,28 +56,47 @@ export default function UnifiedInfo() {
     const [showError, setShowError] = useState(false);
 
     useEffect(() => {
-        async function getTutorOpinions() {
+        async function getOpinions() {
             try {
-                const response = await fetch(`/api/util/getIssueByTeamId/${teamId}`)
+                let tutorComments: TutorComment[] = [];
+                let lecturerComments: LectuerComment[] = [];
+                const response = await fetch(`/api/util/getIssueByTeamId/${issueId}`)
                 if (!response.ok) {
                     const error = await response.json();
                     const message = error.message;
                     // alert("Error: " + message);
-                    setTutorComment(JSON.stringify(message).slice(1,).slice(0,-1));
+                    tutorComments.push(
+                        {
+                            tutorName: "System",
+                            content: JSON.stringify(message).slice(1,).slice(0,-1)
+                        });
+                    setTutorComments(tutorComments);
                 } else {
-                    const comment = await response.json()
-
-                    console.log("comment: " + comment)
-                    console.log("tutorName: " + comment.tutorName)
-                    setTutorComment(JSON.stringify(comment.tutorName + ": " + comment.tutorComment).slice(1,).slice(0,-1));
+                    const res = await response.json()
+                    tutorComments = res.tutorComments.map((comment : TutorComment) => {
+                        return {
+                            tutorName: comment.tutorName,
+                            content: comment.content
+                        };
+                    })
+                    lecturerComments = res.lecturerComments.map((comment : LectuerComment) => { 
+                        return {
+                            lecturerName: comment.lecturerName,
+                            content: comment.content
+                        };
+                    });
+                    console.log (tutorComments);
+                    setTutorComments(tutorComments);
+                    setlecturerComments(lecturerComments);
                     //加回去slice
                 }
             } catch (error) {
                 console.error(error);
             }
         }
-        getTutorOpinions()
-    }, [teamId, tutorComment, isUploadedSuccessfully])
+        getOpinions();
+        console.log(staffId);
+    }, [teamId, isUploadedSuccessfully, issueId, staffId]);
 
     useEffect(() => {
         async function getIssueInfo() {
@@ -118,28 +147,35 @@ export default function UnifiedInfo() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        setIsUploadedSuccessfully(false);
         try {
-            const response = await fetch("api/staff/tutorOpinions", {
+            const response = await fetch("api/staff/submitOpinions", {
                 method: "POST",
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify({content: content, teamId: teamId, staffId: staffId})
-                
+                body: JSON.stringify({content: content, teamId: teamId, staffId: staffId, courseId: courseId, issueId: issueId})
             });
             if (!response.ok) {
                 const errorString = await response.json();
+                console.log(errorString);
                 setErrorMessage(errorString.error);
                 setShowError(true);
                 console.log(errorString);
                 setIsUploadedSuccessfully(false);
             }else {
+                const res = response.json();
+                console.log(res);
+
                 setIsUploadedSuccessfully(true);
+                
             }
         } catch (error) {
             console.error(error);
             setIsUploadedSuccessfully(false);
         }
+
+
     };
 
     const handleClose = () => {
@@ -221,9 +257,9 @@ export default function UnifiedInfo() {
 
                 <div className="bg-gray-100 border border-gray-300 rounded-md p-4 mb-4 mt-6">
                     <h2 className="font-semibold">Tutor Opinions</h2>
-                    {dummyTutorOpinions.map((opinion, index) => (
+                    {tutorComments.map((opinion, index) => (
                         <div key={index} className="mt-2">
-                            <span className="text-sm font-semibold text-gray-700">{opinion.name}:</span>
+                            <span className="text-sm font-semibold text-gray-700">{opinion.tutorName}:</span>
                             <p className="text-black">{opinion.content}</p>
                         </div>
                     ))}
@@ -231,9 +267,9 @@ export default function UnifiedInfo() {
 
                 <div className="bg-gray-100 border border-gray-300 rounded-md p-4">
                     <h2 className="font-semibold">Lecturer Opinions</h2>
-                    {dummyLecturerOpinions.map((opinion, index) => (
+                    {lecturerComments.map((opinion, index) => (
                         <div key={index} className="mt-2">
-                            <span className="text-sm font-semibold text-gray-700">{opinion.name}:</span>
+                            <span className="text-sm font-semibold text-gray-700">{opinion.lecturerName}:</span>
                             <p className="text-black">{opinion.content}</p>
                         </div>
                     ))}

@@ -31,7 +31,6 @@ interface FormData {
 
 interface Question {
     question: string;
-    answer: string;
 }
 
 export default function StudentComment() {
@@ -48,10 +47,10 @@ export default function StudentComment() {
         fileLinks: [],
     });
 
-    const dummyQuestions: Question[] = [
+    /* const dummyQuestions: Question[] = [
         { question: "What is the weather like?", answer: "The weather is sunny and warm." },
         { question: "What did you learn from the project?", answer: "I learned how to work effectively in a team." }
-    ];
+    ];*/
 
     useEffect(() => {
         async function getIssueInfo() {
@@ -72,15 +71,20 @@ export default function StudentComment() {
                     let filesUrls = studentComment.filesUrl.split(",");
                     const filesNames = studentComment.filesName.split(",");
                     filesUrls = filesUrls.slice(0, -1);
+
+
+
                     const newFormData = {
-                        answers: studentComment.answers,
+                        answers: studentComment.answers.map((answer : Answer ) => ({ 
+                            answer: String(answer.answer),
+                        })),
                         questions: student.questions,
                         fileLinks: filesUrls.map((url: string, index: number) => ({
                             url,
                             name: filesNames[index] || "Unnamed File", // Providing a default name if filesNames has fewer entries
                         })),
                     };
-                    console.log("newFormData:" + newFormData);
+                    console.log("newFormData:" + JSON.stringify(newFormData));
                     setFormData(newFormData);
                 }
             } catch (error) {
@@ -103,7 +107,20 @@ export default function StudentComment() {
             
             <div className="max-w-7xl w-full p-8 mt-6 bg-white rounded-lg shadow-md">
     
-                <label className="text-lg text-black block mb-2">3. You can view your files here.</label>
+
+                {formData.questions.map((q, index) => (
+                    <div key={index} className="mt-4">
+                        <label className="text-lg text-black block mb-2">
+                            {index + 1}. {q.question}
+                        </label>
+                        <textarea
+                            className="border border-gray-300 text-black p-2 rounded-md h-20 w-full mt-2"
+                            readOnly
+                            value={formData.answers[index].answer}
+                        />
+                    </div>
+                ))}
+                <label className="text-lg text-black block mb-2">3. Supported files.</label>
                 <div className="mt-4">
                     {formData.fileLinks.map((file, index) => (
                         <div key={index} className="flex items-center justify-between border-b py-2">
@@ -117,19 +134,6 @@ export default function StudentComment() {
                         </div>
                     ))}
                 </div>
-
-                {dummyQuestions.map((q, index) => (
-                    <div key={index} className="mt-4">
-                        <label className="text-lg text-black block mb-2">
-                            {index + 1}. {q.question}
-                        </label>
-                        <textarea
-                            className="border border-gray-300 text-black p-2 rounded-md h-20 w-full mt-2"
-                            readOnly
-                            value={q.answer}
-                        />
-                    </div>
-                ))}
 
             </div>
         </div>

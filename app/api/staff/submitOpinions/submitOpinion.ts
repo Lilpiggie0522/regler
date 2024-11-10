@@ -1,0 +1,47 @@
+import models from "@/models/models";
+import { NextResponse } from "next/server";
+import { getAdminsByCourseId } from "../opinionsUtil/util";
+import deleteReminder from "@/lib/deleteReminder";
+import sendLecturerTutor from "@/lib/lecturerTutor";
+
+export interface SubmitOptionProps {
+    isAdmin: boolean, staffId: string, content: string, issueId: string, teamId: string, courseId: string;
+}
+
+const Issue = models.Issue;
+export const submitOpinions = async (props : SubmitOptionProps): Promise<void|NextResponse> => {
+    const {isAdmin, staffId, content, issueId, teamId, courseId} = props;
+    if (isAdmin) {
+
+
+        const issue = await Issue.findById(issueId);
+        if (issue) {
+            issue.lecturerComments.push({
+                content: content,
+                lecturer: staffId 
+            });
+            await issue.save();
+        }
+
+    }
+    else {
+        const tutorComment = {
+            content: content,
+            tutor: staffId
+        };
+        const lecturers = await getAdminsByCourseId(staffId);
+        if (!lecturers) return NextResponse.json({ error: "No lecturers found for this staff" }, { status: 404 });
+        await Issue.updateOne(
+            { _id: issueId },
+            { $push: { tutorComments: tutorComment } }
+        );
+        await sendLecturerTutor(teamId, courseId, issueId, lecturers);
+
+    }
+    const updatedIssue = await Issue.findById(issueId).exec();
+    console.log(updatedIssue)
+    const message = await deleteReminder(issueId, staffId, "mentor");
+    console.log(message);
+    return NextResponse.json({ message: "Opinion submitted successfully", updatedIssue }, { status: 200 });
+
+}

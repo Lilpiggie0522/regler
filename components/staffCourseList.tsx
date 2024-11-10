@@ -30,7 +30,7 @@ export default function CourseList() {
     
     const { useLocalStorageState } = useStudentContext();
     const [email,] = useLocalStorageState("email", "");
-    // const [,setCourse] = useLocalStorageState('email', '');
+    const [,setCourseId] = useLocalStorageState("courseId", "");
     // const [,setTerm] 
     
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -173,8 +173,11 @@ export default function CourseList() {
         }
         setUploading(false)
     }
-    
-    
+    const handleSelectCourse = (course : Course) => {
+        setCourseId(course.id);
+        router.push(`/staffGroupList?courseId=${course.id}`)
+        
+    }
     return (
         <div className="min-h-screen bg-gray-100">
             {/* Title */}
@@ -314,7 +317,7 @@ export default function CourseList() {
                                     <td className="w-1/3 py-3 px-4 text-center">
                                         <button 
                                             className="bg-black text-white py-1 px-4 rounded-lg"
-                                            onClick={() => router.push(`/staffGroupList?courseId=${course.id}`)}
+                                            onClick={() => handleSelectCourse(course)}
                                         >Select</button>
                                     </td>
                                 </tr>
