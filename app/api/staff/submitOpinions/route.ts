@@ -28,6 +28,9 @@ export async function POST(req: NextRequest) {
         response = await validateId(staffId, "Admin");
         if (response) return response;
 
+        response = await validateId(teamId, "Team");
+        if (response) return response;
+
         
         const openIssue = await Issue.findById(issueId).exec();
         // If no issue created or issue has closed, return 404

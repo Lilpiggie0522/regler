@@ -63,13 +63,8 @@ afterAll(async () => {
     await terminateDatabase(mongoServer);
 });
 
-<<<<<<< HEAD
-describe("Create tutor opinions API Tests", () => {
-    it("Successfully submitted Tutors opinion, resubmit should fail", async () => {
-=======
 describe('Create tutor opinions API Tests', () => {
     it('Successfully submitted Tutors opinion, resubmit add after previous opinion', async () => {
->>>>>>> master
         // Create a issue, return 200 if successful
         const createIssueBody : CreateIssueInput = {
             studentId: studentId,
@@ -117,7 +112,6 @@ describe('Create tutor opinions API Tests', () => {
         console.log("opinionBody: " + JSON.stringify(opinionBody));
         const opinionResponse = await opinionPOST(opinionRequest);
         const opinionJson = await opinionResponse.json();
-<<<<<<< HEAD
         console.log("json: " + opinionJson.error);
 
         expect(opinionResponse.status).toBe(200);
@@ -125,13 +119,11 @@ describe('Create tutor opinions API Tests', () => {
         expect(opinionJson.message).toBe("Opinion submitted successfully");
         expect(opinionJson.updatedIssue.tutorComments[0].tutor.toString()).toBe(tutorId.toString());
         expect(opinionJson.updatedIssue.tutorComments[0].content).toBe("This is the opinion.");
-=======
-        console.log(opinionJson);
-        expect(opinionJson.message).toBe("Tutor opinion added successfully");
+
 
         // Resubmit should add another opinon
         const opinionResubmit = new NextRequest(
-            new URL('http://localhost/api/staff/tutorOpinions'),
+            new URL('http://localhost/api/staff/submitOpinions'),
             {
                 method: 'POST',
                 body: JSON.stringify(opinionBody),
@@ -141,8 +133,7 @@ describe('Create tutor opinions API Tests', () => {
         const opinionResponse2 = await opinionPOST(opinionResubmit);
         expect(opinionResponse2.status).toBe(200);
         const opinionJson2= await opinionResponse2.json();
-        expect(opinionJson2.message).toBe("Tutor opinion added successfully");
->>>>>>> master
+        expect(opinionJson2.message).toBe("Opinion submitted successfully");
 
         // Delete the issue and check if successful, it will return 200
         const deleteIssue = new NextRequest(
@@ -181,9 +172,9 @@ describe("Debug tutor opinions API Tests", () => {
             }
         );
         const opinionResponse = await opinionPOST(opinionRequest);
-        expect(opinionResponse.status).toBe(400);
+        expect(opinionResponse.status).toBe(404);
         const opinionJson = await opinionResponse.json();
-        expect(opinionJson.error).toBe("Invalid Issue ID");
+        expect(opinionJson.error).toBe("Issue not found");
     });
 
     it("Submit an empty comment or Team id invalid", async () => {
