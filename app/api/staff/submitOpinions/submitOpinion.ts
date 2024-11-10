@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { getAdminsByCourseId, getStudentsByTeamId } from "../opinionsUtil/util";
 import deleteReminder from "@/lib/deleteReminder";
 import sendLecturerTutor from "@/lib/lecturerTutor";
+import sendComment from "@/lib/sendComment";
 
 export interface SubmitOptionProps {
     isAdmin: boolean, staffId: string, content: string, issueId: string, teamId: string, courseId: string;
@@ -24,7 +25,7 @@ export const submitOpinions = async (props : SubmitOptionProps): Promise<NextRes
         }
         const students = getStudentsByTeamId(teamId);
         if (!students) return NextResponse.json({ error: "No students found for this team" }, { status: 404 });
-        
+        await sendComment(teamId, courseId, issueId, content)
         //TODO: add sendComment
 
     }
