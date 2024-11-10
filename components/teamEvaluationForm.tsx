@@ -116,9 +116,13 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
 		  }
 		  else {
                 console.error("Failed to delete file:", res);
+                setErrorMessage("Error deleting file");
+                setShowError(true);
 		  }
         } catch (error) {
-		  console.error("Error deleting file:", error);
+            console.error("Error deleting file:", error);
+            setErrorMessage("Error deleting file");
+            setShowError(true);
         }
 	  };
 
@@ -159,7 +163,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                     }),
                 });
                 if (res.ok) {
-                    setErrorMessage("Issue updated successfully");
+                    setErrorMessage("Form submitted successfully");
                     setShowError(true);
                 }
                 if (!res.ok) {
@@ -204,8 +208,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             });
 
             if (res.ok) {                
-                const errorString = await res.json();
-                setErrorMessage(errorString.message);
+                setErrorMessage("Form submitted successfully");
                 setShowError(true);
                 router.push("/studentLogout"); 
             }
