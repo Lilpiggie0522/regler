@@ -1,6 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
 import models from "@/models/models";
-import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 type Params = {
