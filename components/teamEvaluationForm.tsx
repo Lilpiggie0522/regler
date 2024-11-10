@@ -96,7 +96,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
         })
         );
         console.log("File uploaded successfully:", fileUrl);
-		setLoading(false);
+        setLoading(false);
 		
 	  };
 

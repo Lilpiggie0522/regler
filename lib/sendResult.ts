@@ -20,12 +20,7 @@ const Issue = models.Issue;
         - Check if course exists
         - Check if issue exists
 */
-<<<<<<< HEAD
-//sendResult(teamId: string, courseId: string, issueId: string, content: string, type: string);
-export async function sendResult(teamId: string, courseId: string, issueId: string, result: string) {
-=======
 export async function sendResult(teamId: string, courseId: string, issueId: string) {
->>>>>>> 1b5a1454db863c6a372604ce4944438e180712ae
     try {
         await dbConnect();
         const team = await Team.findById(teamId);
