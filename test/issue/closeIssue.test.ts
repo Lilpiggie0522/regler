@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { POST as closeIssuePOST } from '@/app/api/issueSystem/closeIssue/route';
 import { CreateIssueInput, POST as createIssuePOST } from '@/app/api/issueSystem/createIssue/route';
-import { TutorOpinionInput, POST as opinionPOST } from '@/app/api/staff/tutorOpinions/route';
+import { OpinionInput, POST as opinionPOST } from '@/app/api/staff/submitOpinions/route';
 import models from '@/models/models';
 import { createDatabase, initialiseInput, terminateDatabase } from '@/test/testUtils';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -127,14 +127,16 @@ describe('Close Issue API Tests', () => {
     });
 
     it('Successfully close an issue after submit admin opinion', async () => {
-        const opinionBody: TutorOpinionInput = {
+        const opinionBody: OpinionInput = {
             issueId,
             content: "This is a tutor's opinion.",
             staffId: adminId,
+            teamId,
+            courseId,
         };
 
         const opinionRequest = new NextRequest(
-            new URL('http://localhost/api/staff/tutorOpinions'),
+            new URL('http://localhost/api/staff/submitOpinions'),
             {
                 method: 'POST',
                 body: JSON.stringify(opinionBody),

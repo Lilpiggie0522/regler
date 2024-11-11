@@ -35,6 +35,7 @@ const GroupList: React.FC = () => {
 
     const courseId = params.get("courseId");
     const [, setIssueId] = useLocalStorageState("issueId", "")
+    
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [email,] = useLocalStorageState("email", "");

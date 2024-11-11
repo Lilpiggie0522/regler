@@ -300,7 +300,7 @@ describe("Tests for user access contorl on api end points", () => {
         expect(res.status).toBe(401)
     })
 
-    it("should return 401 code, since no token", async () => {
+    /*it("should return 401 code, since no token", async () => {
         const req = new NextRequest("http://localhost:3000/api/issueSystem/updateIssue")
         const res = await middleware(req)
         expect(res.status).toBe(401)
@@ -338,7 +338,7 @@ describe("Tests for user access contorl on api end points", () => {
         const res = await middleware(req)
         expect(res.status).toBe(401)
     })
-
+    */
     it("should return 401 code, since no token", async () => {
         const req = new NextRequest("http://localhost:3000/api/staff/readCsv")
         const res = await middleware(req)

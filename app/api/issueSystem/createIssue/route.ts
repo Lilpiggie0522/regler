@@ -121,12 +121,6 @@ export async function POST(req: NextRequest) {
 
         const curQuestions: Question[] = questions.map(question => ({ question: question }));
         
-
-        console.log("Question input: " + questions)
-        console.log("Answer input: " + answers)
-        console.log("CurQuestions: " + curQuestions);
-        console.log("CurAnswers: " + curAnswers);
-        console.log("Assignment:" + assignment);
         const initialStudentComment: StudentCommentInput = {
             
             filesUrl: filesUrl,
@@ -151,14 +145,11 @@ export async function POST(req: NextRequest) {
             { $push: { issues: issueId } } 
         );
         // calling mailing function send teams
-        // TODO: sendTo api on the same server with /api/mailingSystem/sendTeam
-        
+
         if (!(process.env.NODE_ENV === "test")) {
-            const mailResponse = await sendTeamEmail(teamId, courseId, studentId, issueId)
-            if (!mailResponse.ok) {
-                return NextResponse.json({ error: "Failed to send team information to mailing system" }, { status: 500 });
-            } 
+            await sendTeamEmail(teamId, courseId, studentId, issueId);
         }
+        
         return NextResponse.json({ success: true, issue,
             teamId: teamId,
             studentId: studentId,

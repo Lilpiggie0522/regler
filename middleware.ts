@@ -10,7 +10,7 @@ const PROTECTED_ROUTES = [
     redirect: { tutor: '/staffCourseList', student: '/studentDetailConfirm', admin: '/' }
   },
   {
-    pathRegex: "/teamEvaluationForm.*",
+    pathRegex: "/teamEvaluationForm",
     access: ["student"],
     redirect: { tutor: '/staffCourseList', admin: '/staffCourseList', student: '/' }
   },
@@ -54,10 +54,6 @@ const PROTECTED_APIs = [
   },
   {
     pathRegex: "/api/issueSystem/createIssue",
-    access: ["student"]
-  },
-  {
-    pathRegex: "/api/issueSystem/updateIssue",
     access: ["student"]
   },
   {
