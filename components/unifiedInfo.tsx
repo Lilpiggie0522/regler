@@ -75,7 +75,6 @@ export default function UnifiedInfo() {
                 if (!response.ok) {
                     const res = await response.json();
                     console.log(res.error)
-                    // alert("Error: " + message);
                     tutorComments.push(
                         {
                             tutorName: "System",
@@ -96,7 +95,6 @@ export default function UnifiedInfo() {
                             content: comment.content
                         };
                     });
-                    console.log (tutorComments);
                     setTutorComments(tutorComments);
                     setlecturerComments(lecturerComments);
                     //加回去slice
@@ -106,7 +104,6 @@ export default function UnifiedInfo() {
             }
         }
         getOpinions();
-        console.log(staffId);
     }, [teamId, isUploadedSuccessfully, issueId, staffId]);
 
     useEffect(() => {
@@ -169,9 +166,6 @@ export default function UnifiedInfo() {
                 setErrorMessage(errorString.error);
                 setShowError(true);
             }else {
-                const res = response.json();
-                console.log(res);
-
                 setIsUploadedSuccessfully(true);
                 
                 const successPrompt = await response.json()
@@ -284,9 +278,9 @@ export default function UnifiedInfo() {
                                 <td className="px-4 py-2 text-center w-1/7 align-items-center">
                                     {/* "bg-blue-500 text-white py-1 px-3 rounded" */}
                                     <button
-                                        className={`bg-blue-500 text-white py-1 px-3 rounded flex items-center justify-center space-x-1 ${issueId ? "" : "opacity-50 cursor-not-allowed"}`}
+                                        className={`bg-blue-500 text-white py-1 px-3 rounded flex items-center justify-center space-x-1 ${issueId && student.status === "Submitted" ? "" : "opacity-50 cursor-not-allowed"}`}
                                         onClick={() => router.push(`/studentComment?studentId=${student.id}&issueId=${issueId}&studentName=${student.name}`)}
-                                        disabled={!issueId}
+                                        disabled={!issueId || student.status === "No Submission"}
                                     >
                                         <FaInfoCircle />
                                         <span>Details</span>
