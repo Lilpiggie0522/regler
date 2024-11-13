@@ -14,7 +14,7 @@ const ImageKitUpload = (props : ImageKitProps) => {
     
     return (
         <ImageKitContext>
-            <p>Upload an image</p>
+            
             <IKUpload
                 onUploadProgress={() => props.setSpinner(true)}
                 onError={(err) => props.onUploadError && props.onUploadError(err)}

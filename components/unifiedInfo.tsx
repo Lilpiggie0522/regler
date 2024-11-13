@@ -113,7 +113,7 @@ export default function UnifiedInfo() {
         async function getIssueInfo() {
             try {
                 
-                const response = await fetch(`/api/issueSystem/getIssueInfo/${teamId}`)
+                const response = await fetch(`/api/issueSystem/getIssueInfo/${issueId}/${teamId}`)
                 if (!response.ok) {
                     const errorString = await response.json();
                     setErrorMessage(errorString.error);
@@ -126,7 +126,7 @@ export default function UnifiedInfo() {
                             const studentInfo : Student = {
                                 id : student.comment.student,
                                 name: student.studentName,
-                                class: group || "null",
+                                class: student.class || "null",
                                 zid: student.zid,
                                 email: student.email,
                                 status: student.isSubmitted === true? "Submitted" : "No Submission"

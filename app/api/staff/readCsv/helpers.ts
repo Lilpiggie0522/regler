@@ -168,14 +168,14 @@ export function insertStudent(row: convertedResult, students: createStudentInput
     const newStudentName = row.name
     const newStudentEmail = row.email
     const newStudentZid = row.zid
-    //const newStudentClass = row.class
+    const newStudentClass = row.class
     const alreadyPushedStudent = students.find(student => student.zid === newStudentZid)
     if (!alreadyPushedStudent) {
         const newStudent: createStudentInput = {
             studentName: newStudentName,
             email: newStudentEmail,
             zid: newStudentZid,
-            //class: newStudentClass
+            class: newStudentClass
         }
         students.push(newStudent)
 

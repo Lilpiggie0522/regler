@@ -472,66 +472,79 @@ describe("data insertion", () => {
             {
                 studentName: 'piggie0',
                 email: 'z1234567@student.unsw.edu.au',
-                zid: 'z1234567'
+                zid: 'z1234567',
+                class: "T13B",
             },
             {
                 studentName: 'piggie1',
                 email: 'z1234568@student.unsw.edu.au',
-                zid: 'z1234568'
+                zid: 'z1234568',
+                class: "T13B",
             },
             {
                 studentName: 'piggie2',
                 email: 'z1234569@student.unsw.edu.au',
+                class: "T13B",
                 zid: 'z1234569'
             },
             {
                 studentName: 'piggie3',
                 email: 'z1234571@student.unsw.edu.au',
+                class: "T13B",
                 zid: 'z1234571'
             },
             {
                 studentName: 'piggie4',
                 email: 'z1234572@student.unsw.edu.au',
+                class: "T13B",
                 zid: 'z1234572'
             },
             {
                 studentName: 'doggie0',
                 email: 'z1234576@student.unsw.edu.au',
+                class: "T21A",
                 zid: 'z1234576'
             },
             {
                 studentName: 'doggie1',
                 email: 'z1234577@student.unsw.edu.au',
+                class: "T21A",
                 zid: 'z1234577'
             },
             {
                 studentName: 'Jeffrey',
                 email: 'belikov9519@gmail.com',
+                class: "T22A",
                 zid: 'z5414078'
             },
             {
                 studentName: 'Wilson',
                 email: 'wilsonzhu2003@gmail.com',
+                class: "T22A",
                 zid: 'z5423255'
             },
             {
                 studentName: 'Guojing',
                 email: 'z5450260@ad.unsw.edu.au',
+                class: "T22A",
                 zid: 'z5450260'
             },
             {
                 studentName: 'Rocky',
                 email: 'z5349042@ad.unsw.edu.au',
+                class: "T22A",
                 zid: 'z5349042'
             },
             {
                 studentName: 'Ruiqi',
                 email: 'z5361545@ad.unsw.edu.au',
+                class: "T22A",
                 zid: 'z5361545'
             },
             {
                 studentName: 'Waner',
                 email: 'z5417505@ad.unsw.edu.au',
+                class: "T22A",
                 zid: 'z5417505'
             },
         ])

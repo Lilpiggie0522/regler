@@ -21,7 +21,7 @@ export interface createStudentInput {
     studentName: string,
     email: string,
     zid: string,
-    //class: string
+    class: string
 }
 
 export interface createTeamInput {
@@ -101,6 +101,7 @@ export async function dbInitialization(input: initialiseInput) {
                     studentName: student.studentName,
                     email: student.email,
                     zid: student.zid,
+                    class: student.class,
                     course: [courseId]
                 })
             } else {
