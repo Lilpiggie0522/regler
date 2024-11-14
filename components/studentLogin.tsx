@@ -147,7 +147,7 @@ export default function StudentLogin() {
                             onChange={(input) => setTerm(input.target.value)}
                         />
                     </div>
-、
+
 
                     {/* Verify button */}
           
