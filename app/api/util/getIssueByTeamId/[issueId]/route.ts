@@ -30,9 +30,9 @@ export async function GET(req: NextRequest, { params }: Params) {
         }
 
         const issue = await Issue.findById(issueId).exec();
-        if (!issue) {
+        /*if (!issue) {
             return NextResponse.json({ error: "Issue not found" }, { status: 404 });
-        }
+        }*/
 
         // content is required when created
         const tutorComments = await Promise.all(
