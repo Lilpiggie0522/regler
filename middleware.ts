@@ -75,8 +75,13 @@ const PROTECTED_APIs = [
 ]
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
+
   const token = request.cookies.get("token")?.value
   const path = request.nextUrl.pathname
+
+  if (path.includes('/teamEvaluationForm/update')) {
+    return allowedRequest;  // Allow access without authentication
+  }
   for (const api of PROTECTED_APIs) {
     const compiledRegex = new RegExp(api.pathRegex)
     if (path.match(compiledRegex)) {

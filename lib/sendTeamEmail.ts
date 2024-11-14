@@ -10,6 +10,7 @@ const Team = models.Team;
 const Course = models.Course;
 const Reminder = models.Reminder;
 const Admin = models.Admin;
+//const Issue = models.Issue;
 
 
 /*
@@ -26,17 +27,19 @@ const Admin = models.Admin;
         - Check if team exists
         - Check if course exists
 */
-export async function sendTeamEmail(teamId: string, courseId: string, studentId:string, issueId: string) {
+export async function sendTeamEmail(teamId: string, courseId: string, studentId:string, issueId: string, assignment: string) {
     try {
         await dbConnect();
         const team = await Team.findById(teamId);
         const course = await Course.findById(courseId);
+        
         if (!team) {
             return NextResponse.json("Team not found", { status: 404 })
         }
         if (!course) {
             return NextResponse.json("Course not found", { status: 404 })
         }
+
         const transport = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -62,7 +65,7 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
                     <p>
                         We have received a dispute application regarding 
                         the contribution to your group <strong>${team.teamName}</strong> 
-                        in the course <strong>${course.courseName}</strong>. 
+                        in the course <strong>${course.courseName}</strong> for ${assignment}. 
                         To ensure fairness and uphold the quality of learning, 
                         we sincerely ask that you fill out the following form 
                         to assist us solve the issue promptly. 
@@ -78,7 +81,7 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
                         Contribalance
                     </p>
                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
-                    href="http://localhost:3000/studentLogin"><strong>Complete Here</strong></a>
+                    href="http://localhost:3000/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}&assignment=${assignment}"><strong>Complete Here</strong></a>
                     `
                 };
                 await transport.sendMail(mailingParameters);       

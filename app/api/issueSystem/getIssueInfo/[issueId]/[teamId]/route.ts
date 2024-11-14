@@ -10,6 +10,7 @@ const Issue = models.Issue;
 
 interface StudentResponse {
   studentName: string;
+  class: string;
   email: string;
   zid: string;
   isSubmitted: boolean;
@@ -26,13 +27,15 @@ interface StudentComment {
 
 type Params = {
     params: {
-      teamId: string
+      teamId: string,
+      issueId: string,
     }
   }
 
 export async function GET(req : NextRequest, { params } : Params) {
     try {
         const teamId = params.teamId;
+        const issueId = params.issueId;
         if (!teamId) {
             return NextResponse.json({ error: "Team ID is required" }, { status: 400 });
         }
@@ -49,16 +52,9 @@ export async function GET(req : NextRequest, { params } : Params) {
             }
         )
             .exec();
-        const issuesIds = existingTeam.issues;
-        // console.log(existingTeam)
-        let existingIssue = null;
-        for (const issueId of issuesIds) {
-            existingIssue = await Issue.findById(issueId).exec();
-            // console.log(existingIssue);
-            if (existingIssue && existingIssue.status === "pending") {
-                break;
-            }
-        }
+
+        const existingIssue = await Issue.findById(issueId).exec();
+
         // if (!existingIssue) {
         //     return NextResponse.json({ message: "No pending issue for this team, no information to be returned" }, { status: 200 });
         // }
@@ -76,6 +72,7 @@ export async function GET(req : NextRequest, { params } : Params) {
 
             const studentIssueInfo: StudentResponse = {
                 studentName: studentDetails.studentName,
+                class: studentDetails.class,
                 email: studentDetails.email,
                 zid: studentDetails.email.split("@")[0],
                 isSubmitted,

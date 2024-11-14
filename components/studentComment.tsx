@@ -4,8 +4,9 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Answer } from "@/app/api/issueSystem/createIssue/route";
 
-import { Button } from "react-bootstrap";
+
 import { FaArrowLeft } from "react-icons/fa";
+import FileDisplay from "./imageKit/FileDisplay";
 
 
 interface IssueStudent {
@@ -124,13 +125,7 @@ export default function StudentComment() {
                 <div className="mt-4">
                     {formData.fileLinks.map((file, index) => (
                         <div key={index} className="flex items-center justify-between border-b py-2">
-                            <Button
-                                variant="link"
-                                onClick={() => window.open(file.url, "_blank")}
-                                className="text-blue-600 underline bg-transparent border-none cursor-pointer"
-                            >
-                                {file.name}
-                            </Button>
+                            <FileDisplay fileName={file.name} fileUrl ={file.url}/>
                         </div>
                     ))}
                 </div>

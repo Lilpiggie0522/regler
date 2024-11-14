@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
         // calling mailing function send teams
 
         if (!(process.env.NODE_ENV === "test")) {
-            await sendTeamEmail(teamId, courseId, studentId, issueId);
+            await sendTeamEmail(teamId, courseId, studentId, issueId, assignment);
         }
         
         return NextResponse.json({ success: true, issue,

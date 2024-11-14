@@ -93,7 +93,7 @@ describe("sendTeamEmail - send email to students and tutors when a dispute", () 
         });
 
         (Reminder.create as jest.Mock).mockResolvedValue({});
-        const response = await (await sendTeamEmail("team1", "course1", "student1", "issue1")).json()
+        const response = await (await sendTeamEmail("team1", "course1", "student1", "issue1", "assignment1")).json()
         // Send 4 emails to students and send emails to tutors at once (4+1).
         expect(nodemailer.createTransport).toHaveBeenCalledTimes(1);
         expect(nodemailer.createTransport().sendMail).toHaveBeenCalledTimes(5);
@@ -103,7 +103,7 @@ describe("sendTeamEmail - send email to students and tutors when a dispute", () 
     it("should return 'Team not found' if team not exists", async () => {
         (Team.findById as jest.Mock).mockResolvedValue(null);
     
-        const response = await (await sendTeamEmail("Invalid team", "course1", "student1", "issue1")).json();
+        const response = await (await sendTeamEmail("Invalid team", "course1", "student1", "issue1", "assignment1")).json();
         expect(response).toEqual("Team not found");
     });
   
@@ -117,7 +117,7 @@ describe("sendTeamEmail - send email to students and tutors when a dispute", () 
         });
         (Course.findById as jest.Mock).mockResolvedValue(null);
 
-        const response = await (await sendTeamEmail("team1", "Invalid course", "student1", "issue1")).json();
+        const response = await (await sendTeamEmail("team1", "Invalid course", "student1", "issue1", "assignment1")).json();
         expect(response).toEqual("Course not found");
     });
 });

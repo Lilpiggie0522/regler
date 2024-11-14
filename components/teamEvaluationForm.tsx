@@ -8,6 +8,7 @@ import {deleteImage} from "./services/imageKitApi";
 import {useEffect} from "react";
 import { Question } from "@/app/api/issueSystem/createIssue/route";
 import LogoutButton from "./logoutButton";
+import FileDisplay from "./imageKit/FileDisplay";
 
 
 
@@ -20,6 +21,7 @@ interface TeamEvaluationFormProps{
     courseId: string| null;
     studentId: string| null;
 	issueId: string| null;
+    assignment?: string| null;
 }
 interface Assignment{
 	assignmentName: string;
@@ -41,6 +43,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
     const [questions, setQuestions] = useState<string[]>([]);
     const [assignments, setAssignments] = useState<string[]>([]);
     
+
+
 
     const fetchCourse = async(courseId : string | null) => {
         // Fetch questions from your API endpoint or database based on the provided teamId, courseId, and studentId
@@ -64,6 +68,8 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             });
             return newQuestions;
         });
+
+
         setAssignments((prevAssignments) => {
             const newAssignments = [...prevAssignments];
             courseData.assignments.forEach((row : Assignment, index: number) => {
@@ -168,7 +174,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                     const result = await res.json();
                     console.log("Form submitted successfully:", result);
                     alert("Success!");
-			
+                    router.push("/studentLogout"); 
                 }
                 if (!res.ok) {
                     //const result = await res.json();
@@ -245,22 +251,26 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
             <form className="flex flex-col gap-6 p-8 mt-6 bg-white max-w-7xl mx-auto rounded-lg shadow-md" onSubmit={handleSubmit}>
 
                 <label htmlFor="dropdown" className="text-lg text-black block mb-2">
-				Select the project for this form: 
+				The project for this form: 
                 </label>
-                <select 
-                    id="dropdown" 
-                    className="border border-gray-300 p-2 rounded-md w-full text-black mb-4" 
-                    value={selectedOption}
-                    onChange={handleDropdownChange}
-                    required
-                >
-                    <option value="" disabled></option>
-                    {assignments.map((assignment, index) => (
-                        <option key={index} value={assignment}>
-                            {assignment}
-                        </option>
-                    ))}
-                </select>
+                {props.assignment ? (
+                    <p className="text-lg text-black mb-4">{props.assignment}</p>
+                ) : (
+                    <select 
+                        id="dropdown" 
+                        className="border border-gray-300 p-2 rounded-md w-full text-black mb-4" 
+                        value={selectedOption}
+                        onChange={handleDropdownChange}
+                        required
+                    >
+                        <option value="" disabled>Select an assignment</option>
+                        {assignments.map((assignment, index) => (
+                            <option key={index} value={assignment}>
+                                {assignment}
+                            </option>
+                        ))}
+                    </select>
+                )}
 
                 {questions.map((question, index) => (
                     <div key={index}>
@@ -287,9 +297,7 @@ export default function TeamEvaluationForm(props: TeamEvaluationFormProps) {
                 <div className="mt-4">
                     {formData.fileLinks.map((file, index) => (
                         <div key={index} className="flex items-center justify-between border-b py-2">
-                            <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
-                                {file.name}
-                            </a>
+                            <FileDisplay fileName={file.name} fileUrl ={file.url}/>
                             <ImageKitDelete fileId={file.id} index={index} handleDeleteFile={() => handleDeleteFile(index, file.id)} />
                         </div>
                     ))}
