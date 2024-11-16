@@ -11,7 +11,7 @@
 3. Install dependencies using ```npm install```.
 4. Create a file named .env containing environment variables needed (**Environment variables is sent over email**).
 5. Run ```npm run dev```.
-6. Login via staff login page using email yu.t.chen@unsw.edu.au.
+6. Login via staff login page the first time using email yu.t.chen@unsw.edu.au.
 7. Import prepared .CSV file by clicking on the button ```import csv```.
 
 ### Run in docker container
