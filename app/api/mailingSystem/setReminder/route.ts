@@ -5,8 +5,8 @@ import { NextResponse } from "next/server";
 import cron from "node-cron";
 
 // const CHECK_TIME = '';
-// const PRO_INTERVAL = 7*24*60*60*1000;
-const TEST_INTERVAL = 10*60*1000;
+const PRO_INTERVAL = 7*24*60*60*1000;
+// const TEST_INTERVAL = 10*60*1000;
 
 // Traverse the whole reminder to send notification
 async function reminderRequest() {
@@ -32,11 +32,11 @@ async function reminderRequest() {
 
             await reminderMod(reminder.team, reminder.course, reminder.issue, reminder.students, reminder.mentors);
             // interval < one week, server shuts for < 1 week
-            let futureSchedule = new Date(reminder.schedule.getTime() + TEST_INTERVAL);
+            let futureSchedule = new Date(reminder.schedule.getTime() + PRO_INTERVAL);
 
             // Edge case: interval > one week, server shuts for > 1 week
-            if (currentTime.getTime() - reminder.schedule.getTime() > TEST_INTERVAL) {
-                futureSchedule = new Date(currentTime.getTime() + TEST_INTERVAL);
+            if (currentTime.getTime() - reminder.schedule.getTime() > PRO_INTERVAL) {
+                futureSchedule = new Date(currentTime.getTime() + PRO_INTERVAL);
             }
             // update next schedule
             reminder.schedule = futureSchedule;
