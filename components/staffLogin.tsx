@@ -32,7 +32,7 @@ export default function StaffLogin() {
     // frontend invalid check
     const validateInput = () => {
 
-        const emailRegex = /.*@[a-zA-Z\.]+((\.com)|(\.unsw.edu.au))$/;
+        const emailRegex = /.*@(([a-zA-Z\.]*unsw\.edu\.au)|(.*\.com))$/;
 
         if (!emailRegex.test(email)) {
             setErrorMessage("Invalid email format.");
