@@ -158,8 +158,8 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
 
 
         // Set reminder for the rest of team member
-        const weeklySchedule = new Date(new Date().getTime() + 10*60*1000);
-        // const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
+        // const weeklySchedule = new Date(new Date().getTime() + 10*60*1000);
+        const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
         await Reminder.create({
             team: teamId,
             course: courseId,

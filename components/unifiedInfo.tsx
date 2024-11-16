@@ -111,7 +111,7 @@ export default function UnifiedInfo() {
             try {
                 let issue_Id = issueId;
                 if (!issue_Id) {
-                    issue_Id = '673581c1684db9d33d8fde23';
+                    issue_Id = "673581c1684db9d33d8fde23";
                 }
                 const response = await fetch(`/api/issueSystem/getIssueInfo/${teamId}/${issue_Id}`)
                 if (!response.ok) {

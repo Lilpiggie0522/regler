@@ -1,5 +1,0 @@
-1. tutor 交opinion 发邮件给 course admins
-2. lecturer 交 opinion 发邮件给学生，sendComment
-3. lecturer close issue 先确定这个人的comment填了
-4. lectuer close issue 发邮件用sendResults
-5. tutor可以提交多个comment，lecturer也可以
