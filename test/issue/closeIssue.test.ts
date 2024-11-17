@@ -26,7 +26,7 @@ beforeAll(async () => {
     teamId = course.teams[0];
     const team = await Team.findOne({ _id: teamId }).exec();
     studentId = team.students[0];
-    const admin = await Admin.findOne({ adminName: "Tutor1" }).exec();
+    const admin = await Admin.findOne({ adminName: "Admin1" }).exec();
     adminId = admin._id;
 
     // Create an issue for the team to use in tests
