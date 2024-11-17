@@ -30,7 +30,7 @@ export default function Home() {
             <div className="w-2/5 bg-yellow-400 flex flex-col justify-center items-center p-8">
                 <div className="max-w-sm w-full text-left">
                     <h1 className="text-6xl font-extrabold text-black mb-4 drop-shadow-lg relative left-[-20px] top-[-8px]">
-                        <span className="text-7xl text-shadow-md">C</span>ontri<span className="text-7xl text-shadow-md">B</span>alance
+                        <span className="text-7xl text-shadow-md">Regler</span>
                     </h1>
                     <h2 className="text-2xl font-bold text-black mb-8">Welcome to login platform</h2>
                     <p className="text-black mb-6">Please select one of the following options to sign in.</p>

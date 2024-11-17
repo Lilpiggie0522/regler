@@ -13,8 +13,6 @@ const Issue = models.Issue;
 export const submitOpinions = async (props : SubmitOptionProps): Promise<NextResponse> => {
     const {isAdmin, staffId, content, issueId, teamId, courseId} = props;
     if (isAdmin) {
-
-
         const issue = await Issue.findById(issueId);
         if (issue) {
             issue.lecturerComments.push({
@@ -25,9 +23,7 @@ export const submitOpinions = async (props : SubmitOptionProps): Promise<NextRes
         }
         const students = getStudentsByTeamId(teamId);
         if (!students) return NextResponse.json({ error: "No students found for this team" }, { status: 404 });
-        await sendComment(teamId, courseId, issueId, content)
-        //TODO: add sendComment
-
+        sendComment(teamId, courseId, issueId, content)
     }
     else {
         const tutorComment = {
@@ -40,8 +36,7 @@ export const submitOpinions = async (props : SubmitOptionProps): Promise<NextRes
             { _id: issueId },
             { $push: { tutorComments: tutorComment } }
         );
-        await sendLecturerTutor(teamId, courseId, issueId, lecturers);
-
+        sendLecturerTutor(teamId, courseId, issueId, lecturers);
     }
     const updatedIssue = await Issue.findById(issueId).exec();
     console.log(updatedIssue)

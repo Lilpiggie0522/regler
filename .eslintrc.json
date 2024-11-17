@@ -2,7 +2,6 @@
   "extends": ["next/core-web-vitals", "next/typescript"],
   "rules": {
     "quotes": ["error", "double"],
-    "indent": ["error", 4],
-    "no-console": "warn"
+    "indent": ["error", 4]
   }
 }
