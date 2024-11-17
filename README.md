@@ -6,7 +6,7 @@
 **A sample .csv file is provided in the repository, you can edit information contained in the file.**
 
 ### Run with npm run dev
-1. Clone repository using ```git clone git@github.com:Lilpiggie0522/regler.git``` or download cowhorse3900.zip and unzip it.
+1. Clone repository using ```git clone git@github.com:Lilpiggie0522/regler.git``` or download the zip file and unzip it.
 2. Open a terminal and navigate to the root directory of the project.
 3. Install dependencies using ```npm install```.
 4. Create a file named .env containing environment variables needed (**Environment variables is sent over email**).
@@ -15,12 +15,12 @@
 7. Import prepared .CSV file by clicking on the button ```import csv```.
 
 ### Run in docker container
-1. Clone repository using ```git clone git@github.com:Lilpiggie0522/regler.git``` or download cowhorse3900.zip and unzip it.
+1. Clone repository using ```git clone git@github.com:Lilpiggie0522/regler.git``` or download the zip file and unzip it.
 2. Open a terminal and navigate to the root directory of the project, make sure you are at the root directory of the project, otherwise, docker build will fail.
 3. Create a file named .env containing environment variables needed (**Environment variables is sent over email**).
 4. Open docker desktop application on your device.
 5. Run ```docker build -t regler:latest .``` and wait for docker to build the image
-6. After docker image is built, run ```docker run --env-file .env -p 3000:3000 regler:latest```, a container will start from the cowhorse3900:latest image with environment variables being passed into the container.
+6. After docker image is built, run ```docker run --env-file .env -p 3000:3000 regler:latest```, a container will start from the regler:latest image with environment variables being passed into the container.
 
 
 ### .CSV file format
