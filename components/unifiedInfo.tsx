@@ -97,7 +97,6 @@ export default function UnifiedInfo() {
                     });
                     setTutorComments(tutorComments);
                     setlecturerComments(lecturerComments);
-                    //加回去slice
                 }
             } catch (error) {
                 console.error(error);

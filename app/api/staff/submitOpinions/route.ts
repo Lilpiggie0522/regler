@@ -58,8 +58,7 @@ export async function POST(req: NextRequest) {
             courseId,
             teamId,
         }
-
-        return await submitOpinions(submitOpinionsProp);
+        return await submitOpinions(submitOpinionsProp)
 
     } catch (error) {
         console.log(error);
