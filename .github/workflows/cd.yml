@@ -1,14 +1,8 @@
 name: continuous-development
-
-env:
-  MONGODB_URI: ${{secrets.MONGODB_URI}}
-  SMTP_EMAIL: ${{secrets.SMTP_EMAIL}}
-  SMTP_PASSWORD: ${{secrets.SMTP_PASSWORD}}
-  IMAGEKIT_PRIVATE_KEY: ${{secrets.IMAGEKIT_PRIVATE_KEY}}
   
 on:
   push:
-    branches: [ "master", "jeff-code-refactor"]
+    branches: [ "master"]
 
 jobs:
   build-and-test:
@@ -59,4 +53,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: zpt0001/capstone-nextjs:latest
+          tags: zpt0001/regler:latest
