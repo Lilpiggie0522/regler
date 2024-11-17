@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "You are not an admin" }, { status: 404 });
         }
 
-        const adminHasComment = issue.tutorComments.some(
-            (comment: { tutor: string }) => comment.tutor.toString() === adminId
+        const adminHasComment = issue.lecturerComments.some(
+            (comment: { lecturer: string }) => comment.lecturer.toString() === adminId
         );
 
         if (!adminHasComment) {
