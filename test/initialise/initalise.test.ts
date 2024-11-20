@@ -1,5 +1,4 @@
 import { dbInitialization } from "@/app/api/adminSystem/initialise/dbInitialisation"
-import { NextRequest } from "next/server"
 //import { createMocks } from 'node-mocks-http';
 import { MongoMemoryServer } from "mongodb-memory-server"
 import { createDatabase, initialiseInput, terminateDatabase } from "@/test/testUtils"

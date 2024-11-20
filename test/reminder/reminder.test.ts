@@ -2,6 +2,7 @@ import { POST } from "@/app/api/mailingSystem/setReminder/route"
 import models from "@/models/models"
 import cron from "node-cron"
 import { deleteReminder } from "@/lib/deleteReminder"
+import { NextResponse } from "next/server"
 
 jest.mock("@/lib/dbConnect")
 jest.mock("node-cron")
@@ -13,7 +14,7 @@ const Student = models.Student
 const Admin = models.Admin
 
 describe("setReminder POST", () => {
-  let response: any
+  let response: NextResponse
   beforeEach(() => {
     jest.clearAllMocks()
   })

@@ -1,14 +1,10 @@
 import {POST, studentIdentityCheckInput } from "@/app/api/studentSystem/identityCheck/route"
-import models from "@/models/models"
 import { NextRequest } from "next/server"
 //import { createMocks } from 'node-mocks-http';
 import { MongoMemoryServer } from "mongodb-memory-server"
 import { createDatabase, initialiseInput, initialiseDatabase, terminateDatabase } from "@/test/testUtils"
 
 jest.setTimeout(30000)
-let studentId : string, teamId : string, courseId: string
-let notInTeamStudentIds : string
-const { Team, Course, Student} = models
 // In-memory MongoDB server instance
 let mongoServer: MongoMemoryServer
 
@@ -37,13 +33,6 @@ beforeAll(async () => {
     course: { courseName: "CS888", mentorsEmails: "", teams: "", term: "T1" },
   }
   initialiseDatabase(input1)
-  const course = await Course.findOne({}).exec()
-  courseId = course._id
-  teamId = course.teams[0]
-  const team = await Team.findOne({_id: teamId}).exec()
-  studentId = team.students[0]
-  const notInTeamStudent = await Student.findOne({studentName: "John"}).exec()
-  notInTeamStudentIds = notInTeamStudent._id
 })
 
 afterAll(async () => {

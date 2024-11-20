@@ -53,20 +53,20 @@
 // }
 
 "use client"
-import React, { useState } from 'react';
+import React, { useState } from "react"
 
 export default function GGPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+    setIsModalOpen(!isModalOpen)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     // Add logic to handle form submission, such as sending data to a server
-    console.log('Form submitted');
-  };
+    console.log("Form submitted")
+  }
 
   return (
     <div className="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -134,5 +134,5 @@ export default function GGPage() {
         </div>
       )}
     </div>
-  );
+  )
 }

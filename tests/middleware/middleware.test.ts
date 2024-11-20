@@ -1,5 +1,5 @@
 import { middleware } from "@/middleware"
-import { NextRequest, NextResponse } from "next/server"
+import { NextRequest } from "next/server"
 import { signJWT } from "@/util/jwt"
 
 describe("Tests for user access control on pages", () => {

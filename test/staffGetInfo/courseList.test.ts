@@ -1,5 +1,4 @@
 import { POST } from "@/app/api/staff/courseList/route"
-import models from "@/models/models"
 import { NextRequest } from "next/server"
 //import { createMocks } from 'node-mocks-http';
 import { MongoMemoryServer } from "mongodb-memory-server"
@@ -14,9 +13,6 @@ jest.mock("next/headers", () => ({
   }),
 }))
 
-let studentId : string, teamId : string, courseId: string
-let notInTeamStudentIds : string
-const { Team, Course, Student, AuthCode } = models
 // In-memory MongoDB server instance
 let mongoServer: MongoMemoryServer
 
@@ -37,13 +33,6 @@ beforeAll(async () => {
   }
 
   mongoServer = await createDatabase(input, mongoServer)
-  const course = await Course.findOne({}).exec()
-  courseId = course._id
-  teamId = course.teams[0]
-  const team = await Team.findOne({_id: teamId}).exec()
-  studentId = team.students[0]
-  const notInTeamStudent = await Student.findOne({studentName: "John"}).exec()
-  notInTeamStudentIds = notInTeamStudent._id
 })
 
 afterAll(async () => {

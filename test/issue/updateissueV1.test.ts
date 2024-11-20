@@ -5,7 +5,6 @@ import { NextRequest } from "next/server"
 import { createDatabase, initialiseInput, terminateDatabase } from "@/test/testUtils"
 import { MongoMemoryServer } from "mongodb-memory-server"
 import { UpdateIssueInput } from "@/app/api/issueSystem/updateIssue/route"
-import StudentComment from "@/components/studentComment"
 
 
 let studentId : string, teamId : string, courseId: string
