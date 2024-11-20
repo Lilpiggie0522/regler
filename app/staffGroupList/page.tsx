@@ -1,7 +1,7 @@
-import StaffGroupList from "@/components/staffGroupList";
+import StaffGroupList from "@/components/staffGroupList"
 
 export default function StaffGroupListPage() {
-    return (
-        <StaffGroupList />
-    );
+  return (
+    <StaffGroupList />
+  )
 }

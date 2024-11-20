@@ -1,11 +1,11 @@
-import nodemailer from "nodemailer";
-import dbConnect from "@/lib/dbConnect";
-import models from "@/models/models";
+import nodemailer from "nodemailer"
+import dbConnect from "@/lib/dbConnect"
+import models from "@/models/models"
 
-const Student = models.Student;
-const Team = models.Team;
-const Course = models.Course;
-const Issue = models.Issue;
+const Student = models.Student
+const Team = models.Team
+const Course = models.Course
+const Issue = models.Issue
 
 /*
     Input: 
@@ -21,35 +21,35 @@ const Issue = models.Issue;
         - Check if issue exists
 */
 export async function sendResult(teamId: string, courseId: string, issueId: string) {
-    try {
-        await dbConnect();
-        const team = await Team.findById(teamId);
-        const course = await Course.findById(courseId);
-        const issue = await Issue.findById(issueId);
-        if (!team) {
-            return "team not exists";
-        }
-        if (!course) {
-            return "course not exists";
-        }
-        if (!issue) {
-            return "issue not exists";
-        }
-        const transport = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.SMTP_EMAIL,
-                pass: process.env.SMTP_PASSWORD,
-            },
-        });
+  try {
+    await dbConnect()
+    const team = await Team.findById(teamId)
+    const course = await Course.findById(courseId)
+    const issue = await Issue.findById(issueId)
+    if (!team) {
+      return "team not exists"
+    }
+    if (!course) {
+      return "course not exists"
+    }
+    if (!issue) {
+      return "issue not exists"
+    }
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    })
 
-        for (const tempId of team.students) {
-            const student = await Student.findById(tempId);
-            const mailingParameters = {
-                from: process.env.SMTP_EMAIL,
-                to: student.email,
-                subject: "Contribution Dispute Completed",
-                html: 
+    for (const tempId of team.students) {
+      const student = await Student.findById(tempId)
+      const mailingParameters = {
+        from: process.env.SMTP_EMAIL,
+        to: student.email,
+        subject: "Contribution Dispute Completed",
+        html: 
                 `
                 <p>
                     Hi, <strong>${student.studentName}</strong>!
@@ -71,15 +71,15 @@ export async function sendResult(teamId: string, courseId: string, issueId: stri
                     Contribalance
                 </p>
                 `
-            };
-            await transport.sendMail(mailingParameters);
-        }
-        return "Send emails to students successfully";
-    } catch (error) {
-        if (error instanceof Error) {
-            return "failed to send result to students";
-        }
+      }
+      await transport.sendMail(mailingParameters)
     }
+    return "Send emails to students successfully"
+  } catch (error) {
+    if (error instanceof Error) {
+      return "failed to send result to students"
+    }
+  }
 }
 
-export default sendResult;
+export default sendResult

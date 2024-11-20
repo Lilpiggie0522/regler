@@ -1,5 +1,5 @@
-import dbConnect from "@/lib/dbConnect";
-import models from "@/models/models";
+import dbConnect from "@/lib/dbConnect"
+import models from "@/models/models"
 
 
 // /*
@@ -17,35 +17,35 @@ import models from "@/models/models";
 //         - Student not found
 // */
 export async function deleteReminder(issueId: string, personId: string, type: string) {
-    try {
-        await dbConnect();
+  try {
+    await dbConnect()
         
-        // check if mentor or student exists
-        const reminder = await models.Reminder.findOne({ issue: issueId });
-        if (!reminder) {
-            return "reminder not found or issue closed"
-        }
-        if (type === "student") {
-            const student = await models.Student.findById(personId);
-            if (!student) {
-                return "student not in the team/ already submitted"
-            }
-            await models.Reminder.updateOne({ issue: issueId }, { $pull: { students: personId } });
-        } else if (type === "mentor") {
-            const mentor = await models.Admin.findById({ _id: personId });
-            if (!mentor) {
-                return "tutor not in the team/ already submitted";
-            }
-            await models.Reminder.updateOne({ issue: issueId }, { $pull: { mentors: personId } });
-        } else {
-            return "Incorrect type";
-        }
-        return "Successfully remove person from reminder";
-    } catch (error) {
-        if (error instanceof Error) {
-            return `Unexpected error: ${error}`;
-        }
+    // check if mentor or student exists
+    const reminder = await models.Reminder.findOne({ issue: issueId })
+    if (!reminder) {
+      return "reminder not found or issue closed"
     }
+    if (type === "student") {
+      const student = await models.Student.findById(personId)
+      if (!student) {
+        return "student not in the team/ already submitted"
+      }
+      await models.Reminder.updateOne({ issue: issueId }, { $pull: { students: personId } })
+    } else if (type === "mentor") {
+      const mentor = await models.Admin.findById({ _id: personId })
+      if (!mentor) {
+        return "tutor not in the team/ already submitted"
+      }
+      await models.Reminder.updateOne({ issue: issueId }, { $pull: { mentors: personId } })
+    } else {
+      return "Incorrect type"
+    }
+    return "Successfully remove person from reminder"
+  } catch (error) {
+    if (error instanceof Error) {
+      return `Unexpected error: ${error}`
+    }
+  }
 }
 
-export default deleteReminder;
+export default deleteReminder

@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose"
 
 
 interface AuthCodeDocument extends Document {
@@ -8,11 +8,11 @@ interface AuthCodeDocument extends Document {
 }
 
 export const authCodeSchema = new Schema<AuthCodeDocument>({
-    zid: { type: String, required: true },
-    code: { type: String, required: true },
-    expiresAt: { type: Date, required: true },
-});
+  zid: { type: String, required: true },
+  code: { type: String, required: true },
+  expiresAt: { type: Date, required: true },
+})
 
-authCodeSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+authCodeSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 })
 
 

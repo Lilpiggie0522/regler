@@ -1,7 +1,7 @@
-import StudentLogin from "@/components/studentLogin";
+import StudentLogin from "@/components/studentLogin"
 
 export default function StudentLoginPage() {
-    return (
-        <StudentLogin />
-    );
+  return (
+    <StudentLogin />
+  )
 }

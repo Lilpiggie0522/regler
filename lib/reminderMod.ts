@@ -1,38 +1,38 @@
-import dbConnect from "@/lib/dbConnect";
-import models from "@/models/models";
-import mongoose from "mongoose";
-import nodemailer from "nodemailer";
+import dbConnect from "@/lib/dbConnect"
+import models from "@/models/models"
+import mongoose from "mongoose"
+import nodemailer from "nodemailer"
 
 export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId, 
-    courseId: mongoose.Schema.Types.ObjectId, 
-    issueId: mongoose.Schema.Types.ObjectId, 
-    restIds: mongoose.Schema.Types.ObjectId[],
-    mentorIds: mongoose.Schema.Types.ObjectId[]) {
-    await dbConnect();
-    const transport = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.SMTP_EMAIL,
-            pass: process.env.SMTP_PASSWORD,
-        },
-    });
+  courseId: mongoose.Schema.Types.ObjectId, 
+  issueId: mongoose.Schema.Types.ObjectId, 
+  restIds: mongoose.Schema.Types.ObjectId[],
+  mentorIds: mongoose.Schema.Types.ObjectId[]) {
+  await dbConnect()
+  const transport = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.SMTP_EMAIL,
+      pass: process.env.SMTP_PASSWORD,
+    },
+  })
 
-    const Student = models.Student;
-    const Team = models.Team;
-    const Course = models.Course;
-    const Admin = models.Admin;
+  const Student = models.Student
+  const Team = models.Team
+  const Course = models.Course
+  const Admin = models.Admin
 
-    // Send reminder email to remind the rest of team members
-    const team = await Team.findById(teamId);
-    const course = await Course.findById(courseId);
-    for (const tempId of restIds) {
-        const student = await Student.findById(tempId);
-        if (student) {
-            const mailingParameters = {
-                from: process.env.SMTP_EMAIL,
-                to: student.email,
-                subject: "Reminder for Form Completion",
-                html: 
+  // Send reminder email to remind the rest of team members
+  const team = await Team.findById(teamId)
+  const course = await Course.findById(courseId)
+  for (const tempId of restIds) {
+    const student = await Student.findById(tempId)
+    if (student) {
+      const mailingParameters = {
+        from: process.env.SMTP_EMAIL,
+        to: student.email,
+        subject: "Reminder for Form Completion",
+        html: 
                 `
                 <p>
                     Hi, <strong>${student.studentName}</strong>!
@@ -56,24 +56,24 @@ export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId,
                 <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
                 href="https://3900-capstone.vercel.app/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}"><strong>Complete Here</strong></a>
                 `
-            };
-            await transport.sendMail(mailingParameters);  
-        };
-    }
+      }
+      await transport.sendMail(mailingParameters)  
+    };
+  }
 
-    // Send reminder email to remind tutors
-    const emailList = [];
-    for (const mentorId of mentorIds) {
-        const temp = await Admin.findById(mentorId);
-        if (temp) {
-            emailList.push(temp.email);
-        }
+  // Send reminder email to remind tutors
+  const emailList = []
+  for (const mentorId of mentorIds) {
+    const temp = await Admin.findById(mentorId)
+    if (temp) {
+      emailList.push(temp.email)
     }
-    const mailingParameters = {
-        from: process.env.SMTP_EMAIL,
-        to: emailList.join(","),
-        subject: "Reminder for Providing Opinion",
-        html: 
+  }
+  const mailingParameters = {
+    from: process.env.SMTP_EMAIL,
+    to: emailList.join(","),
+    subject: "Reminder for Providing Opinion",
+    html: 
         `
         <p>
             Hi!
@@ -96,10 +96,10 @@ export async function reminderMod(teamId: mongoose.Schema.Types.ObjectId,
             Contribalance
         </p>
         `
-    };
-    await transport.sendMail(mailingParameters);   
+  }
+  await transport.sendMail(mailingParameters)   
 }
 
 
 
-export default reminderMod;
+export default reminderMod

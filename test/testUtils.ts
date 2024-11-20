@@ -1,13 +1,13 @@
 
-import { createCourseInput, createStudentInput, createTeamInput, createAdminInput } from '@/app/api/adminSystem/initialise/dbInitialisation';
-import models from '@/models/models';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
+import { createCourseInput, createStudentInput, createTeamInput, createAdminInput } from "@/app/api/adminSystem/initialise/dbInitialisation"
+import models from "@/models/models"
+import { MongoMemoryServer } from "mongodb-memory-server"
+import mongoose from "mongoose"
 //import mongoose from 'mongoose';
 
 
 // Destructure models for convenience
-const { Student, Team, Course, Admin } = models;
+const { Student, Team, Course, Admin } = models
 
 // Define the input type for initializing the database
 export interface initialiseInput {
@@ -20,11 +20,11 @@ export interface initialiseInput {
 
 // Function to initialize the database with the provided input
 export async function initialiseDatabase(input: initialiseInput) {
-  const { courseAdmins, staffAdmins, students, teams, course } = input;
-  const term = course.term;
+  const { courseAdmins, staffAdmins, students, teams, course } = input
+  const term = course.term
 
   // Create the course
-  let courseDoc = await Course.findOne({ courseName: course.courseName, term });
+  let courseDoc = await Course.findOne({ courseName: course.courseName, term })
   if (!courseDoc) {
     courseDoc = await Course.create({
       courseName: course.courseName,
@@ -33,28 +33,28 @@ export async function initialiseDatabase(input: initialiseInput) {
       mentors: [],
       assignments: [
         {
-          assignmentName: 'default project'
+          assignmentName: "default project"
         },
         {
-          assignmentName: 'default project2'
+          assignmentName: "default project2"
         }
       ],
-    questionBanks: [
-      {
-        question: 'How do you do'
-      },
-      {
-        question: 'What is the weather like'
-      }
-]
-    });
+      questionBanks: [
+        {
+          question: "How do you do"
+        },
+        {
+          question: "What is the weather like"
+        }
+      ]
+    })
   }
 
   // Create students
   for (const student of students) {
-    const studentExists = await Student.findOne({ email: student.email });
+    const studentExists = await Student.findOne({ email: student.email })
     if (!studentExists) {
-      await Student.create({ ...student, course: [courseDoc._id] });
+      await Student.create({ ...student, course: [courseDoc._id] })
     }
   }
 
@@ -64,49 +64,49 @@ export async function initialiseDatabase(input: initialiseInput) {
       { email: admin.email },
       { ...admin, courses: [courseDoc._id] },
       { upsert: true, new: true }
-    );
+    )
     if (!courseDoc.mentors.includes(adminDoc._id)) {
-      courseDoc.mentors.push(adminDoc._id);
+      courseDoc.mentors.push(adminDoc._id)
     }
   }
 
   // Create teams and assign students and mentors
   for (const team of teams) {
-    const studentIds = await Student.find({ zid: { $in: team.studentsZids.split(',') } }).select('_id');
-    const mentorIds = await Admin.find({ email: { $in: team.mentorsEmails.split(',') } }).select('_id');
+    const studentIds = await Student.find({ zid: { $in: team.studentsZids.split(",") } }).select("_id")
+    const mentorIds = await Admin.find({ email: { $in: team.mentorsEmails.split(",") } }).select("_id")
 
     const newTeam = await Team.create({
       teamName: team.teamName,
       course: courseDoc._id,
       students: studentIds.map(s => s._id),
       mentors: mentorIds.map(m => m._id),
-    });
+    })
 
-    courseDoc.teams.push(newTeam._id);
+    courseDoc.teams.push(newTeam._id)
   }
 
   // Save the course with all assigned teams and mentors
-  await courseDoc.save();
+  await courseDoc.save()
 }
 
 
 
 export async function createDatabase(input : initialiseInput, mongoServer: MongoMemoryServer) : Promise<MongoMemoryServer> {
   try {
-    mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    await mongoose.connect(uri);
-    await initialiseDatabase(input);
-    return mongoServer;
+    mongoServer = await MongoMemoryServer.create()
+    const uri = mongoServer.getUri()
+    await mongoose.connect(uri)
+    await initialiseDatabase(input)
+    return mongoServer
   }
   catch (error) {
-    throw error;
+    throw error
   }
 }
 export async function terminateDatabase(mongoServer: MongoMemoryServer) {
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
-  await mongoServer.stop();
+  await mongoose.connection.dropDatabase()
+  await mongoose.connection.close()
+  await mongoServer.stop()
 }
 
 /*
