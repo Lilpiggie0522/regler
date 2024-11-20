@@ -1,5 +1,5 @@
-'use client'
-import React, { createContext, useState, useContext, ContextType } from 'react';
+"use client"
+import React, { createContext, useState, useContext } from "react"
 
 interface contextType {
   useLocalStorageState: <T>(key: string, value: T) => [T, React.Dispatch<React.SetStateAction<T>>];
@@ -10,26 +10,26 @@ interface StudentProviderProps {
 }
 
 // Create the context with a default value of null
-const StudentContext = createContext<contextType | null>(null);
+const StudentContext = createContext<contextType | null>(null)
 
 // Custom hook to use the context
 export function useStudentContext() {
-  const context = useContext(StudentContext);
+  const context = useContext(StudentContext)
   if (!context) {
-    throw new Error("useStudent must be used within a StudentProvider");
+    throw new Error("useStudent must be used within a StudentProvider")
   }
-  return context;
+  return context
 }
 
 // Provider component
 export function StudentProvider({ children }: StudentProviderProps) {
-  useLocalStorageState('studentId', '')
+  useLocalStorageState("studentId", "")
   return (
     // studentId, teamId, courseId, 
     <StudentContext.Provider value={{ useLocalStorageState }}>
       {children}
     </StudentContext.Provider>
-  );
+  )
 }
 
 
@@ -44,17 +44,17 @@ export function useLocalStorageState<T>(key: string, defaultValue: T): [T, React
 }
 
 function getStorageItem<T>(key: string, defaultValue: T): T {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const value = localStorage.getItem(key)
     if (value) {
-      return value as T;
+      return value as T
     }
   }
-  return defaultValue;
+  return defaultValue
 }
 
 function saveStorageItem(key: string, value: string): void {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(key, value);
+  if (typeof window !== "undefined") {
+    localStorage.setItem(key, value)
   }
 }

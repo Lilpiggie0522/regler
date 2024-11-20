@@ -1,12 +1,12 @@
 
-import { NextResponse } from "next/server";
-import { imagekit } from "./imagekit";
+import { NextResponse } from "next/server"
+import { imagekit } from "./imagekit"
 
 
 
  
 export async function GET() {
-    const result = imagekit.getAuthenticationParameters();
-    return NextResponse.json(result, {status: 200});
+  const result = imagekit.getAuthenticationParameters()
+  return NextResponse.json(result, {status: 200})
 }
 

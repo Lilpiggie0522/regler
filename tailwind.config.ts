@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
 
 const config: Config = {
   content: [
@@ -15,7 +15,7 @@ const config: Config = {
     },
   },
   plugins: [
-    require('tailwindcss-textshadow')
+    require("tailwindcss-textshadow")
   ],
-};
-export default config;
+}
+export default config

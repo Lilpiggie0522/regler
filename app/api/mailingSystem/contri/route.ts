@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
-import { gitContribution } from "@/lib/gitContribution";
+import { NextResponse } from "next/server"
+import { gitContribution } from "@/lib/gitContribution"
 
 /*
     Input: 
@@ -9,20 +9,20 @@ import { gitContribution } from "@/lib/gitContribution";
         Return contributor lists
 */
 export async function GET() {
-    const owner = "ruiqidiaodrq";
-    const repo = "TEST3900";
+  const owner = "ruiqidiaodrq"
+  const repo = "TEST3900"
     
-    try {
-        const contributorList = await gitContribution(owner, repo)
-        if (!contributorList) {
-            return NextResponse.json({ error: "Error" }, { status: 500 });
-        }
-        console.log(contributorList)
-
-        return NextResponse.json({ message: "Completed" }, { status: 200 });
-    } catch (error) {
-        if (error instanceof Error) {
-            return NextResponse.json({ error: `${error.message}` }, { status: 500 });
-        }
+  try {
+    const contributorList = await gitContribution(owner, repo)
+    if (!contributorList) {
+      return NextResponse.json({ error: "Error" }, { status: 500 })
     }
+    console.log(contributorList)
+
+    return NextResponse.json({ message: "Completed" }, { status: 200 })
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: `${error.message}` }, { status: 500 })
+    }
+  }
 }

@@ -1,15 +1,15 @@
-import nodemailer from "nodemailer";
-import dbConnect from "@/lib/dbConnect";
+import nodemailer from "nodemailer"
+import dbConnect from "@/lib/dbConnect"
 
-import models from "@/models/models";
-import { NextResponse } from "next/server";
+import models from "@/models/models"
+import { NextResponse } from "next/server"
 
 
-const Student = models.Student;
-const Team = models.Team;
-const Course = models.Course;
-const Reminder = models.Reminder;
-const Admin = models.Admin;
+const Student = models.Student
+const Team = models.Team
+const Course = models.Course
+const Reminder = models.Reminder
+const Admin = models.Admin
 //const Issue = models.Issue;
 
 
@@ -28,36 +28,36 @@ const Admin = models.Admin;
         - Check if course exists
 */
 export async function sendTeamEmail(teamId: string, courseId: string, studentId:string, issueId: string, assignment: string) {
-    try {
-        await dbConnect();
-        const team = await Team.findById(teamId);
-        const course = await Course.findById(courseId);
+  try {
+    await dbConnect()
+    const team = await Team.findById(teamId)
+    const course = await Course.findById(courseId)
         
-        if (!team) {
-            return NextResponse.json("Team not found", { status: 404 })
-        }
-        if (!course) {
-            return NextResponse.json("Course not found", { status: 404 })
-        }
+    if (!team) {
+      return NextResponse.json("Team not found", { status: 404 })
+    }
+    if (!course) {
+      return NextResponse.json("Course not found", { status: 404 })
+    }
 
-        const transport = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.SMTP_EMAIL,
-                pass: process.env.SMTP_PASSWORD,
-            },
-        });
+    const transport = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.SMTP_EMAIL,
+        pass: process.env.SMTP_PASSWORD,
+      },
+    })
 
-        const restId = []
-        for (const tempId of team.students) {
-            const student = await Student.findById(tempId);
-            if (student && tempId.toString() !== studentId.toString()) {
-                restId.push(tempId);
-                const mailingParameters = {
-                    from: process.env.SMTP_EMAIL,
-                    to: student.email,
-                    subject: "Group Project Contribution Dispute",
-                    html: 
+    const restId = []
+    for (const tempId of team.students) {
+      const student = await Student.findById(tempId)
+      if (student && tempId.toString() !== studentId.toString()) {
+        restId.push(tempId)
+        const mailingParameters = {
+          from: process.env.SMTP_EMAIL,
+          to: student.email,
+          subject: "Group Project Contribution Dispute",
+          html: 
                     `
                     <p>
                         Hi, <strong>${student.studentName}</strong>!
@@ -83,14 +83,14 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
                     <a style="display:inline-block; background-color:#f7b602; color:black; padding:8px 16px; border-radius:4px"
                     href="http://localhost:3000/teamEvaluationForm/update?studentId=${tempId}&teamId=${teamId}&courseId=${courseId}&issueId=${issueId}&assignment=${assignment}"><strong>Complete Here</strong></a>
                     `
-                };
-                await transport.sendMail(mailingParameters);       
-            } else if (student && tempId.toString() === studentId.toString()) {
-                const mailingParameters = {
-                    from: process.env.SMTP_EMAIL,
-                    to: student.email,
-                    subject: "Submission Confirmed (Do not reply)",
-                    html: 
+        }
+        await transport.sendMail(mailingParameters)       
+      } else if (student && tempId.toString() === studentId.toString()) {
+        const mailingParameters = {
+          from: process.env.SMTP_EMAIL,
+          to: student.email,
+          subject: "Submission Confirmed (Do not reply)",
+          html: 
                     `
                     <p>
                         Hi, <strong>${student.studentName}</strong>!
@@ -112,25 +112,25 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
                         Contribalance
                     </p>
                     `
-                };
-                await transport.sendMail(mailingParameters);  
-            }
         }
+        await transport.sendMail(mailingParameters)  
+      }
+    }
 
-        // Send notification to tutors
-        const emailList = [];
-        for (const mentorId of team.mentors) {
-            const temp = await Admin.findById(mentorId);
-            if (!temp) {
-                continue
-            }
-            emailList.push(temp.email);
-        }
-        const mailingParameters = {
-            from: process.env.SMTP_EMAIL,
-            to: emailList.join(","),
-            subject: "New Contribution Dispute",
-            html: 
+    // Send notification to tutors
+    const emailList = []
+    for (const mentorId of team.mentors) {
+      const temp = await Admin.findById(mentorId)
+      if (!temp) {
+        continue
+      }
+      emailList.push(temp.email)
+    }
+    const mailingParameters = {
+      from: process.env.SMTP_EMAIL,
+      to: emailList.join(","),
+      subject: "New Contribution Dispute",
+      html: 
             `
             <p>
                 Hi!
@@ -153,27 +153,27 @@ export async function sendTeamEmail(teamId: string, courseId: string, studentId:
                 Contribalance
             </p>
             `
-        };
-        await transport.sendMail(mailingParameters);
-
-
-        // Set reminder for the rest of team member
-        // const weeklySchedule = new Date(new Date().getTime() + 10*60*1000);
-        const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000);
-        await Reminder.create({
-            team: teamId,
-            course: courseId,
-            issue: issueId,
-            schedule: weeklySchedule,
-            students: restId,
-            mentors: team.mentors,
-        });
-        
-        return NextResponse.json("Notification sent to the team and tutors successfully", {status: 200})
-
-    } catch (error) {
-        return NextResponse.json(`Error - sendTeam ${error}`, {status: 500})
     }
+    await transport.sendMail(mailingParameters)
+
+
+    // Set reminder for the rest of team member
+    // const weeklySchedule = new Date(new Date().getTime() + 10*60*1000);
+    const weeklySchedule = new Date(new Date().getTime() + 7*24*60*60*1000)
+    await Reminder.create({
+      team: teamId,
+      course: courseId,
+      issue: issueId,
+      schedule: weeklySchedule,
+      students: restId,
+      mentors: team.mentors,
+    })
+        
+    return NextResponse.json("Notification sent to the team and tutors successfully", {status: 200})
+
+  } catch (error) {
+    return NextResponse.json(`Error - sendTeam ${error}`, {status: 500})
+  }
 }
 
-export default sendTeamEmail;
+export default sendTeamEmail

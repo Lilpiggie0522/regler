@@ -1,13 +1,13 @@
 // components/LoadingSpinner.tsx
-"use client";
+"use client"
 
-import React from "react";
+import React from "react"
 
 const LoadingSpinner: React.FC = () => {
-    return (
-        <div className="flex justify-center items-center h-screen">
-            <div className="loader"></div>
-            <style jsx>{`
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <div className="loader"></div>
+      <style jsx>{`
                 .loader {
                     border: 8px solid #f3f3f3; /* Light grey */
                     border-top: 8px solid #ffcc02; /* Yellow */
@@ -22,8 +22,8 @@ const LoadingSpinner: React.FC = () => {
                     100% { transform: rotate(360deg); }
                 }
             `}</style>
-        </div>
-    );
-};
+    </div>
+  )
+}
 
-export default LoadingSpinner;
+export default LoadingSpinner
